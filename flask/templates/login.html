@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="/static/js/jquery-3.3.1.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<link rel="stylesheet" href="/static/css/bootstrap.css">
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<style>
+.settingscol{
+background-color:rgb(100,120,180);
+}
+
+</style>
+</head>
+<body onload="getconfigdata();getwifidata();getpassworddata();init()">
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+     	{% if name=="anonymous" %}
+	    <div class="navbar-brand">Try to login</div>
+        {%else%}
+	    <font color="blue" class="mr-auto link">{{name}}</font>
+        <a class="btn btn-primary" href="/logout">Logout</a>
+	    {%endif%}
+   </nav>
+   
+	{% if name=="anonymous" %}
+     <div class="row">
+	<div class="col-3"></div>
+	<div class="col-6 settingscol">
+	<form id="login_form">
+	<div class="row"><div class="col-3">UserName: </div><div class="col-3"><input type = "text" id = "user_txt"/></div></div>
+    <div class="row"><div class="col-3">Password: </div><div class="col-3"><input type = "password" id = "pass_txt"/></p></div></div>
+	<input type="submit"  class="btn btn-primary" value="Login">
+	</form>
+	</div>	
+	<div class="col-3"></div></div>
+	{%else%}
+	<div class="row">
+	<div class="col-3"></div>
+	<div class="col-6 settingscol">
+	<form id="logindata_form">
+	<p id="passconfig"></p>
+	<input type="submit"  class="btn btn-primary" onclick="" value="Change Password/Username">
+	</form>
+	<form id="config_form">
+	<p id="config"></p>
+	<input type="submit"  class="btn btn-primary" onclick="" value="Apply config changes">
+	</form>
+	<form id="wifi_form">
+	<p id="wifi"></p>
+	<input type="submit"  class="btn btn-primary" onclick="" value="Apply wifi changes">
+	</form>
+	<p id="board_status"></p>
+	<p id="data_status"></p>
+    </div>	
+	<div class="col-3"></div>
+	</div>
+	{% endif %}   
+
+<script src="/static/js/hello.js?v=1.14"></script>
+</body>
+</html>
