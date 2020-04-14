@@ -1,12 +1,12 @@
 from flask import Flask,session, redirect, url_for, request,render_template
-from configvalue import getconfigdata,setconfigdata,setpassword,getpassworddata
-from wificonfigscript import getwifidata,setwifidata
-from extractvalues import Extractdata_Config
+#from configvalue import getconfigdata,setconfigdata,setpassword,getpassworddata
+#from wificonfigscript import getwifidata,setwifidata
+#from extractvalues import Extractdata_Config
 #from gpiozero import LED
 from time import sleep
 #import Adafruit_DHT
-import myloginstatus
-import data_retr
+#import myloginstatus
+#import data_retr
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
