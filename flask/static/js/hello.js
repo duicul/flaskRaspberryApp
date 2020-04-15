@@ -1,3 +1,74 @@
+
+
+function draw_graph(){
+	countries_checked=verifycheck();
+	var data=[]
+	console.log(countries_checked)
+	countries_checked.forEach(function(item,index){
+		
+		$.ajax({url:"https://api.covid19api.com/dayone/country/"+item+"/status/confirmed/live",success : function(result)
+	    {	datap=[]
+			result.forEach(function(item){
+				if(item["Province"] =="")
+					datap.push({x: new Date(item["Date"]),y:item["Cases"]});
+				
+			});
+			$("#graph").html("");
+			count={type: "line",dataPoints:datap,name: item,showInLegend: true,};
+			data.push(count);
+			console.log(data);
+			var chart = new CanvasJS.Chart("graph", {
+				animationEnabled: true,
+				title:{	text: "Cases"},
+				toolTip: {
+					shared: true
+				},
+				legend: {
+					horizontalAlign: "left", // "center" , "right"
+					verticalAlign: "center",  // "top" , "bottom"
+					fontSize: 15
+					},
+				axisY:{includeZero: true},
+				data:eval(data)
+			});
+			chart.render();
+		}
+	    });
+		
+		
+	});	
+}
+var countries=[];
+function load_countries(){
+	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
+	    {data="<button onClick=\"draw_graph()\">Display</button></br> ";
+		data+="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
+		result.sort(function(a,b){return a["Country"]> b["Country"]});
+		result.forEach(function(item,index){
+			countries.push(item["Slug"]);
+			data+="<input type=\"checkbox\"id=\"country"+item["Slug"]+"\">";
+			data+="<label>"+item["Country"]+"</label>";
+			data+="</br>";
+		});	
+		data+="</div> ";
+		$("#country_list").html(data);
+		}
+	    });
+		
+
+}
+
+function verifycheck(){
+	checked=[]
+	countries.forEach(function (item,index){
+		if($("#country"+item).is(":checked")){
+			console.log("checked "+item);
+			checked.push(item);
+		}
+	});
+	return checked;
+}
+
 var interval_calls;
 function hello(){
 alert("hello");
@@ -148,3 +219,5 @@ function update_data(){
        alert(result);
 	   $("#login_form").submit(function( event ) { console.log("loginform");event.preventDefault();login();})
     }}); } 
+	
+	
