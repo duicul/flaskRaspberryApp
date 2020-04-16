@@ -5,9 +5,45 @@ $.ajax({url: "/read_sensor/dummy/43", success: function(result){
     div_html="";
     result=JSON.parse(result)
     result.forEach(function(item,index){
-                      div_html+=item["name"]+"  "+item["val"]+"</br>";}
+                      div_html+=item["name"]+"  "+item["val"]+"</br>";
+					  div_html+="<div id=\"gauge"+item["name"]+"\"></div></br>";}
                    );
     $("#graphdiv").html(div_html);
+	result.forEach(function(item,index){
+                      var radial = new RadialGauge({
+							renderTo: 'gauge-id',
+							width: 400,
+							height: 400,
+							units: 'Km/h',
+							title: false,
+							value: item["val"],
+							minValue: 0,
+							maxValue: 220,
+							majorTicks: ['-10','-5','0','5','10','15','20','25','30','35','40'],
+							minorTicks: 2,
+							strokeTicks: false,
+							highlights: [
+								{ from: 0, to: 50, color: 'rgba(0,255,0,.15)' },
+								{ from: 50, to: 100, color: 'rgba(255,255,0,.15)' },
+								{ from: 100, to: 150, color: 'rgba(255,30,0,.25)' },
+								{ from: 150, to: 200, color: 'rgba(255,0,225,.25)' },
+								{ from: 200, to: 220, color: 'rgba(0,0,255,.25)' }
+							],
+							colorPlate: '#222',
+							colorMajorTicks: '#f5f5f5',
+							colorMinorTicks: '#ddd',
+							colorTitle: '#fff',
+							colorUnits: '#ccc',
+							colorNumbers: '#eee',
+							colorNeedle: 'rgba(240, 128, 128, 1)',
+							colorNeedleEnd: 'rgba(255, 160, 122, .9)',
+							valueBox: true,
+							animationRule: 'bounce',
+							animationDuration: 500
+					});
+					radial.draw();
+					}
+                   );
 
     }});
 }
@@ -34,21 +70,23 @@ function draw_graph(){
 			count={type: "line",dataPoints:datap,name: item,showInLegend: true,};
 			data.push(count);
 			console.log(data);
-			var chart = new CanvasJS.Chart("graph", {
-				animationEnabled: true,
-				title:{	text: "Cases"},
-				toolTip: {
-					shared: true
-				},
-				legend: {
-					horizontalAlign: "left", // "center" , "right"
-					verticalAlign: "center",  // "top" , "bottom"
-					fontSize: 15
+			if(data.length==countries_checked.length){
+				var chart = new CanvasJS.Chart("graph", {
+					animationEnabled: true,
+					title:{	text: "Cases"},
+					toolTip: {
+						shared: true
 					},
-				axisY:{includeZero: true},
-				data:eval(data)
-			});
-			chart.render();
+					legend: {
+						horizontalAlign: "left", // "center" , "right"
+						verticalAlign: "center",  // "top" , "bottom"
+						fontSize: 15
+						},
+					axisY:{includeZero: true},
+					data:eval(data)
+				});
+				chart.render();
+			}
 		}
 	    });
 		
