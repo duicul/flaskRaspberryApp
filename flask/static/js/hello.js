@@ -9,9 +9,13 @@ function draw_graph(){
 		$.ajax({url:"https://api.covid19api.com/dayone/country/"+item+"/status/confirmed/live",success : function(result)
 	    {	datap=[]
 			result.forEach(function(item){
-				if(item["Province"] =="")
-					datap.push({x: new Date(item["Date"]),y:item["Cases"]});
+				if(item["Province"] ==""){
+					date_now= new Date(item["Date"]);
+					year=date_now.getFullYear()
+					if(year==2020 || year==2021)
+						datap.push({x: new Date(item["Date"]),y:item["Cases"]});
 				
+				}
 			});
 			$("#graph").html("");
 			count={type: "line",dataPoints:datap,name: item,showInLegend: true,};
