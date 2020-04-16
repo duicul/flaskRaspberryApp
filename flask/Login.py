@@ -1,12 +1,7 @@
 from flask import Flask,session, redirect, url_for, request,render_template
-#from configvalue import getconfigdata,setconfigdata,setpassword,getpassworddata
-#from wificonfigscript import getwifidata,setwifidata
-#from extractvalues import Extractdata_Config
-#from gpiozero import LED
+import inputpin
+from inutpin import InputPin
 from time import sleep
-#import Adafruit_DHT
-#import myloginstatus
-#import data_retr
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -41,6 +36,13 @@ def index():
 		username = session['username']
 	else:   username="anonymous"
 	return render_template('login.html',name=username)
+
+@app.route('/read_sensor/<sensor_type>/<pin>',methods=['GET'])
+def read_sensor(sensor_type,pin):
+        ip=InputPin(pin,sensor_type)
+        return ip.show_gauge()
+        
+
 """
 @app.route('/on')
 def turnon():
