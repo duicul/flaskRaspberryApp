@@ -1,3 +1,16 @@
+function draw_gauge(){
+$.ajax({url: "/read_sensor/dummy/43", success: function(result){
+    console.log(result);
+    gauges=[];
+    div_html="";
+    result=JSON.parse(result)
+    result.forEach(function(item,index){
+                      div_html+=item["name"]+"  "+item["val"]+"</br>";}
+                   );
+    $("#graphdiv").html(div_html);
+
+    }});
+}
 
 
 function draw_graph(){

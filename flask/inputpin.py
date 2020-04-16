@@ -1,10 +1,6 @@
 import sys
 import Adafruit_DHT
-import RPi.GPIO as GPIO
-from extractvalues import Extractdata_Config
 import json
-import requests
-from pinconfig import pin_to_GPIO
 
 class InputPin:
     
@@ -12,15 +8,15 @@ class InputPin:
         self.pin=pin
         self.sensor_type=sensor_type
 
-    def show_gauge(self):
-        if sensor_type == "DHT11":
-            return convert_to_gauge(self.readDHT11())
-        elif sensor_type == "DHT11":
-            return convert_to_gauge(self.readDHT22())
-        elif sensor_type == "dummy":
-            return convert_to_gauge([{name:"dummy_sensor",val:"random"}])
+    def show_sensor_data(self):
+        if self.sensor_type == "DHT11":
+            return self.readDHT11()
+        elif self.sensor_type == "DHT11":
+            return self.readDHT22()
+        elif self.sensor_type == "dummy":
+            return [{"name":"dummy_sensor","val":self.pin}]
         else:
-            return "Sensor type unknown"
+            return [{"name":"Sensor type unknown","val":"0"}]
             
     def convert_to_gauge(self,sensor_values):
         ret="<div>"
@@ -32,9 +28,9 @@ class InputPin:
     def readDHT11(self):
         sensor=Adafruit_DHT.DHT11
         humidity, temperature = Adafruit_DHT.read_retry(sensor, self.pin)
-        return [{name:"temperature",val:temperature},{name:"humidity",val:humidity}]
+        return [{"name":"temperature","val":temperature},{"name":"humidity","val":humidity}]
 
     def readDHT22(self):
         sensor=Adafruit_DHT.DHT22
         humidity, temperature = Adafruit_DHT.read_retry(sensor, self.pin)
-        return [{name:"temperature",val:temperature},{name:"humidity",val:humidity}]
+        return [{"name":"temperature","val":temperature},{"name":"humidity","val":humidity}]

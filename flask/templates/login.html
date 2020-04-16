@@ -13,7 +13,7 @@ background-color:rgb(100,120,180);
 
 </style>
 </head>
-<body onload="load_countries();">
+<body onload="load_countries();draw_gauge();">
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
      	{% if name=="anonymous" %}
 	    <div class="navbar-brand">Try to login</div>
@@ -22,7 +22,7 @@ background-color:rgb(100,120,180);
         <a class="btn btn-primary" href="/logout">Logout</a>
 	    {%endif%}
    </nav>
-  
+  <div id="graphdiv"></div>
   
      <div class="row">
 	<div class="col-2"></div>

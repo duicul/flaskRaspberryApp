@@ -1,7 +1,7 @@
 from flask import Flask,session, redirect, url_for, request,render_template
-import inputpin
-from inutpin import InputPin
+from inputpin import InputPin
 from time import sleep
+import json
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -40,7 +40,7 @@ def index():
 @app.route('/read_sensor/<sensor_type>/<pin>',methods=['GET'])
 def read_sensor(sensor_type,pin):
         ip=InputPin(pin,sensor_type)
-        return ip.show_gauge()
+        return json.dumps(ip.show_sensor_data())
         
 
 """
