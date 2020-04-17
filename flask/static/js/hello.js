@@ -58,15 +58,20 @@ function draw_graph(){
 		$.ajax({url:"https://api.covid19api.com/dayone/country/"+item+"/status/confirmed/live",success : function(result)
 	    {	datapdata=[]
 			datapgrowth=[]
+			datapgrowthchange=[]
 			prev_val=0
+			prev_growth=0
 			result.forEach(function(item){
 				if(item["Province"] ==""){
 					date_now= new Date(item["Date"]);
 					year=date_now.getFullYear()
 					if(year==2020 || year==2021){
+						growth=item["Cases"]-prev_val
 						datapdata.push({x: new Date(item["Date"]),y:item["Cases"]});
-						datapgrowth.push({x: new Date(item["Date"]),y:(item["Cases"]-prev_val)});
+						datapgrowth.push({x: new Date(item["Date"]),y:(growth)});
+						datapgrowthchange.push({x: new Date(item["Date"]),y:(growth-prev_growth)});
 						prev_val=item["Cases"];
+						prev_growth=growth;
 					}
 				
 				}
@@ -79,6 +84,10 @@ function draw_graph(){
 			if($("#growth_checkbox").is(":checked")){
 				count_growth={type: "line",dataPoints:datapgrowth,name: item+" growth",showInLegend: true,};
 				data.push(count_growth);
+			}
+			if($("#growthchange_checkbox").is(":checked")){
+				count_growthchange={type: "line",dataPoints:datapgrowthchange,name: item,showInLegend: true,};
+				data.push(count_growthchange);
 			}
 			
 			console.log(data);
@@ -109,13 +118,15 @@ var countries=[];
 function load_countries(){
 	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
 	    {data="<button onClick=\"draw_graph()\">Display</button></br> ";
-		data+="<p>";
+		data+="<div>";
 		data+="Data to show: </br>";
 		data+="<input type=\"checkbox\"id=\"data_checkbox\">";
-		data+="<label>Cases data</label>";
+		data+="<label>Cases data</label></br>";
 		data+="<input type=\"checkbox\"id=\"growth_checkbox\">";
-		data+="<label>Cases growth</label>";
-		data+="</p>";
+		data+="<label>Cases growth</label></br>";
+		data+="<input type=\"checkbox\"id=\"growthchange_checkbox\">";
+		data+="<label>Cases growth change</label></br>";
+		data+="</div>";
 		data+="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
 		result.sort(function(a,b){return a["Country"]> b["Country"]});
 		result.forEach(function(item,index){
