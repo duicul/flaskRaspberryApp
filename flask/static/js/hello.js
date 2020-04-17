@@ -77,15 +77,16 @@ function draw_graph(){
 				}
 			});
 			$("#graph").html("");
-			if($("#data_checkbox").is(":checked")){
+			data_type=$("#data_type").val()
+			if(data_type == "data"){
 				count_data={type: "line",dataPoints:datapdata,name: item,showInLegend: true,};
 				data.push(count_data);
 			}
-			if($("#growth_checkbox").is(":checked")){
+			if(data_type == "growth"){
 				count_growth={type: "line",dataPoints:datapgrowth,name: item+" growth",showInLegend: true,};
 				data.push(count_growth);
 			}
-			if($("#growthchange_checkbox").is(":checked")){
+			if(data_type == "growthchange"){
 				count_growthchange={type: "line",dataPoints:datapgrowthchange,name: item,showInLegend: true,};
 				data.push(count_growthchange);
 			}
@@ -118,15 +119,15 @@ var countries=[];
 function load_countries(){
 	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
 	    {data="<button onClick=\"draw_graph()\">Display</button></br> ";
-		data+="<div>";
 		data+="Data to show: </br>";
-		data+="<input type=\"checkbox\"id=\"data_checkbox\">";
-		data+="<label>Cases data</label></br>";
-		data+="<input type=\"checkbox\"id=\"growth_checkbox\">";
-		data+="<label>Cases growth</label></br>";
-		data+="<input type=\"checkbox\"id=\"growthchange_checkbox\">";
-		data+="<label>Cases growth change</label></br>";
-		data+="</div>";
+                data+="<select id=\"data_type\">";
+		data+="<option value=\"data\">";
+		data+="Cases data</option>";
+		data+="<option value=\"growth\">";
+		data+="Cases growth</option>";
+		data+="<option value=\"growthchange\">";
+		data+="Cases growth change</option>";
+		data+="</select><hr>";
 		data+="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
 		result.sort(function(a,b){return a["Country"]> b["Country"]});
 		result.forEach(function(item,index){
