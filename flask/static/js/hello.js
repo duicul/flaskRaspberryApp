@@ -56,19 +56,31 @@ function draw_graph(){
 	countries_checked.forEach(function(item,index){
 		
 		$.ajax({url:"https://api.covid19api.com/dayone/country/"+item+"/status/confirmed/live",success : function(result)
-	    {	datap=[]
+	    {	datapdata=[]
+			datapgrowth=[]
+			prev_val=0
 			result.forEach(function(item){
 				if(item["Province"] ==""){
 					date_now= new Date(item["Date"]);
 					year=date_now.getFullYear()
-					if(year==2020 || year==2021)
+					if(year==2020 || year==2021){
 						datap.push({x: new Date(item["Date"]),y:item["Cases"]});
+						datapgrowth.push({x: new Date(item["Date"]),y:(item["Cases"]-prev_val)});
+						prev_val=item["Cases"];
+					}
 				
 				}
 			});
 			$("#graph").html("");
-			count={type: "line",dataPoints:datap,name: item,showInLegend: true,};
-			data.push(count);
+			if($("#data_checkbox").is(":checked")){
+				count_data={type: "line",dataPoints:datapdata,name: item,showInLegend: true,};
+				data.push(count_data);
+			}
+			if($("#growth_checkbox").is(":checked")){
+				count_growth={type: "line",dataPoints:datapgrowth,name: item+" growth",showInLegend: true,};
+				data.push(count_growth);
+			}
+			
 			console.log(data);
 			if(data.length==countries_checked.length){
 				var chart = new CanvasJS.Chart("graph", {
@@ -97,6 +109,13 @@ var countries=[];
 function load_countries(){
 	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
 	    {data="<button onClick=\"draw_graph()\">Display</button></br> ";
+		div+="<p>";
+		data+="Data to show: </br>";
+		data+="<input type=\"checkbox\"id=\"data_checkbox\">";
+		data+="<label>Cases data</label>";
+		data+="<input type=\"checkbox\"id=\"growth_checkbox\">";
+		data+="<label>Cases growth</label>";
+		div+="</p>";
 		data+="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
 		result.sort(function(a,b){return a["Country"]> b["Country"]});
 		result.forEach(function(item,index){
