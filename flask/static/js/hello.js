@@ -6,7 +6,7 @@ $.ajax({url: "/read_sensor/dummy/43", success: function(result){
     result=JSON.parse(result)
     result.forEach(function(item,index){
                       div_html+=item["name"]+"  "+item["val"]+"</br>";
-					  div_html+="<div id=\"gauge"+item["name"]+"\"></div></br>";}
+		      div_html+="<div id=\"gauge"+item["name"]+"\"></div></br>";}
                    );
     $("#graphdiv").html(div_html);
 	result.forEach(function(item,index){

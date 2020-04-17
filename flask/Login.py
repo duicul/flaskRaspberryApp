@@ -37,8 +37,8 @@ def index():
 	else:   username="anonymous"
 	return render_template('login.html',name=username)
 
-@app.route('/gauge')
-def index():
+@app.route('/gauge_show')
+def gauge_show():
 	return render_template('gauge.html')
 
 @app.route('/read_sensor/<sensor_type>/<pin>',methods=['GET'])
