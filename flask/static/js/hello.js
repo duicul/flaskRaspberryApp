@@ -64,7 +64,7 @@ function draw_graph(){
 					date_now= new Date(item["Date"]);
 					year=date_now.getFullYear()
 					if(year==2020 || year==2021){
-						datap.push({x: new Date(item["Date"]),y:item["Cases"]});
+						datapdata.push({x: new Date(item["Date"]),y:item["Cases"]});
 						datapgrowth.push({x: new Date(item["Date"]),y:(item["Cases"]-prev_val)});
 						prev_val=item["Cases"];
 					}
@@ -109,13 +109,13 @@ var countries=[];
 function load_countries(){
 	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
 	    {data="<button onClick=\"draw_graph()\">Display</button></br> ";
-		div+="<p>";
+		data+="<p>";
 		data+="Data to show: </br>";
 		data+="<input type=\"checkbox\"id=\"data_checkbox\">";
 		data+="<label>Cases data</label>";
 		data+="<input type=\"checkbox\"id=\"growth_checkbox\">";
 		data+="<label>Cases growth</label>";
-		div+="</p>";
+		data+="</p>";
 		data+="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
 		result.sort(function(a,b){return a["Country"]> b["Country"]});
 		result.forEach(function(item,index){
