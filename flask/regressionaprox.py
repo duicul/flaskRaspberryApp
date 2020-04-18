@@ -69,10 +69,14 @@ def extract_country_data(country,case_type):
             ygrowch.append((int(rec[case_type])-prev_app)-prev_app_gr)
             prev_app_gr=int(rec[case_type])-prev_app
             prev_app=rec[case_type]
-    #xaux.pop()
-    #yaux.pop()
-    #ygrowa.pop()
-    #ygrowch.pop()
+    if len(xaux)>0:
+        xaux.pop()
+    if len(yaux)>0:
+        yaux.pop()
+    if len(ygrowa)>0:
+        ygrowa.pop()
+    if len(ygrowch)>0:
+        ygrowch.pop()
         
     return (xaux,yaux,ygrowa,ygrowch,country,case_type)
 def extract_countries_data(countries,case_type):
