@@ -1,15 +1,12 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import json
 import traceback
 import requests
-import matplotlib.dates
 import datetime
 import time
 import os
 import random
 import concurrent.futures
-from scipy.stats import norm
 import math
 
 def extract_country_data(country,case_type):
