@@ -77,6 +77,9 @@ function draw_graph(){
 				}
 			});
 			$("#graph").html("");
+			datapdata.pop()
+			datapgrowth.pop()
+			datapgrowthchange.pop()
 			data_type=$("#data_type").val()
 			if(data_type == "data"){
 				count_data={type: "line",dataPoints:datapdata,name: item,showInLegend: true,};
