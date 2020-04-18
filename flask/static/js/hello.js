@@ -52,7 +52,7 @@ $.ajax({url: "/read_sensor/dummy/43", success: function(result){
 function draw_graph(){
 	countries_checked=verifycheck();
 	var data=[]
-	console.log(countries_checked)
+	//console.log(countries_checked)
 	countries_checked.forEach(function(item,index){
 		
 		$.ajax({url:"https://api.covid19api.com/dayone/country/"+item+"/status/confirmed/live",success : function(result)
@@ -91,7 +91,7 @@ function draw_graph(){
 				data.push(count_growthchange);
 			}
 			
-			console.log(data);
+			//console.log(data);
 			if(data.length==countries_checked.length){
 				var chart = new CanvasJS.Chart("graph", {
 					animationEnabled: true,
@@ -115,19 +115,113 @@ function draw_graph(){
 		
 	});	
 }
+function draw_graph_local(){
+	countries_checked=verifycheck();
+	var data=[]
+	data_type=$("#data_type").val()
+	//console.log(countries_checked)
+	pol_grade=$("#pol_grade").val()
+	var url="/covid_data/Confirmed/"+data_type;
+	if(pol_grade!="None"){
+		pred_len=$("#pred_select").val()
+		url="/covid_data_all/Confirmed/"+data_type+"/"+pred_len+"/"+pol_grade;
+	}
+	var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                $("#graph").html("");
+				console.log(xmlhttp.responseText)
+				console.log(eval(xmlhttp.responseText))
+				var chart = new CanvasJS.Chart("graph", {
+					animationEnabled: true,
+					title:{	text: "Cases"},
+					toolTip: {
+						shared: true
+					},
+					legend: {
+						horizontalAlign: "center", // "left" , "right"
+						verticalAlign: "bottom",  // "top" , "center"
+						fontSize: 15
+						},
+					axisY:{includeZero: true},
+					data:eval(xmlhttp.responseText)
+				});
+				chart.render();
+			}
+        };
+    var formData = new FormData();
+    formData.append("countries",JSON.stringify(countries_checked));
+    xmlhttp.open("POST",url, true);
+    xmlhttp.send(formData);
+	
+	/*
+	$.get("/covid_data/Confirmed/"+data_type,{countries: countries_checked},function(data, status){
+	$("#graph").html("");
+    var chart = new CanvasJS.Chart("graph", {
+					animationEnabled: true,
+					title:{	text: "Cases"},
+					toolTip: {
+						shared: true
+					},
+					legend: {
+						horizontalAlign: "left", // "center" , "right"
+						verticalAlign: "center",  // "top" , "bottom"
+						fontSize: 15
+						},
+					axisY:{includeZero: true},
+					data:eval(data)
+				});
+				chart.render();
+	
+  });*/
+}
+var prev_pol="None"
+function displaypredlength(){
+pol_grade=$("#pol_grade").val()
+console.log(pol_grade)
+if(pol_grade=="None"){
+	$("#pred_len").html("");
+	prev_pol=pol_grade
+	return;}
+if(prev_pol=="None"){
+	data="Prediction length : </br>";
+	data+="<select id=\"pred_select\">";
+	for(i=1;i<=30;i++){
+		data+="<option value=\""+i*10+"\">";
+		data+=i*10+" Days</option>";
+	}
+	$("#pred_len").html(data);}
+prev_pol=pol_grade
+}
+
+
 var countries=[];
 function load_countries(){
 	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
-	    {data="<button onClick=\"draw_graph()\">Display</button></br> ";
+	    {data="<button onClick=\"draw_graph_local()\">Display</button></br> ";
 		data+="Data to show: </br>";
                 data+="<select id=\"data_type\">";
 		data+="<option value=\"data\">";
 		data+="Cases data</option>";
 		data+="<option value=\"growth\">";
 		data+="Cases growth</option>";
-		data+="<option value=\"growthchange\">";
+		data+="<option value=\"growth_change\">";
 		data+="Cases growth change</option>";
 		data+="</select><hr>";
+		data+="Polinomial Aproximation : </br>";
+                data+="<select id=\"pol_grade\" onchange=displaypredlength();>";
+		data+="<option value=\"None\">";
+		data+="None</option>";
+		for(i=1;i<=10;i++){
+			data+="<option value=\""+i+"\">";
+			data+="Grade "+i+"</option>";}
+		data+="</select>"
+		
+		data+="<div id=\"pred_len\"></div>";
+		data+="<hr>";
+		
+		
+		
 		data+="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
 		result.sort(function(a,b){return a["Country"]> b["Country"]});
 		result.forEach(function(item,index){

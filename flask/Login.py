@@ -1,8 +1,8 @@
 from flask import Flask,session, redirect, url_for, request,render_template
-from inputpin import InputPin
+#from inputpin import InputPin
 from time import sleep
 import json
-
+from regressionaprox import aggregate_data
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
 
@@ -30,6 +30,28 @@ def login():
                 return "okay"
    return "error" #redirect('/')
 """
+@app.route('/covid_data_all/<case_type>/<data_type>/<predict_len>/<pol_grade>',methods = ['POST'])
+def extract_data_pol(predict_len,pol_grade,case_type,data_type):
+        #print(case_type)
+        #print(data_type)
+        #print(predict_len)
+        #print(pol_grade)
+        #print(request.form)
+        #print(request.form['countries'])
+        countries=json.loads(request.form['countries'])
+        #print(countries)
+        return aggregate_data(pol_grade,countries,data_type,case_type,predict_len)
+
+
+@app.route('/covid_data/<case_type>/<data_type>',methods = ['POST'])
+def extract_data(case_type,data_type):
+        #print(case_type)
+        #print(data_type)
+        #print(request.form)
+        #print(request.form['countries'])
+        countries=json.loads(request.form['countries'])
+        return aggregate_data(0,countries,data_type,case_type,0)
+
 @app.route('/')
 def index():
 	if 'username' in session:
@@ -37,6 +59,7 @@ def index():
 	else:   username="anonymous"
 	return render_template('login.html',name=username)
 
+"""
 @app.route('/gauge_show')
 def gauge_show():
 	return render_template('gauge.html')
@@ -45,9 +68,7 @@ def gauge_show():
 def read_sensor(sensor_type,pin):
         ip=InputPin(pin,sensor_type)
         return json.dumps(ip.show_sensor_data())
-        
 
-"""
 @app.route('/on')
 def turnon():
 	LED(47).on()
@@ -112,6 +133,7 @@ def turnoff():
 def logout():
 	session.pop('username',None)
 	return redirect('/')
+	
 """
 if __name__ == '__main__':
    app.run(debug = True,host='0.0.0.0')
