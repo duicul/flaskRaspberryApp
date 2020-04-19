@@ -209,6 +209,11 @@ var apis=[{"name":"covid19api","display":"api.covid19api.com"},{"name":"geospati
 function show_api_options(){
 api=$("#api_source").val()
 if(api=="covid19api"){
+	if(prev_api=="geospatial"){
+		search_box="<input type=\"text\" id=\"search_country\" placeholder=\"Search Country\" onkeyup=\"load_countries();\"></input>";
+		search_box+="<button type=\"button\" class=\"btn btn-primary\" onclick=\"uncheck_all();\">Uncheck All</button>";
+		$("#searchbox").html(search_box);
+	}
 load_countries();
 data="Case Type: </br>";
 data+="<select id=\"case_type_select\">";
@@ -216,8 +221,12 @@ data+="<option value=\"Confirmed\">";
 data+="Confirmed</option>";
 data+="</select><hr>";
 api=$("#case_type").html(data)
+
 }
 else if(api=="geospatial"){
+	if(prev_api=="covid19api"){
+		$("#searchbox").html("");
+	}
 	$("#country_list").html("");
 	data="Case Type: </br>";
 	data+="<select id=\"case_type_select\">";
@@ -226,13 +235,13 @@ else if(api=="geospatial"){
 	data+="<option value=\"Confirmed\">";
 	data+="Confirmed</option>";
 	data+="</select><hr>";
-	api=$("#case_type").html(data)
-	return;}
-
+	$("#case_type").html(data)
+	}
+prev_api=api;
 }
 
 function load_main_menu(){
-	data="<button onClick=\"draw_graph_local()\">Display</button></br> ";
+		data="<button onClick=\"draw_graph_local()\">Display</button></br> ";
 		data+="Data to show: </br>";
                 data+="<select id=\"data_type\">";
 		data+="<option value=\"data\">";
@@ -260,48 +269,93 @@ function load_main_menu(){
 		data+="<option value=\"Confirmed\">";
 		data+="Confirmed</option>";
 		data+="</select><hr>";
-		data+="</div>"
+		data+="</div></br>"
 		
 		data+="API source : </br>";
         data+="<select id=\"api_source\" onchange=show_api_options();>";
 		for(i=0;i<apis.length;i++){
 			data+="<option value=\""+apis[i]["name"]+"\">";
 			data+=apis[i]["display"]+"</option>";}
-		data+="</select>"
+		data+="</select></br>"
 		
-		data+="<div id=\"country_list\"></div>";
+		
+		data+="<div id=\"searchbox\"><input type=\"text\" id=\"search_country\" placeholder=\"Search Country\" onkeyup=\"load_countries();\"></input>";
+		data+="<button type=\"button\" class=\"btn btn-primary\" onclick=\"uncheck_all();\">Uncheck All</button></div>";
+		data+="<div id=\"country_list\"></br>";
+		data+="</div></br>";
 		
 		$("#main_menu").html(data);
 		
 		show_api_options();
 }
+function check_country(index,checkbox_id){
+ if(countries.length<=index)
+	 return;
+ 
+ if($("#"+checkbox_id).is(":checked")){
+ countries[index]["checked"]=true;}
+ else countries[index]["checked"]=false;
+ console.log(countries[index]);
+}
 
+function uncheck_all(){
+      countries.forEach(function(item,index){
+			item["checked"]=false;			
+		});
+		load_countries();
+}
 
 var countries=[];
+var prev_api="";
 function load_countries(){
+	api=$("#api_source").val()
+	if(api!="covid19api")
+		return;
+	if(countries.length<=0){
 	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
-	    {data="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
-		res1=result.sort(function(a,b){return (a["Country"].localeCompare(b["Country"]));});
-		res1.forEach(function(item,index){
-			countries.push(item["Slug"]);
-			data+="<input type=\"checkbox\"id=\"country"+item["Slug"]+"\">";
-			data+="<label>"+item["Country"]+"</label>";
-			data+="</br>";
+	    {
+		result.sort(function(a,b){return (a["Country"].localeCompare(b["Country"]));});
+		result.forEach(function(item,index){
+			item["checked"]=false;
+			countries.push(item);
+			
 		});	
-		data+="</div> ";
-		$("#country_list").html(data);
+		load_countries();
 		}
-	    });
-		
+	});}
+	//console.log("countries len "+countries.length);
+	data="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
+	countries.forEach(function(item,index){
+		search_val=$("#search_country").val();
+		//console.log(search_val.toLowerCase())
+		//console.log(item["Country"].toLowerCase())
+		if(item["Country"].toLowerCase().match(""+search_val.toLowerCase()+"")!=null){
+			let checkbox_id="country"+item["Slug"];
+			data+="<input type=\"checkbox\"id=\""+checkbox_id+"\" onchange=\"check_country("+index+",'"+checkbox_id+"')\">";
+			data+="<label>"+item["Country"]+"</label>";
+			data+="</br>";}
+	});
+	data+="</div> ";
+	$("#country_list").html(data);
+	countries.forEach(function(item,index){
+		search_val=$("#search_country").val();
+		//console.log(search_val.toLowerCase())
+		//console.log(item["Country"].toLowerCase())
+		if(item["Country"].toLowerCase().match(""+search_val.toLowerCase()+"")!=null){
+			let checkbox_id="country"+item["Slug"];
+			$("#"+checkbox_id).prop("checked", item["checked"]);
+			}
+	});
+	prev_api=api;
 
 }
 
 function verifycheck(){
 	checked=[]
 	countries.forEach(function (item,index){
-		if($("#country"+item).is(":checked")){
+		if(item["checked"]==true){
 			//console.log("checked "+item);
-			checked.push(item);
+			checked.push(item["Slug"]);
 		}
 	});
 	return checked;
