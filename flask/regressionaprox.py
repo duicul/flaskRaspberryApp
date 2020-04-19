@@ -12,7 +12,7 @@ import concurrent.futures
 from scipy.stats import norm
 import math
 
-def extract_country_data(country,case_type):
+def extract_country_data_covid19(country,case_type):
     xaux=[]
     yaux=[]
     ygrowa=[]
@@ -79,17 +79,57 @@ def extract_country_data(country,case_type):
         ygrowch.pop()
         
     return (xaux,yaux,ygrowa,ygrowch,country,case_type)
-def extract_countries_data(countries,case_type):
+
+
+def extract_country_data_geospatial(case_type):
+    xaux=[]
+    yaux=[]
+    ygrowa=[]
+    ygrowch=[]
+    cnt=0
+    init=0
+    date_init=None
+    prev_app_gr=0
+    remove0_conf="Confirmed"
+    #print(case_type)
+    r = requests.get('https://covid19.geo-spatial.org/api/dashboard/getDailyCases')
+    try:
+        if case_type=="Active":
+            case_type="Cazuri active"
+        elif case_type=="Confirmed":
+            case_type="Total"
+        else:
+            return (xaux,yaux,ygrowa,ygrowch,country,case_type)
+    except:
+        return (xaux,yaux,ygrowa,ygrowch,country,case_type)
+    for rec in r.json()["data"]["data"]:
+            d=datetime.datetime.strptime(rec["Data"], "%Y-%m-%d")
+            xaux.append(d)
+            yaux.append(abs(rec[case_type]))
+            ygrowa.append(rec["Cazuri"])
+            ygrowch.append(rec["Cazuri"]-prev_app_gr)
+            prev_app_gr=rec["Cazuri"]
+      
+    return (xaux,yaux,ygrowa,ygrowch,"romania",case_type)
+
+
+def extract_countries_data(countries,case_type,api):
     x=[]
     y=[]
     ygrow=[]
     ygrowchange=[]
     threads=[]
-    for c in countries:
-         with concurrent.futures.ThreadPoolExecutor() as executor:
-            t1 = executor.submit(extract_country_data,c,case_type)
-         threads.append(t1)
-    
+    print("extract data "+str(api))
+    if api=="covid19api":
+        for c in countries:
+            print(c)
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                t1 = executor.submit(extract_country_data_covid19,c,case_type)
+            threads.append(t1)
+    elif api=="geospatial":
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            t1 = executor.submit(extract_country_data_geospatial,case_type)
+        threads.append(t1)
     return join_threads(threads)
 
 def join_threads(thread_list):
@@ -127,8 +167,8 @@ def convert_to_js(x,y):
 def data_point(datapoint,name):
     return "{type: 'line',dataPoints:"+str(datapoint)+",name: '"+str(name)+"',showInLegend: true}"
 
-def aggregate_data(pol_grade,countries,data_type,case_type,predict_len):
-    (x,y,ygrow,ygrowch,countries)=extract_countries_data(countries,case_type)
+def aggregate_data(pol_grade,countries,data_type,case_type,predict_len,api):
+    (x,y,ygrow,ygrowch,countries)=extract_countries_data(countries,case_type,api)
     #print(x)
     ret_data="["
     predict_len=int(predict_len)
@@ -172,4 +212,4 @@ def aggregate_data(pol_grade,countries,data_type,case_type,predict_len):
     return str(ret_data)
 
 if __name__ == "__main__":
-    print(aggregate_data(1,["austria"],"growth","Confirmed",1))
+    print(aggregate_data(1,["austria"],"growth","Confirmed",1,"covid19"))

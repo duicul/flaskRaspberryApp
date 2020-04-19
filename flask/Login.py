@@ -13,6 +13,8 @@ def data_status():
 @app.route('/success/<name>')
 def success(name):
    return 'welcome %s' % name
+
+
 """
 @app.route('/loginstatus.py')
 def loginstatus():
@@ -30,27 +32,28 @@ def login():
                 return "okay"
    return "error" #redirect('/')
 """
-@app.route('/covid_data_all/<case_type>/<data_type>/<predict_len>/<pol_grade>',methods = ['POST'])
-def extract_data_pol(predict_len,pol_grade,case_type,data_type):
+@app.route('/covid_data_all/<case_type>/<api>/<data_type>/<predict_len>/<pol_grade>',methods = ['POST'])
+def extract_data_pol(api,predict_len,pol_grade,case_type,data_type):
+        #print(api)
         #print(case_type)
         #print(data_type)
         #print(predict_len)
         #print(pol_grade)
-        #print(request.form)
+        #print(request.form) 
         #print(request.form['countries'])
         countries=json.loads(request.form['countries'])
         #print(countries)
-        return aggregate_data(pol_grade,countries,data_type,case_type,predict_len)
+        return aggregate_data(pol_grade,countries,data_type,case_type,predict_len,api)
 
-
-@app.route('/covid_data/<case_type>/<data_type>',methods = ['POST'])
-def extract_data(case_type,data_type):
+@app.route('/covid_data/<case_type>/<api>/<data_type>',methods = ['POST'])
+def extract_data(api,case_type,data_type):
+        #print(api)
         #print(case_type)
         #print(data_type)
         #print(request.form)
         #print(request.form['countries'])
         countries=json.loads(request.form['countries'])
-        return aggregate_data(0,countries,data_type,case_type,0)
+        return aggregate_data(0,countries,data_type,case_type,0,api)
 
 @app.route('/')
 def index():

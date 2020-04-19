@@ -1,6 +1,6 @@
 function draw_gauge(){
 $.ajax({url: "/read_sensor/dummy/43", success: function(result){
-    console.log(result);
+    //console.log(result);
     gauges=[];
     div_html="";
     result=JSON.parse(result)
@@ -119,22 +119,29 @@ function draw_graph(){
 	});	
 }
 function draw_graph_local(){
-	countries_checked=verifycheck();
+	api=$("#api_source").val();
+	countries_checked=[]
+	if(api=="covid19api")
+		countries_checked=verifycheck();
 	var data=[]
 	data_type=$("#data_type").val()
+	//console.log(api)
 	//console.log(countries_checked)
 	pol_grade=$("#pol_grade").val()
-	var url="/covid_data/Confirmed/"+data_type;
+	case_type=$("#case_type_select").val();
+	//console.log(case_type);
+	var url="/covid_data/"+case_type+"/"+api+"/"+data_type;
+	//console.log(api)
 	if(pol_grade!="None"){
 		pred_len=$("#pred_select").val()
-		url="/covid_data_all/Confirmed/"+data_type+"/"+pred_len+"/"+pol_grade;
+		url="/covid_data_all/"+case_type+"/"+api+"/"+data_type+"/"+pred_len+"/"+pol_grade;
 	}
 	var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 $("#graph").html("");
-				console.log(xmlhttp.responseText)
-				console.log(eval(xmlhttp.responseText))
+				//console.log(xmlhttp.responseText)
+				//console.log(eval(xmlhttp.responseText))
 				var chart = new CanvasJS.Chart("graph", {
 					animationEnabled: true,
 					title:{	text: "Cases"},
@@ -181,7 +188,7 @@ function draw_graph_local(){
 var prev_pol="None"
 function displaypredlength(){
 pol_grade=$("#pol_grade").val()
-console.log(pol_grade)
+//console.log(pol_grade)
 if(pol_grade=="None"){
 	$("#pred_len").html("");
 	prev_pol=pol_grade
@@ -196,12 +203,36 @@ if(prev_pol=="None"){
 	$("#pred_len").html(data);}
 prev_pol=pol_grade
 }
+var apis=[{"name":"covid19api","display":"api.covid19api.com"},{"name":"geospatial","display":"covid19.geo-spatial (Romania)"}]
 
 
-var countries=[];
-function load_countries(){
-	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
-	    {data="<button onClick=\"draw_graph_local()\">Display</button></br> ";
+function show_api_options(){
+api=$("#api_source").val()
+if(api=="covid19api"){
+load_countries();
+data="Case Type: </br>";
+data+="<select id=\"case_type_select\">";
+data+="<option value=\"Confirmed\">";
+data+="Confirmed</option>";
+data+="</select><hr>";
+api=$("#case_type").html(data)
+}
+else if(api=="geospatial"){
+	$("#country_list").html("");
+	data="Case Type: </br>";
+	data+="<select id=\"case_type_select\">";
+	data+="<option value=\"Active\">";
+	data+="Active</option>";
+	data+="<option value=\"Confirmed\">";
+	data+="Confirmed</option>";
+	data+="</select><hr>";
+	api=$("#case_type").html(data)
+	return;}
+
+}
+
+function load_main_menu(){
+	data="<button onClick=\"draw_graph_local()\">Display</button></br> ";
 		data+="Data to show: </br>";
                 data+="<select id=\"data_type\">";
 		data+="<option value=\"data\">";
@@ -211,21 +242,45 @@ function load_countries(){
 		data+="<option value=\"growth_change\">";
 		data+="Cases growth change</option>";
 		data+="</select><hr>";
+		
 		data+="Polinomial Aproximation : </br>";
-                data+="<select id=\"pol_grade\" onchange=displaypredlength();>";
+        data+="<select id=\"pol_grade\" onchange=displaypredlength();>";
 		data+="<option value=\"None\">";
 		data+="None</option>";
 		for(i=1;i<=10;i++){
 			data+="<option value=\""+i+"\">";
 			data+="Grade "+i+"</option>";}
-		data+="</select>"
-		
+		data+="</select>";
 		data+="<div id=\"pred_len\"></div>";
 		data+="<hr>";
 		
+		data+="<div id=\"case_type\">"
+		data+="Case Type: </br>";
+        data+="<select id=\"case_type_select\">";
+		data+="<option value=\"Confirmed\">";
+		data+="Confirmed</option>";
+		data+="</select><hr>";
+		data+="</div>"
 		
+		data+="API source : </br>";
+        data+="<select id=\"api_source\" onchange=show_api_options();>";
+		for(i=0;i<apis.length;i++){
+			data+="<option value=\""+apis[i]["name"]+"\">";
+			data+=apis[i]["display"]+"</option>";}
+		data+="</select>"
 		
-		data+="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
+		data+="<div id=\"country_list\"></div>";
+		
+		$("#main_menu").html(data);
+		
+		show_api_options();
+}
+
+
+var countries=[];
+function load_countries(){
+	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
+	    {data="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
 		result.sort(function(a,b){return a["Country"]> b["Country"]});
 		result.forEach(function(item,index){
 			countries.push(item["Slug"]);
@@ -245,7 +300,7 @@ function verifycheck(){
 	checked=[]
 	countries.forEach(function (item,index){
 		if($("#country"+item).is(":checked")){
-			console.log("checked "+item);
+			//console.log("checked "+item);
 			checked.push(item);
 		}
 	});
