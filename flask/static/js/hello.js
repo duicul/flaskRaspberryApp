@@ -281,8 +281,8 @@ var countries=[];
 function load_countries(){
 	$.ajax({url:"https://api.covid19api.com/countries",success : function(result)
 	    {data="<div class=\"\" style=\"width:300px;height:500px;overflow:auto;\">";
-		result.sort(function(a,b){return a["Country"]> b["Country"]});
-		result.forEach(function(item,index){
+		res1=result.sort(function(a,b){return (a["Country"].localeCompare(b["Country"]));});
+		res1.forEach(function(item,index){
 			countries.push(item["Slug"]);
 			data+="<input type=\"checkbox\"id=\"country"+item["Slug"]+"\">";
 			data+="<label>"+item["Country"]+"</label>";
