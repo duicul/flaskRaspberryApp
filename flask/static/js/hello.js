@@ -1,3 +1,8 @@
+var apis=[{"name":"covid19api","display":"api.covid19api.com"},{"name":"geospatial","display":"covid19.geo-spatial (Romania)"}]
+
+//var states=[{"state":"Confirmed","checked":true}]
+var states=[{"state":"Confirmed","checked":true,"api":["geospatial","covid19api"]},{"state":"Active","checked":false,"api":["geospatial"]},{"state":"Recuperated","checked":false,"api":["geospatial"]},{"state":"Dead","checked":false,"api":["geospatial"]}]
+
 function draw_gauge(){
 $.ajax({url: "/read_sensor/dummy/43", success: function(result){
     //console.log(result);
@@ -125,44 +130,61 @@ function draw_graph_local(){
 		countries_checked=verifycheck();
 	var data=[]
 	data_type=$("#data_type").val()
-	//console.log(api)
-	//console.log(countries_checked)
 	pol_grade=$("#pol_grade").val()
-	case_type=$("#case_type_select").val();
-	//console.log(case_type);
-	var url="/covid_data/"+case_type+"/"+api+"/"+data_type;
-	//console.log(api)
-	if(pol_grade!="None"){
-		pred_len=$("#pred_select").val()
-		url="/covid_data_all/"+case_type+"/"+api+"/"+data_type+"/"+pred_len+"/"+pol_grade;
-	}
-	var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
+	
+	checked_states=[]
+	data_response=[]
+	states.forEach(function(item,index){
+		console.log(item)
+		if(item["api"].includes(api) && item["checked"]==true){
+			checked_states.push(item["state"])}
+	});
+	var responses=0;
+	console.log(checked_states)
+	checked_states.forEach(function(item,index){
+		
+		var url="/covid_data/"+item+"/"+api+"/"+data_type;
+		
+		if(pol_grade!="None"){
+			pred_len=$("#pred_select").val()
+			url="/covid_data_all/"+item+"/"+api+"/"+data_type+"/"+pred_len+"/"+pol_grade;}
+		
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                $("#graph").html("");
-				//console.log(xmlhttp.responseText)
-				//console.log(eval(xmlhttp.responseText))
-				var chart = new CanvasJS.Chart("graph", {
-					animationEnabled: true,
-					title:{	text: "Cases"},
-					toolTip: {
-						shared: true
-					},
-					legend: {
-						horizontalAlign: "center", // "left" , "right"
-						verticalAlign: "bottom",  // "top" , "center"
-						fontSize: 15
+				responses+=1;
+				eval(xmlhttp.responseText).forEach(function(item){
+					data_response.push(item);
+				})
+				//data_response.concat(eval(xmlhttp.responseText));
+				console.log(responses+" "+data_response)
+				if(responses==checked_states.length){
+					console.log(responses+" "+eval(xmlhttp.responseText))
+					$("#graph").html("");
+					//console.log(xmlhttp.responseText)
+					//console.log(eval(xmlhttp.responseText))
+					var chart = new CanvasJS.Chart("graph", {
+						animationEnabled: true,
+						title:{	text: "Cases"},
+						toolTip: {
+							shared: true
 						},
-					axisY:{includeZero: true},
-					data:eval(xmlhttp.responseText)
-				});
-				chart.render();
+						legend: {
+							horizontalAlign: "center", // "left" , "right"
+							verticalAlign: "bottom",  // "top" , "center"
+							fontSize: 15
+						},
+						axisY:{includeZero: true},
+						data: data_response
+					});
+					chart.render();
+				}
 			}
         };
-    var formData = new FormData();
-    formData.append("countries",JSON.stringify(countries_checked));
-    xmlhttp.open("POST",url, true);
-    xmlhttp.send(formData);
+		var formData = new FormData();
+		formData.append("countries",JSON.stringify(countries_checked));
+		xmlhttp.open("POST",url, true);
+		xmlhttp.send(formData);});
 	
 	/*
 	$.get("/covid_data/Confirmed/"+data_type,{countries: countries_checked},function(data, status){
@@ -203,7 +225,7 @@ if(prev_pol=="None"){
 	$("#pred_len").html(data);}
 prev_pol=pol_grade
 }
-var apis=[{"name":"covid19api","display":"api.covid19api.com"},{"name":"geospatial","display":"covid19.geo-spatial (Romania)"}]
+
 
 
 function show_api_options(){
@@ -212,37 +234,33 @@ if(api=="covid19api"){
 	if(prev_api=="geospatial"){
 		search_box="<input type=\"text\" id=\"search_country\" placeholder=\"Search Country\" onkeyup=\"load_countries();\"></input>";
 		search_box+="<button type=\"button\" class=\"btn btn-primary\" onclick=\"uncheck_all();\">Uncheck All</button>";
-		$("#searchbox").html(search_box);
-	}
-load_countries();
-data="Case Type: </br>";
-data+="<select id=\"case_type_select\">";
-data+="<option value=\"Confirmed\">";
-data+="Confirmed</option>";
-data+="</select><hr>";
-api=$("#case_type").html(data)
-
-}
+		$("#searchbox").html(search_box);}
+	load_countries();}
 else if(api=="geospatial"){
-	if(prev_api=="covid19api"){
-		$("#searchbox").html("");
-	}
-	$("#country_list").html("");
-	data="Case Type: </br>";
-	data+="<select id=\"case_type_select\">";
-	data+="<option value=\"Active\">";
-	data+="Active</option>";
-	data+="<option value=\"Confirmed\">";
-	data+="Confirmed</option>";
-	data+="<option value=\"Recuperated\">";
-	data+="Recuperated</option>";
-	data+="<option value=\"Dead\">";
-	data+="Dead</option>";
-	data+="</select><hr>";
-	$("#case_type").html(data)
-	}
+		if(prev_api=="covid19api"){
+			$("#searchbox").html("");}
+		$("#country_list").html("");}
+	
+data="Case Type: </br>";
+states.forEach(function(item,index){
+		if(item["api"].includes(api)){
+			checked=item["checked"]==true? "checked=\"checked\"" : ""
+			data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state("+index+",this,'"+api+"')\">";
+			data+="<label>"+item["state"]+"</label></br>";}});
+data+="<hr>";
+$("#case_type").html(data)
+
 prev_api=api;
 }
+
+function check_state(index,elem,api){
+if(states[index]["api"].includes(api)){
+	states[index]["checked"]=elem.checked
+	//console.log(states)
+	//console.log(api)
+}
+}
+
 
 function load_main_menu(){
 		data="<button onClick=\"draw_graph_local()\">Display</button></br> ";
@@ -268,11 +286,12 @@ function load_main_menu(){
 		data+="<hr>";
 		
 		data+="<div id=\"case_type\">"
-		data+="Case Type: </br>";
-        data+="<select id=\"case_type_select\">";
-		data+="<option value=\"Confirmed\">";
-		data+="Confirmed</option>";
-		data+="</select><hr>";
+		//data+="Case Type: </br>";
+        //data+="<select id=\"case_type_select\">";
+		
+		//data+="<option value=\"Confirmed\">";
+		//data+="Confirmed</option>";
+		//data+="</select><hr>";
 		data+="</div></br>"
 		
 		data+="API source : </br>";
@@ -292,11 +311,11 @@ function load_main_menu(){
 		
 		show_api_options();
 }
-function check_country(index,checkbox_id){
+function check_country(index,elem){
  if(countries.length<=index)
 	 return;
  
- if($("#"+checkbox_id).is(":checked")){
+ if(elem.checked){
  countries[index]["checked"]=true;}
  else countries[index]["checked"]=false;
  console.log(countries[index]);
@@ -335,7 +354,8 @@ function load_countries(){
 		//console.log(item["Country"].toLowerCase())
 		if(item["Country"].toLowerCase().match(""+search_val.toLowerCase()+"")!=null){
 			let checkbox_id="country"+item["Slug"];
-			data+="<input type=\"checkbox\"id=\""+checkbox_id+"\" onchange=\"check_country("+index+",'"+checkbox_id+"')\">";
+			check=item["checked"]==true ? "checked":"unchecked";
+			data+="<input type=\"checkbox\" id=\""+checkbox_id+"\" checked=\""+check+"\" onchange=\"check_country("+index+",this)\">";
 			data+="<label>"+item["Country"]+"</label>";
 			data+="</br>";}
 	});
