@@ -98,6 +98,10 @@ def extract_country_data_geospatial(case_type):
             case_type="Cazuri active"
         elif case_type=="Confirmed":
             case_type="Total"
+        elif case_type=="Recuperated":
+            case_type="Vindecati"
+        elif case_type=="Dead":
+            case_type="Morti"
         else:
             return (xaux,yaux,ygrowa,ygrowch,country,case_type)
     except:

@@ -234,6 +234,10 @@ else if(api=="geospatial"){
 	data+="Active</option>";
 	data+="<option value=\"Confirmed\">";
 	data+="Confirmed</option>";
+	data+="<option value=\"Recuperated\">";
+	data+="Recuperated</option>";
+	data+="<option value=\"Dead\">";
+	data+="Dead</option>";
 	data+="</select><hr>";
 	$("#case_type").html(data)
 	}
