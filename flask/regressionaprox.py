@@ -43,10 +43,11 @@ def extract_country_data_covid19(country,case_type):
                 xaux.append(d)
                 yaux.append(abs(init))
                 ygrowa.append(init-prev_app)
+                curr_grow=init-prev_app
+                ygrowch.append(curr_grow-prev_app_gr)
+                prev_app_gr=curr_grow
                 prev_app=init
-                ygrowch.append(prev_app-prev_app_gr)
-                prev_app_gr=prev_app
-                init+=rec[case_type]
+                init=0
                 date_init=d
     else:
         for rec in r.json():
@@ -62,10 +63,11 @@ def extract_country_data_covid19(country,case_type):
             d=datetime.datetime.strptime(rec["Date"], "%Y-%m-%dT%H:%M:%SZ")
             xaux.append(d)
             yaux.append(abs(rec[case_type]))
-            ygrowa.append(int(rec[case_type])-prev_app)
-            ygrowch.append((int(rec[case_type])-prev_app)-prev_app_gr)
-            prev_app_gr=int(rec[case_type])-prev_app
-            prev_app=rec[case_type]
+            curr_grow=abs(rec[case_type])-prev_app
+            ygrowa.append(curr_grow)
+            ygrowch.append(curr_grow-prev_app_gr)
+            prev_app_gr=curr_grow-prev_app_gr
+            prev_app=abs(rec[case_type])
     if len(xaux)>0:
         xaux.pop()
     if len(yaux)>0:
@@ -86,6 +88,7 @@ def extract_country_data_geospatial(case_type):
     cnt=0
     init=0
     date_init=None
+    prev_app=0
     prev_app_gr=0
     remove0_conf="Confirmed"
     #print(case_type)
@@ -103,9 +106,11 @@ def extract_country_data_geospatial(case_type):
             d=datetime.datetime.strptime(rec["Data"], "%Y-%m-%d")
             xaux.append(d)
             yaux.append(abs(rec[case_type]))
-            ygrowa.append(rec["Cazuri"])
-            ygrowch.append(rec["Cazuri"]-prev_app_gr)
-            prev_app_gr=rec["Cazuri"]
+            curr_grow=abs(rec[case_type])-prev_app
+            ygrowa.append(curr_grow)
+            ygrowch.append(curr_grow-prev_app_gr)
+            prev_app_gr=curr_grow-prev_app_gr
+            prev_app=abs(rec[case_type])
       
     return (xaux,yaux,ygrowa,ygrowch,"romania",case_type)
 
