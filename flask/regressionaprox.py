@@ -94,6 +94,7 @@ def extract_country_data_geospatial(case_type):
     #print(case_type)
     r = requests.get('https://covid19.geo-spatial.org/api/dashboard/getDailyCases')
     try:
+        simple=True
         if case_type=="Active":
             case_type="Cazuri active"
         elif case_type=="Confirmed":
@@ -102,19 +103,35 @@ def extract_country_data_geospatial(case_type):
             case_type="Vindecati"
         elif case_type=="Dead":
             case_type="Morti"
+        elif case_type=="Tests":
+            case_type="Nr de teste"
+        elif case_type=="TestsperCase":
+            simple=False
+            pass
         else:
-            return (xaux,yaux,ygrowa,ygrowch,country,case_type)
+            return (xaux,yaux,ygrowa,ygrowch,"romania",case_type)
     except:
         return (xaux,yaux,ygrowa,ygrowch,country,case_type)
     for rec in r.json()["data"]["data"]:
             d=datetime.datetime.strptime(rec["Data"], "%Y-%m-%d")
             xaux.append(d)
-            yaux.append(abs(rec[case_type]))
-            curr_grow=abs(rec[case_type])-prev_app
+            if simple and rec[case_type]==None:
+                curr_val=0
+            if case_type=="TestsperCase":
+                test_no=abs(rec["Nr de teste pe zi"]) if rec["Nr de teste pe zi"]!=None else 0
+                curr_val=(test_no/abs(rec["Cazuri"])) if  test_no!=0 else abs(rec["Cazuri"])
+            else :
+                curr_val=abs(rec[case_type]) if rec[case_type] != None else 0
+            yaux.append(curr_val)
+            if case_type=="TestsperCase":
+                ygrowa.append(curr_val)
+                ygrowch.append(curr_val)
+                continue
+            curr_grow=curr_val-prev_app
             ygrowa.append(curr_grow)
             ygrowch.append(curr_grow-prev_app_gr)
             prev_app_gr=curr_grow-prev_app_gr
-            prev_app=abs(rec[case_type])
+            prev_app=curr_val
       
     return (xaux,yaux,ygrowa,ygrowch,"romania",case_type)
 
