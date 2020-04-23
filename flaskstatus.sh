@@ -6,4 +6,4 @@ then
 fi
 echo $process
 ps aux | head -n 1
-ps aux | grep -E "((^USER)|($process))"
+ps aux | grep -E "($process)"
