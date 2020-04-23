@@ -63,10 +63,10 @@ def extract_country_data_covid19(country,case_type):
             d=datetime.datetime.strptime(rec["Date"], "%Y-%m-%dT%H:%M:%SZ")
             xaux.append(d)
             yaux.append(abs(rec[case_type]))
-            curr_grow=abs(rec[case_type])-prev_app
+            curr_grow=rec[case_type]-prev_app
             ygrowa.append(curr_grow)
             ygrowch.append(curr_grow-prev_app_gr)
-            prev_app_gr=curr_grow-prev_app_gr
+            prev_app_gr=curr_grow
             prev_app=abs(rec[case_type])
     if len(xaux)>0:
         xaux.pop()
@@ -130,7 +130,7 @@ def extract_country_data_geospatial(case_type):
             curr_grow=curr_val-prev_app
             ygrowa.append(curr_grow)
             ygrowch.append(curr_grow-prev_app_gr)
-            prev_app_gr=curr_grow-prev_app_gr
+            prev_app_gr=curr_grow
             prev_app=curr_val
       
     return (xaux,yaux,ygrowa,ygrowch,"romania",case_type)
