@@ -1,7 +1,9 @@
-var apis=[{"name":"covid19api","display":"api.covid19api.com"},{"name":"geospatial","display":"covid19.geo-spatial (Romania)"}]
+var apis=[{"name":"covid19api","display":"api.covid19api.com","regions":false},{"name":"geospatial","display":"covid19.geo-spatial (Romania)","regions":true}]
 
 //var states=[{"state":"Confirmed","checked":true}]
 var states=[{"state":"Confirmed","display":"Confirmed","checked":true,"api":["geospatial","covid19api"]},{"state":"Active","display":"Active","checked":false,"api":["geospatial"]},{"state":"Recuperated","display":"Recuperated","checked":false,"api":["geospatial"]},{"state":"Dead","display":"Dead","checked":false,"api":["geospatial"]},{"state":"Tests","display":"Tests","checked":false,"api":["geospatial"]},{"state":"TestsperCase","display":"New Tests per Daily Case </br> (no differential is applied)","checked":false,"api":["geospatial"]},{"state":"CasesperTest","display":"Daily cases per new Tests </br> (no differential is applied)","checked":false,"api":["geospatial"]}]
+
+var region_states=[{"state":"Confirmed","display":"Confirmed","checked":true,"api":["geospatial"],"color":"#014D65"},{"state":"Recuperated","display":"Recuperated","checked":false,"api":["geospatial"],"color":"#004DEE"},{"state":"Dead","display":"Dead","checked":false,"api":["geospatial"],"color":"#334A12"},{"state":"DeathRate","display":"DeathRate","checked":false,"api":["geospatial"],"color":"#BD4B82"}]
 
 function draw_gauge(){
 $.ajax({url: "/read_sensor/dummy/43", success: function(result){
@@ -135,12 +137,12 @@ function draw_graph_local(){
 	checked_states=[]
 	data_response=[]
 	states.forEach(function(item,index){
-		console.log(item)
+		//console.log(item)
 		if(item["api"].includes(api) && item["checked"]==true){
 			checked_states.push(item["state"])}
 	});
 	var responses=0;
-	console.log(checked_states)
+	//console.log(checked_states)
 	checked_states.forEach(function(item,index){
 		
 		var url="/covid_data/"+item+"/"+api+"/"+data_type;
@@ -157,9 +159,9 @@ function draw_graph_local(){
 					data_response.push(item);
 				})
 				//data_response.concat(eval(xmlhttp.responseText));
-				console.log(responses+" "+data_response)
+				//console.log(responses+" "+data_response)
 				if(responses==checked_states.length){
-					console.log(responses+" "+eval(xmlhttp.responseText))
+					//console.log(responses+" "+eval(xmlhttp.responseText))
 					$("#graph").html("");
 					//console.log(xmlhttp.responseText)
 					//console.log(eval(xmlhttp.responseText))
@@ -177,6 +179,7 @@ function draw_graph_local(){
 						axisY:{includeZero: true},
 						data: data_response
 					});
+				    $("#graph").css({"height":""});
 					chart.render();
 				}
 			}
@@ -185,28 +188,78 @@ function draw_graph_local(){
 		formData.append("countries",JSON.stringify(countries_checked));
 		xmlhttp.open("POST",url, true);
 		xmlhttp.send(formData);});
-	
-	/*
-	$.get("/covid_data/Confirmed/"+data_type,{countries: countries_checked},function(data, status){
-	$("#graph").html("");
-    var chart = new CanvasJS.Chart("graph", {
-					animationEnabled: true,
-					title:{	text: "Cases"},
-					toolTip: {
-						shared: true
-					},
-					legend: {
-						horizontalAlign: "left", // "center" , "right"
-						verticalAlign: "center",  // "top" , "bottom"
-						fontSize: 15
-						},
-					axisY:{includeZero: true},
-					data:eval(data)
-				});
-				chart.render();
-	
-  });*/
 }
+
+function load_region_data(){
+	api=$("#api_source").val();
+	countries_checked=[]
+
+	var responses=0;  
+
+	region_state=$("#region_state").val()
+	countries_checked=[]
+	
+	checked_states=[]
+	data_response=[]
+	region_states.forEach(function(item,index){
+		//console.log(item)
+		if(item["api"].includes(api) && item["checked"]==true){
+			checked_states.push(item)}
+	});
+	
+		
+	//console.log(checked_states)
+	checked_states.forEach(function(item,index){
+		
+		var url="/regions/"+item["state"]+"/"+api+"/"+"data";
+		
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+				responses+=1;
+				data_response_aux=[]
+				eval(xmlhttp.responseText).forEach(function(item){
+					data_response_aux.push(item);
+				})
+				region_state={type: "bar",
+							  name: item["state"],
+							  color: item["color"],
+						   	  axisYType: "secondary",
+							  showInLegend: true,
+							  dataPoints: data_response_aux}
+				data_response.push(region_state)
+				//data_response.concat(eval(xmlhttp.responseText));
+				//console.log(responses+" "+data_response)
+				if(responses==checked_states.length){
+					//console.log(responses+" "+eval(xmlhttp.responseText))
+					$("#graph").html("");
+					//console.log(xmlhttp.responseText)
+					//console.log(eval(xmlhttp.responseText))
+					//console.log(data_response);
+					var chart = new CanvasJS.Chart("graph", {
+														animationEnabled: true,
+													title:{text:"Regions"},
+													axisX:{interval: 1},
+													legend: {
+														horizontalAlign: "center", // "left" , "right"
+														verticalAlign: "bottom",  // "top" , "center"
+														fontSize: 15
+													},
+													axisY2:{interlacedColor: "rgba(1,77,101,.2)",
+															gridColor: "rgba(1,77,101,.1)",
+															title: "Regions bar graph"},
+													data: data_response});
+					$("#graph").css({"height":"180%"});
+					chart.render();
+				}
+			}
+        };
+		var formData = new FormData();
+		formData.append("countries",JSON.stringify(countries_checked));
+		xmlhttp.open("POST",url, true);
+		xmlhttp.send(formData);});
+}
+
 var prev_pol="None"
 function displaypredlength(){
 pol_grade=$("#pol_grade").val()
@@ -248,10 +301,29 @@ states.forEach(function(item,index){
 			data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state("+index+",this,'"+api+"')\">";
 			data+="<label>"+item["display"]+"</label></br>";}});
 data+="<hr>";
+
+regions=false
+apis.forEach(function (item){if(item["name"]==api && item["regions"]==true)
+								regions=true;
+	});
+if(regions==true){
+	data+="<button class=\"btn btn-primary\" onclick=\"load_region_data()\">Display Regions</button></br>"
+	data+="Regions: </br>"
+	region_states.forEach(function(item,index){
+		if(item["api"].includes(api)){
+					checked=item["checked"]==true? "checked=\"checked\"" : ""
+					data+="<input type=\"checkbox\" "+checked+" onchange=\"check_region_state("+index+",this,'"+api+"')\">";
+					data+="<label>"+item["display"]+"</label></br>";}
+				});				
+data+="<hr>"	
+}
+
 $("#case_type").html(data)
 
 prev_api=api;
 }
+
+
 
 function check_state(index,elem,api){
 if(states[index]["api"].includes(api)){
@@ -261,9 +333,16 @@ if(states[index]["api"].includes(api)){
 }
 }
 
+function check_region_state(index,elem,api){
+if(region_states[index]["api"].includes(api)){
+	region_states[index]["checked"]=elem.checked
+	//console.log(region_states)
+	//console.log(api)
+}
+}
 
 function load_main_menu(){
-		data="<button onClick=\"draw_graph_local()\">Display</button></br> ";
+		data="<button class=\"btn btn-primary\" onClick=\"draw_graph_local()\">Display</button></br> ";
 		data+="Data to show: </br>";
                 data+="<select id=\"data_type\">";
 		data+="<option value=\"data\">";
@@ -318,7 +397,7 @@ function check_country(index,elem){
  if(elem.checked){
  countries[index]["checked"]=true;}
  else countries[index]["checked"]=false;
- console.log(countries[index]);
+ //console.log(countries[index]);
 }
 
 function uncheck_all(){
@@ -371,7 +450,6 @@ function load_countries(){
 			}
 	});
 	prev_api=api;
-
 }
 
 function verifycheck(){
@@ -384,156 +462,3 @@ function verifycheck(){
 	});
 	return checked;
 }
-
-var interval_calls;
-function hello(){
-alert("hello");
-$("#messfunc").html("hello");
- //document.getElementById("messfunc").innerHTML = "hello";
- }
-
-function goodbye(){
- alert("goodbye");
- $("#messfunc").html("goodbye");
- //document.getElementById("messfunc").innerHTML = "goodbye";
- } 
- var ind=0;
-
- function init_server(period)
- {//interval_calls=setInterval(ajax_calls,period);
-  }
-
-  /*$("#login_form").submit(function( event ) { console.log("loginform");event.preventDefault();login();})
-  $("#wifi_form").submit(function( event ) { console.log("configform");event.preventDefault();setwifidata();})
-  $("#config_form").submit(function( event ) { console.log("wifiform");event.preventDefault();setconfigdata();})
-  $("#logindata_form").submit(function( event ) { console.log("logindataform");event.preventDefault();setpassworddata();})*/
-  
-function login()
-{console.log("logging in ...");
-var url="/login";
-	var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                if(xmlhttp.responseText == "okay")
-		{console.log("logged in");
-                window.location.replace("/");}
-		else alert("Wrong username/password");
-		}
-        };
-    var formData = new FormData();
-    formData.append("user_txt",$("#user_txt").val());
-    formData.append("pass_txt",$("#pass_txt").val());
-    xmlhttp.open("POST",url, true);
-	xmlhttp.send(formData);	
-}
-
-function ajax_calls(){
-board_status();
-update_data();
-}
-
-function stopajaxcalls()
-{clearInterval(interval_calls);}
-
-function getconfigdata()
- {console.log("getconfigdata");
-$.ajax({url: "/getconfigdata", success: function(result){
-$("#config").html(result);}})
-}
- 
-function init()
-{$("#login_form").submit(function( event ) { console.log("loginform");event.preventDefault();login();})
-  $("#wifi_form").submit(function( event ) { console.log("wifiform");event.preventDefault();setwifidata();})
-  $("#config_form").submit(function( event ) { console.log("configform");event.preventDefault();setconfigdata();})
-  $("#logindata_form").submit(function( event ) { console.log("logindataform");event.preventDefault();setpassworddata();})
-}
- 
-function getpassworddata()
- {console.log("getpassworddata");
-$.ajax({url: "/getpassworddata", success: function(result){
-$("#passconfig").html(result);}
-}
-
-)
-
-}
- 
- 
-function setconfigdata()
- {
-var url="/setconfigdata";
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                if(xmlhttp.responseText == "okay")
-                {getconfigdata();
-				 alert("Configuration changed");}}
-        };
-    var formData = new FormData();
-    formData.append("user",$("#username").val());
-    formData.append("pass",$("#password").val());
-    formData.append("ip",$("#ip").val());
-    formData.append("port",$("#port").val());
-	formData.append("refresh_in",$("#refresh_in").val());
-	formData.append("refresh_out",$("#refresh_out").val());
-	formData.append("logtime",$("#logtime").val());
-    xmlhttp.open("POST",url, true);
-        xmlhttp.send(formData);
-}
-
-function setpassworddata()
-{var url="/changeuserpassword";
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                if(xmlhttp.responseText == "okay")
-                {getconfigdata();
-				 alert("Password changed");}}
-        };
-    var formData = new FormData();
-    formData.append("user",$("#username").val());
-    formData.append("pass",$("#password").val());
-    xmlhttp.open("POST",url, true);
-        xmlhttp.send(formData);
-}
-
-
-function getwifidata()
- {console.log("getwifidata");
-$.ajax({url: "/getwifidata", success: function(result){
-       $("#wifi").html(result);}})
-}
- 
-function setwifidata()
- {console.log("setwifidata");
-var url="/setwifidata";
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                if(xmlhttp.responseText == "okay")
-                {getwifidata();
-				 alert("Wifi settings changed");}}
-        };
-    var formData = new FormData();
-    formData.append("wifi_ssid",$("#wifi_ssid").val());
-    formData.append("wifi_psk",$("#wifi_psk").val());
-    xmlhttp.open("POST",url, true);
-        xmlhttp.send(formData);
-}
-
- function board_status()
- {$.ajax({url: "/board_status", success: function(result){
-       $("#board_status").html(result+" "+ind);
-	   ind++;}});	 }
-
-function update_data(){
-  $.ajax({url:"/data_retr",success : function(result)
-     {$("#data_status").html(result+" "+ind);}});  }
-
- function loginstatus(){
- $.ajax({url: "/loginstatus.py", success: function(result){
-       alert(result);
-	   $("#login_form").submit(function( event ) { console.log("loginform");event.preventDefault();login();})
-    }}); } 
-	
-	

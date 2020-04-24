@@ -241,5 +241,64 @@ def aggregate_data(pol_grade,countries,data_type,case_type,predict_len,api):
     #print(ret_data)
     return str(ret_data)
 
+def display_regions(countries,data_type,case_type,api):
+    r = requests.get('https://covid19.geo-spatial.org/api/dashboard/getCasesByCounty')
+    try:
+        simple=True
+        if case_type=="Confirmed":
+            case_type="total_county"
+        elif case_type=="Recuperated":
+            case_type="total_healed"
+        elif case_type=="Dead":
+            case_type="total_dead"
+        elif case_type=="DeathRate":
+            simple=False
+            pass
+        else:
+            return "[]"
+    except:
+        return "[]"
+
+    total=0
+    no_prov=0
+    result=[]
+    for rec in r.json()["data"]["data"]:
+            no_prov+=1
+            if simple:
+                total+=rec[case_type]
+                result.append({"y":rec[case_type],"label":rec["county_code"]})
+            else :
+                if case_type=="DeathRate":
+                    curr=rec["total_dead"]/rec["total_county"]
+                    result.append({"y":curr,"label":rec["county_code"]})
+                    total+=curr
+                    
+            """
+            xaux.append(d)
+            if simple and rec[case_type]==None:
+                curr_val=0
+            if case_type=="TestsperCase" or case_type=="CasesperTest":
+                test_no=abs(rec["Nr de teste pe zi"]) if rec["Nr de teste pe zi"]!=None else 0
+                
+            if case_type=="TestsperCase":
+                curr_val=(test_no/abs(rec["Cazuri"])) if  test_no!=0 else 0
+            elif case_type=="CasesperTest":
+                curr_val=(abs(rec["Cazuri"])/test_no) if  test_no!=0 else 0
+            else : curr_val=abs(rec[case_type]) if rec[case_type] != None else 0
+                
+            yaux.append(curr_val)
+            if case_type=="TestsperCase" or case_type=="CasesperTest":
+                ygrowa.append(curr_val)
+                ygrowch.append(curr_val)
+                continue
+            curr_grow=curr_val-prev_app
+            ygrowa.append(curr_grow)
+            ygrowch.append(curr_grow-prev_app_gr)
+            prev_app_gr=curr_grow
+            prev_app=curr_val"""
+    result.sort(key= lambda rec: rec["y"],reverse=False)
+    result.append({"y":total/no_prov,"label":"Average"})
+    return json.dumps(result)
+
 if __name__ == "__main__":
     print(aggregate_data(1,["austria"],"growth","Confirmed",1,"covid19"))
