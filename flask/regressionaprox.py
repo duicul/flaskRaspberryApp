@@ -108,6 +108,9 @@ def extract_country_data_geospatial(case_type):
         elif case_type=="TestsperCase":
             simple=False
             pass
+        elif case_type=="CasesperTest":
+            simple=False
+            pass
         else:
             return (xaux,yaux,ygrowa,ygrowch,"romania",case_type)
     except:
@@ -117,13 +120,17 @@ def extract_country_data_geospatial(case_type):
             xaux.append(d)
             if simple and rec[case_type]==None:
                 curr_val=0
-            if case_type=="TestsperCase":
+            if case_type=="TestsperCase" or case_type=="CasesperTest":
                 test_no=abs(rec["Nr de teste pe zi"]) if rec["Nr de teste pe zi"]!=None else 0
-                curr_val=(test_no/abs(rec["Cazuri"])) if  test_no!=0 else abs(rec["Cazuri"])
-            else :
-                curr_val=abs(rec[case_type]) if rec[case_type] != None else 0
-            yaux.append(curr_val)
+                
             if case_type=="TestsperCase":
+                curr_val=(test_no/abs(rec["Cazuri"])) if  test_no!=0 else 0
+            elif case_type=="CasesperTest":
+                curr_val=(abs(rec["Cazuri"])/test_no) if  test_no!=0 else 0
+            else : curr_val=abs(rec[case_type]) if rec[case_type] != None else 0
+                
+            yaux.append(curr_val)
+            if case_type=="TestsperCase" or case_type=="CasesperTest":
                 ygrowa.append(curr_val)
                 ygrowch.append(curr_val)
                 continue

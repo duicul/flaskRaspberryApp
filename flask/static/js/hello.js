@@ -1,7 +1,7 @@
 var apis=[{"name":"covid19api","display":"api.covid19api.com"},{"name":"geospatial","display":"covid19.geo-spatial (Romania)"}]
 
 //var states=[{"state":"Confirmed","checked":true}]
-var states=[{"state":"Confirmed","display":"Confirmed","checked":true,"api":["geospatial","covid19api"]},{"state":"Active","display":"Active","checked":false,"api":["geospatial"]},{"state":"Recuperated","display":"Recuperated","checked":false,"api":["geospatial"]},{"state":"Dead","display":"Dead","checked":false,"api":["geospatial"]},{"state":"Tests","display":"Tests","checked":false,"api":["geospatial"]},{"state":"TestsperCase","display":"New Tests per Daily Case </br> (no differential is applied)","checked":false,"api":["geospatial"]}]
+var states=[{"state":"Confirmed","display":"Confirmed","checked":true,"api":["geospatial","covid19api"]},{"state":"Active","display":"Active","checked":false,"api":["geospatial"]},{"state":"Recuperated","display":"Recuperated","checked":false,"api":["geospatial"]},{"state":"Dead","display":"Dead","checked":false,"api":["geospatial"]},{"state":"Tests","display":"Tests","checked":false,"api":["geospatial"]},{"state":"TestsperCase","display":"New Tests per Daily Case </br> (no differential is applied)","checked":false,"api":["geospatial"]},{"state":"CasesperTest","display":"Daily cases per new Tests </br> (no differential is applied)","checked":false,"api":["geospatial"]}]
 
 function draw_gauge(){
 $.ajax({url: "/read_sensor/dummy/43", success: function(result){
