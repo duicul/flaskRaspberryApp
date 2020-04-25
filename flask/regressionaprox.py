@@ -262,15 +262,24 @@ def display_regions(countries,data_type,case_type,api):
     total=0
     no_prov=0
     result=[]
+    top=[]
     for rec in r.json()["data"]["data"]:
-            no_prov+=1
+            county_code=rec["county_code"]
+            county=rec["county"]
             if simple:
+                if county_code=="NA":
+                    top.append({"y":rec[case_type],"label":"Necunoscut"})
+                else : result.append({"y":rec[case_type],"label":county})
+                no_prov+=1
                 total+=rec[case_type]
-                result.append({"y":rec[case_type],"label":rec["county_code"]})
+                
             else :
                 if case_type=="DeathRate":
                     curr=rec["total_dead"]/rec["total_county"]
-                    result.append({"y":curr,"label":rec["county_code"]})
+                    if county_code=="NA":
+                        top.append({"y":curr,"label":"Necunoscut"})
+                    else : result.append({"y":curr,"label":county})
+                    no_prov+=1
                     total+=curr
                     
             """
@@ -298,6 +307,8 @@ def display_regions(countries,data_type,case_type,api):
             prev_app=curr_val"""
     result.sort(key= lambda rec: rec["y"],reverse=False)
     result.append({"y":total/no_prov,"label":"Average"})
+    for topi in top:
+        result.append(topi)
     return json.dumps(result)
 
 if __name__ == "__main__":

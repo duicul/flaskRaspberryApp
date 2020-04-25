@@ -3,7 +3,7 @@ var apis=[{"name":"covid19api","display":"api.covid19api.com","regions":false},{
 //var states=[{"state":"Confirmed","checked":true}]
 var states=[{"state":"Confirmed","display":"Confirmed","checked":true,"api":["geospatial","covid19api"]},{"state":"Active","display":"Active","checked":false,"api":["geospatial"]},{"state":"Recuperated","display":"Recuperated","checked":false,"api":["geospatial"]},{"state":"Dead","display":"Dead","checked":false,"api":["geospatial"]},{"state":"Tests","display":"Tests","checked":false,"api":["geospatial"]},{"state":"TestsperCase","display":"New Tests per Daily Case </br> (no differential is applied)","checked":false,"api":["geospatial"]},{"state":"CasesperTest","display":"Daily cases per new Tests </br> (no differential is applied)","checked":false,"api":["geospatial"]}]
 
-var region_states=[{"state":"Confirmed","display":"Confirmed","checked":true,"api":["geospatial"],"color":"#014D65"},{"state":"Recuperated","display":"Recuperated","checked":false,"api":["geospatial"],"color":"#004DEE"},{"state":"Dead","display":"Dead","checked":false,"api":["geospatial"],"color":"#334A12"},{"state":"DeathRate","display":"DeathRate","checked":false,"api":["geospatial"],"color":"#BD4B82"}]
+var region_states=[{"state":"Confirmed","display":"Confirmed","checked":true,"api":["geospatial"],"r":100,"g":200,"b":200,"a":1},{"state":"Recuperated","display":"Recuperated","checked":false,"api":["geospatial"],"r":20,"g":250,"b":250,"a":1},{"state":"Dead","display":"Dead","checked":false,"api":["geospatial"],"r":250,"g":50,"b":10,"a":1},{"state":"DeathRate","display":"DeathRate","checked":false,"api":["geospatial"],"r":250,"g":100,"b":200,"a":1}]
 
 function draw_gauge(){
 $.ajax({url: "/read_sensor/dummy/43", success: function(result){
@@ -221,12 +221,29 @@ function load_region_data(){
 				eval(xmlhttp.responseText).forEach(function(item){
 					data_response_aux.push(item);
 				})
+				average=0
+				data_response_aux.forEach(function(itema){
+					if(itema["label"]=="Average"){
+						average=itema["y"]
+						itema["color"]="rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")";}
+				});
+				console.log(average)
+				data_response_aux.forEach(function(itema){
+					if(itema["y"]<average)
+						itema["color"]="rgba("+(item["r"]-50)+","+(item["g"]-100)+","+(item["b"]-50)+","+item["a"]+")";
+					if(itema["y"]>average)
+						itema["color"]="rgba("+(item["r"]+100)+","+(item["g"]+50)+","+(item["b"]+100)+","+item["a"]+")";
+					if((itema["y"]==average))
+						itema["color"]="rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")";
+				});
 				region_state={type: "bar",
 							  name: item["state"],
-							  color: item["color"],
+							  color: "rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")",
 						   	  axisYType: "secondary",
 							  showInLegend: true,
 							  dataPoints: data_response_aux}
+							  
+				console.log(region_state)
 				data_response.push(region_state)
 				//data_response.concat(eval(xmlhttp.responseText));
 				//console.log(responses+" "+data_response)
