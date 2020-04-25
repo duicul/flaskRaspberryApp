@@ -12,5 +12,4 @@
 HOME=/home/pi
 USER=pi
 chmod a+x ~/flaskRaspberryApp/flask/flask.sh;
-echo date >> flasklog.txt
-~/flaskRaspberryApp/flask/flask.sh >> flasklog.txt &
+~/flaskRaspberryApp/flask/flask.sh&

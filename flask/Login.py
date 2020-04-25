@@ -76,4 +76,6 @@ def index():
 	return render_template('login.html',name=username)
 	
 if __name__ == '__main__':
+   import logging
+   logging.basicConfig(filename='error.log',level=logging.INFO)
    app.run(debug = True,host='0.0.0.0')
