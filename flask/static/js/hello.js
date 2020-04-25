@@ -221,21 +221,8 @@ function load_region_data(){
 				eval(xmlhttp.responseText).forEach(function(item){
 					data_response_aux.push(item);
 				})
-				average=0
-				data_response_aux.forEach(function(itema){
-					if(itema["label"]=="Average"){
-						average=itema["y"]
-						itema["color"]="rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")";}
-				});
-				console.log(average)
-				data_response_aux.forEach(function(itema){
-					if(itema["y"]<average)
-						itema["color"]="rgba("+(item["r"]-50)+","+(item["g"]-100)+","+(item["b"]-50)+","+item["a"]+")";
-					if(itema["y"]>average)
-						itema["color"]="rgba("+(item["r"]+100)+","+(item["g"]+50)+","+(item["b"]+100)+","+item["a"]+")";
-					if((itema["y"]==average))
-						itema["color"]="rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")";
-				});
+				
+				
 				region_state={type: "bar",
 							  name: item["state"],
 							  color: "rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")",
@@ -248,6 +235,24 @@ function load_region_data(){
 				//data_response.concat(eval(xmlhttp.responseText));
 				//console.log(responses+" "+data_response)
 				if(responses==checked_states.length){
+					if(checked_states.length==1){
+						average=0
+						data_response[0]["dataPoints"].forEach(function(itema){
+						if(itema["label"]=="Average"){
+							average=itema["y"]
+							itema["color"]="rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")";}
+						});
+						console.log(average)
+						data_response[0]["dataPoints"].forEach(function(itema){
+							if(itema["y"]<average)
+								itema["color"]="rgba("+(item["r"]+100)+","+(item["g"]+50)+","+(item["b"]+100)+","+item["a"]+")";
+							if(itema["y"]>average)
+								itema["color"]="rgba("+(item["r"]-100)+","+(item["g"]-50)+","+(item["b"]-100)+","+item["a"]+")";
+							if((itema["y"]==average))
+								itema["color"]="rgba("+item["r"]+","+item["g"]+","+item["b"]+","+item["a"]+")";
+							});
+						
+						data_response[0]["dataPoints"].sort(function(a,b){return (a["y"]>b["y"]);});}
 					//console.log(responses+" "+eval(xmlhttp.responseText))
 					$("#graph").html("");
 					//console.log(xmlhttp.responseText)
@@ -257,6 +262,9 @@ function load_region_data(){
 														animationEnabled: true,
 													title:{text:"Regions"},
 													axisX:{interval: 1},
+													toolTip: {
+														shared: true,
+														content: toolTipFormatter},
 													legend: {
 														horizontalAlign: "center", // "left" , "right"
 														verticalAlign: "bottom",  // "top" , "center"
@@ -275,6 +283,20 @@ function load_region_data(){
 		formData.append("countries",JSON.stringify(countries_checked));
 		xmlhttp.open("POST",url, true);
 		xmlhttp.send(formData);});
+}
+
+function toolTipFormatter(e) {
+	var str = "";
+	var total = 0 ;
+	var str3;
+	var str2 ;
+	for (var i = 0; i < e.entries.length; i++){
+		var str1 = "<span style= \"color:"+e.entries[i].dataSeries.color + "\">" + e.entries[i].dataSeries.name + "</span>: <strong>"+  e.entries[i].dataPoint.y + "</strong> <br/>" ;
+		total = e.entries[i].dataPoint.y + total;
+		str = str.concat(str1);
+	}
+	str2 = "<strong>" + e.entries[0].dataPoint.label + "</strong> <br/>";
+	return (str2.concat(str));
 }
 
 var prev_pol="None"

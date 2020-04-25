@@ -305,7 +305,7 @@ def display_regions(countries,data_type,case_type,api):
             ygrowch.append(curr_grow-prev_app_gr)
             prev_app_gr=curr_grow
             prev_app=curr_val"""
-    result.sort(key= lambda rec: rec["y"],reverse=False)
+    result.sort(key= lambda rec: rec["label"],reverse=True)
     result.append({"y":total/no_prov,"label":"Average"})
     for topi in top:
         result.append(topi)
