@@ -105,6 +105,14 @@ def extract_country_data_geospatial(case_type):
             case_type="Morti"
         elif case_type=="Tests":
             case_type="Nr de teste"
+        elif case_type=="Quarantined":
+            case_type="Carantina"
+        elif case_type=="Isolated":
+            case_type="Izolare"
+        elif case_type=="NotSeparated":
+            simple=False
+            #case_type="Izolare"
+            pass
         elif case_type=="TestsperCase":
             simple=False
             pass
@@ -115,6 +123,10 @@ def extract_country_data_geospatial(case_type):
             return (xaux,yaux,ygrowa,ygrowch,"romania",case_type)
     except:
         return (xaux,yaux,ygrowa,ygrowch,country,case_type)
+    if case_type=="NotSeparated":
+        prev_izo=0
+        prev_conf=0
+        prev_caran=0
     for rec in r.json()["data"]["data"]:
             d=datetime.datetime.strptime(rec["Data"], "%Y-%m-%d")
             xaux.append(d)
@@ -127,6 +139,11 @@ def extract_country_data_geospatial(case_type):
                 curr_val=(test_no/abs(rec["Cazuri"])) if  test_no!=0 else 0
             elif case_type=="CasesperTest":
                 curr_val=(abs(rec["Cazuri"])/test_no) if  test_no!=0 else 0
+            elif case_type=="NotSeparated":
+                conf=0 if rec["Total"]==None else rec["Total"]
+                izo=0 if rec["Izolare"]==None else rec["Izolare"]
+                caran=0 if rec["Carantina"]==None else rec["Carantina"]
+                curr_val=conf+izo+caran
             else : curr_val=abs(rec[case_type]) if rec[case_type] != None else 0
                 
             yaux.append(curr_val)
@@ -134,6 +151,9 @@ def extract_country_data_geospatial(case_type):
                 ygrowa.append(curr_val)
                 ygrowch.append(curr_val)
                 continue
+            #if case_type=="NotSeparated":
+            #    ygrowa.appned()
+                
             curr_grow=curr_val-prev_app
             ygrowa.append(curr_grow)
             ygrowch.append(curr_grow-prev_app_gr)
