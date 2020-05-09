@@ -22,8 +22,8 @@ def extract_country_data_covid19(country,case_type):
     remove0_conf="Confirmed"
     #print(case_type)
     try:
-        if case_type=="Active":
-            r = requests.get('https://api.covid19api.com/live/country/'+country+'/status/active')
+        if case_type=="Active" or case_type=="Recovered":
+            r = requests.get('https://api.covid19api.com/live/country/'+country+'/status/confirmed')
             remove0_conf="Confirmed"
         elif case_type=="Confirmed":
             r = requests.get('https://api.covid19api.com/dayone/country/'+country+'/status/confirmed/live')
