@@ -3,8 +3,12 @@ from flask import Flask,session, redirect, url_for, request,render_template
 from time import sleep
 import json
 from regressionaprox import aggregate_data,display_regions
+import requests
+
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
+
+home_station_url="http://192.168.1.3"
 
 @app.route('/data_retr')
 def data_status():
@@ -67,6 +71,20 @@ def extract_regions(api,case_type,data_type):
         ret = display_regions(countries,data_type,case_type,api)
         #print(ret)
         return ret
+
+@app.route('/temperature')
+def temperature():
+        r = requests.get(home_station_url+"/temperature")
+        return r.json()
+
+@app.route('/voltage')
+def voltage():
+	r = requests.get(home_station_url+"/voltage")
+	return r.json()
+
+@app.route('/home_station')
+def home_station():
+	return render_template('home_measure.html')
 
 @app.route('/')
 def index():
