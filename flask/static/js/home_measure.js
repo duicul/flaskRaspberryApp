@@ -1,5 +1,7 @@
 
 function init(){
+	draw_gauge_temperature();
+	draw_gauge_voltage();
 	setInterval(function(){ draw_gauge_temperature();
 							draw_gauge_voltage();}, 30000);
 }
