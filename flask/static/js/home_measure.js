@@ -1,3 +1,8 @@
+
+function init(){
+	setInterval(function(){ draw_gauge_temperature();
+							draw_gauge_voltage();}, 30000);
+}
 function draw_gauge_temperature(){
 $.ajax({url: "/temperature", success: function(result){
 	console.log(result)

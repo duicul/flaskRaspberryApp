@@ -8,7 +8,7 @@ import requests
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
 
-home_station_url="http://192.168.1.3"
+home_station_url="http://192.168.1.6"
 
 @app.route('/data_retr')
 def data_status():
