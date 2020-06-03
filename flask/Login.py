@@ -82,6 +82,14 @@ def voltage():
 	r = requests.get(home_station_url+"/voltage")
 	return r.json()
 
+@app.route('/home_station/data')
+def home_station_data():
+        try:
+                file=open("data.json","r")
+                file_json=json.load(file)
+                return str(file_json)
+        except:
+                return "[]"
 @app.route('/home_station')
 def home_station():
 	return render_template('home_measure.html')
