@@ -24,7 +24,7 @@ def create_table():
         cursor=conn.cursor()
         sql="CREATE TABLE Measure("
         sql+="ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
-        sql+="TIMESTAMP TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP  ,"
+        sql+="TIMESTAMP TEXT NOT NULL DEFAULT (datetime('now','localtime')),"
         sql+="TEMP1 REAL NOT NULL,"
         sql+="TEMP2 REAL NOT NULL,"
         sql+="VOLT REAL NOT NULL);"
