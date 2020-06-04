@@ -13,3 +13,4 @@ HOME=/home/pi
 USER=pi
 chmod a+x ~/flaskRaspberryApp/flask/flask.sh;
 ~/flaskRaspberryApp/flask/flask.sh&
+python3 ~/flaskRaspberryApp/flask/monitor.py&

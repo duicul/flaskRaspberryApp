@@ -31,14 +31,16 @@ def create_table():
         try:
             cursor.execute(sql)
             logging.debug('Table created')
+            cursor.close()
+            conn.close()
         except:
             logging.warning(str(traceback.format_exc()))
-        cursor.close()
-        conn.close()
+        
 
 def insert(temp1,temp2,volt):
         conn = sqlite3.connect('measure.db')
         vals=[(temp1,temp2,volt)]
+        print(vals)
         mycursor=conn.cursor()
         sql = """INSERT INTO Measure (TEMP1,TEMP2,VOLT) VALUES (?,?,?)"""
         initresp = time.time_ns()
@@ -55,10 +57,13 @@ def extract_all():
         mycursor=conn.cursor()
         querry="SELECT * FROM Measure"
         mycursor.execute(querry)
-        result=mycursor.fetchall()
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.error(str(traceback.format_exc()))
         #print(result)
-        mycursor.close()
-        conn.close()
         return result
         
 def extract_last():
@@ -66,10 +71,13 @@ def extract_last():
         mycursor=conn.cursor()
         querry="SELECT * FROM Measure WHERE ID = (SELECT MAX(ID)  FROM Measure)"
         mycursor.execute(querry)
-        result=mycursor.fetchall()
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.error(str(traceback.format_exc()))
         #print(result)
-        mycursor.close()
-        conn.close()
         return result[0] if len(result)>0 else None
 
 def poll_value(home_station_url):
@@ -79,7 +87,7 @@ def poll_value(home_station_url):
         volt=sum(volt)/len(volt)
         insert(float(temp["temp1"]),float(temp["temp2"]),float(volt))       
 
-class Monitor(Thread):
+class Monitor():
     def __init__(self,home_station_url,period):
         self.home_station_url=home_station_url
         self.period=period
@@ -90,11 +98,25 @@ class Monitor(Thread):
     def run(self):
         create_table()
         while True:
-            poll_value(self.home_station_url)
-            extract_all()
-            extract_last()
-            time.sleep(self.period)
+            try:
+                poll_value(self.home_station_url)
+                extract_all()
+                extract_last()
+            except:
+                logging.error(str(traceback.format_exc()))
+            try:
+                file=open("data.json","r")
+                file_json=json.load(file)
+                file.close()
+            except:
+                file_json={"url":self.home_station_url,"period":self.period}
+                file=open("data.json","w")
+                json.dump(file_json,file)
+                file.close()
+            self.period=file_json["period"]
+            self.home_station_url=file_json["url"]
+            time.sleep(int(self.period))
         
 if __name__ == "__main__":
-    mon=Monitor("http://192.168.1.6",10)
-    mon.start()
+    mon=Monitor("http://192.168.1.6",1800)
+    mon.run()
