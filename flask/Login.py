@@ -59,7 +59,7 @@ def extract_regions(api,case_type,data_type):
 def force_poll():
         poll_value(home_station_url)
         return ""
-        
+
 @app.route('/temperature')
 def temperature():
         data=extract_last()
@@ -105,7 +105,7 @@ def index():
 		username = session['username']
 	else:   username="anonymous"
 	return render_template('login.html',name=username)
-	
+
 if __name__ == '__main__':
    monitor=Monitor(home_station_url,polling_period)
    monitor.start()
