@@ -2,9 +2,20 @@
 function init(){
 	draw_gauge_temperature();
 	draw_gauge_voltage();
+	draw_graph();
 	setInterval(function(){ draw_gauge_temperature();
-							draw_gauge_voltage();}, 30000);
+							draw_gauge_voltage();
+							draw_graph}, 30000);
 }
+
+function force_refresh(){
+$.ajax({url: "/force_poll", success: function(result){
+	draw_gauge_temperature();
+	draw_gauge_voltage();
+	draw_graph();
+	}});
+}
+
 function draw_gauge_temperature(){
 $.ajax({url: "/temperature", success: function(result){
 	console.log(result)
@@ -132,37 +143,46 @@ function draw_graph(){
 $.ajax({url: "/home_station/data", success: function(result){
 	console.log(result)
     result=JSON.parse(result)
-    var radial1 = new RadialGauge({
-							renderTo: 'gauge_voltage',
-							width: 200,
-							height: 200,
-							units: 'V',
-							title: false,
-							value: result["volt1"],
-							minValue: 0,
-							maxValue: 40,
-							majorTicks: ['0','10','20','30','40'],
-							minorTicks: 10,
-							strokeTicks: true,
-							highlights: [
-								{ from: 0, to: 10, color: 'rgba(0,0,155,.15)' },
-								{ from: 10, to: 20, color: 'rgba(0,255,255,.15)' },
-								{ from: 20, to: 30, color: 'rgba(0,155,0,.15)' },
-								{ from: 30, to: 40, color: 'rgba(255,30,0,.25)' }
-							],
-							colorPlate: '#222',
-							colorMajorTicks: '#f5f5f5',
-							colorMinorTicks: '#ddd',
-							colorTitle: '#fff',
-							colorUnits: '#ccc',
-							colorNumbers: '#eee',
-							colorNeedle: 'rgba(240, 128, 128, 1)',
-							colorNeedleEnd: 'rgba(255, 160, 122, .9)',
-							valueBox: true,
-							animationRule: 'bounce',
-							animationDuration: 500
-					});
-	radial1.draw();
+	data=[]
+	data.push({type:"line",
+			axisYType: "secondary",
+			name: "Temperature1",
+			showInLegend: true,
+			markerSize: 0,
+			dataPoints: []})
+	data.push({type:"line",
+			axisYType: "secondary",
+			name: "Temperature2",
+			showInLegend: true,
+			markerSize: 0,
+			dataPoints: []})
+	data.push({type:"line",
+			axisYType: "secondary",
+			name: "Voltage1",
+			showInLegend: true,
+			markerSize: 0,
+			dataPoints: []})
+	result.forEach(function(item){
+		data[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
+		data[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
+		data[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
+		
+	})
+    var chart = new CanvasJS.Chart("graph", {
+					animationEnabled: true,
+					title:{	text: "Measurements"},
+					toolTip: {
+						shared: true
+					},
+					legend: {
+						horizontalAlign: "left", // "center" , "right"
+						verticalAlign: "center",  // "top" , "bottom"
+						fontSize: 15
+						},
+					axisY:{includeZero: true},
+					data:eval(data)
+				});
+				chart.render();
     }});
 }
 	

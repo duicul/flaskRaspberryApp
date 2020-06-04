@@ -4,11 +4,13 @@ from time import sleep
 import json
 from regressionaprox import aggregate_data,display_regions
 import requests
+from monitor import Monitor,extract_all,extract_last,poll_value,clean_table
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
 
 home_station_url="http://192.168.1.6"
+polling_period=1800
 
 @app.route('/data_retr')
 def data_status():
@@ -18,25 +20,6 @@ def data_status():
 def success(name):
    return 'welcome %s' % name
 
-
-
-"""
-@app.route('/loginstatus.py')
-def loginstatus():
-	return myloginstatus.show()
-
-@app.route('/login',methods = ['POST'])
-def login():
-   if request.method == 'POST':
-           ed=Extractdata_Config("../config.txt")
-           print(request.form['user_txt'])
-           print(request.form['pass_txt'])
-           if ed.getUsername() == request.form['user_txt'] and ed.testPassword(request.form['pass_txt']):
-                session['username'] = ed.getUsername()
-                print(session['username'])
-                return "okay"
-   return "error" #redirect('/')
-"""
 @app.route('/covid_data_all/<case_type>/<api>/<data_type>/<predict_len>/<pol_grade>',methods = ['POST'])
 def extract_data_pol(api,predict_len,pol_grade,case_type,data_type):
         #print(api)
@@ -72,24 +55,46 @@ def extract_regions(api,case_type,data_type):
         #print(ret)
         return ret
 
+@app.route('/force_poll')
+def force_poll():
+        poll_value(home_station_url)
+        return ""
+        
 @app.route('/temperature')
 def temperature():
-        r = requests.get(home_station_url+"/temperature")
-        return r.json()
+        data=extract_last()
+        if data==None:
+                return {}
+        #print(data)
+        #r = requests.get(home_station_url+"/temperature")
+        return {"temp1":data[2],"temp2":data[3]}
+        
 
 @app.route('/voltage')
 def voltage():
-	r = requests.get(home_station_url+"/voltage")
-	return r.json()
+        data=extract_last()
+        if data==None:
+                return {}
+        #print(data)
+	#r = requests.get(home_station_url+"/voltage")
+        return {"volt1":data[4]}
 
 @app.route('/home_station/data')
 def home_station_data():
         try:
-                file=open("data.json","r")
-                file_json=json.load(file)
-                return str(file_json)
+                data = extract_all()
         except:
-                return "[]"
+                data=[]
+        t=[]
+        for i in data:
+            t.append({"date":i[1],"temp1":i[2],"temp2":i[3],"volt1":i[4]})    
+        return json.dumps(t)
+
+@app.route('/home_station/clean')
+def home_station_clean():
+        clean_table();
+        return ""
+        
 @app.route('/home_station')
 def home_station():
 	return render_template('home_measure.html')
@@ -102,6 +107,9 @@ def index():
 	return render_template('login.html',name=username)
 	
 if __name__ == '__main__':
+   monitor=Monitor(home_station_url,polling_period)
+   monitor.start()
    import logging
    logging.basicConfig(filename='error.log',level=logging.INFO)
    app.run(debug = True,host='0.0.0.0')
+   
