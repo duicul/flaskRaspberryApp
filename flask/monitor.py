@@ -87,7 +87,7 @@ def poll_value(home_station_url):
         volt=sum(volt)/len(volt)
         insert(float(temp["temp1"]),float(temp["temp2"]),float(volt))       
 
-class Monitor(Thread):
+class Monitor():
     def __init__(self,home_station_url,period):
         self.home_station_url=home_station_url
         self.period=period
@@ -119,5 +119,6 @@ class Monitor(Thread):
         
 if __name__ == "__main__":
     logging.basicConfig(filename='error_monitor.log',level=logging.INFO)
+    time.sleep(30)
     mon=Monitor("http://192.168.1.6",1800)
-    mon.start()
+    mon.run()
