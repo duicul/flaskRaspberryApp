@@ -100,7 +100,7 @@ $.ajax({url: "/temperature", success: function(result){
 
 function draw_gauge_voltage(){
 $.ajax({url: "/voltage", success: function(result){
-	//console.log(result)
+	console.log(result)
     //result=JSON.parse(result)
 	div_html=""
 	div_html+="<canvas id=\"gauge_voltage\"></canvas>";
