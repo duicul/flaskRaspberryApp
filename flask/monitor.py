@@ -112,8 +112,8 @@ class Monitor():
         while True:
             try:
                 poll_value(self.home_station_url)
-                extract_all()
-                extract_last()
+                #extract_all()
+                #extract_last()
             except:
                 logging.error(str(traceback.format_exc()))
             try:
