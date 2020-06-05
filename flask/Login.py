@@ -67,7 +67,7 @@ def temperature():
                 return {}
         #print(data)
         #r = requests.get(home_station_url+"/temperature")
-        return {"temp1":data[2],"temp2":data[3]}
+        return {"date":data[1],"temp1":data[2],"temp2":data[3]}
         
 
 @app.route('/voltage')
@@ -77,7 +77,7 @@ def voltage():
                 return {}
         #print(data)
 	#r = requests.get(home_station_url+"/voltage")
-        return {"volt1":data[4]}
+        return {"date":data[1],"volt1":data[4]}
 
 
 @app.route('/home_station/data')

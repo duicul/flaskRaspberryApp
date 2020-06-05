@@ -21,6 +21,7 @@ $.ajax({url: "/temperature", success: function(result){
 	//console.log(result)
     //result=JSON.parse(result)
 	div_html=""
+	div_html+=new Date(result["date"]).toString()+"</br>"
 	div_html+="<canvas id=\"gauge_temp_1\"></canvas>";
 	div_html+="<canvas id=\"gauge_temp_2\"></canvas>";
     $("#draw_gauge_temperature").html(div_html);
@@ -103,6 +104,7 @@ $.ajax({url: "/voltage", success: function(result){
 	console.log(result)
     //result=JSON.parse(result)
 	div_html=""
+	div_html+=new Date(result["date"]).toString()+"</br>"
 	div_html+="<canvas id=\"gauge_voltage\"></canvas>";
     $("#draw_gauge_voltage").html(div_html);
     var radial1 = new RadialGauge({
