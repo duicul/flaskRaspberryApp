@@ -18,7 +18,7 @@ $.ajax({url: "/force_poll", success: function(result){
 
 function draw_gauge_temperature(){
 $.ajax({url: "/temperature", success: function(result){
-	console.log(result)
+	//console.log(result)
     //result=JSON.parse(result)
 	div_html=""
 	div_html+="<canvas id=\"gauge_temp_1\"></canvas>";
@@ -100,7 +100,7 @@ $.ajax({url: "/temperature", success: function(result){
 
 function draw_gauge_voltage(){
 $.ajax({url: "/voltage", success: function(result){
-	console.log(result)
+	//console.log(result)
     //result=JSON.parse(result)
 	div_html=""
 	div_html+="<canvas id=\"gauge_voltage\"></canvas>";
@@ -140,8 +140,13 @@ $.ajax({url: "/voltage", success: function(result){
 }
 
 function draw_graph(){
-$.ajax({url: "/home_station/data", success: function(result){
-	console.log(result)
+items=$("#items_interval").val()
+//if(!Number.isInteger(items))
+//	return;
+//console.log(items)
+url="/home_station/data?items="+items
+$.ajax({url: url, success: function(result){
+	//console.log(result)
     result=JSON.parse(result)
 	data=[]
 	data.push({type:"line",
@@ -176,7 +181,7 @@ $.ajax({url: "/home_station/data", success: function(result){
 					},
 					legend: {
 						horizontalAlign: "left", // "center" , "right"
-						verticalAlign: "center",  // "top" , "bottom"
+						verticalAlign: "top", //"center", "bottom"
 						fontSize: 15
 						},
 					axisY:{includeZero: true},
