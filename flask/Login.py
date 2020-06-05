@@ -4,8 +4,8 @@ from time import sleep
 import json
 from regressionaprox import aggregate_data,display_regions
 import requests
-from monitor import Monitor,extract_all,extract_last,poll_value,clean_table
-
+from monitor import Monitor,extract_all_interval,extract_last,poll_value,clean_table
+import traceback
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
 
@@ -79,12 +79,17 @@ def voltage():
 	#r = requests.get(home_station_url+"/voltage")
         return {"volt1":data[4]}
 
+
 @app.route('/home_station/data')
 def home_station_data():
+        items=int(request.args["items"])
+        #print(items)
         try:
-                data = extract_all()
+                data = extract_all_interval(items)
         except:
+                logging.error(str(traceback.format_exc()))
                 data=[]
+        #print(data)
         t=[]
         for i in data:
             t.append({"date":i[1],"temp1":i[2],"temp2":i[3],"volt1":i[4]})    

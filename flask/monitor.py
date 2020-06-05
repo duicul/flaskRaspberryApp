@@ -52,10 +52,22 @@ def insert(temp1,temp2,volt):
         except:
             logging.error(str(traceback.format_exc()))
 
-def extract_all():
+def extract_all_interval(items):
+        #print("extract_all_interval")
+        try:
+            items=int(items)
+        except:
+            logging.error(str(traceback.format_exc()))
+            return []
+        if(items!=-1):
+            condition=" WHERE ID >= ((SELECT MAX(ID)  FROM Measure) - "+str(items)+")"
+        else:
+            condition=""
+        #print(condition)
         conn = sqlite3.connect('measure.db')
         mycursor=conn.cursor()
-        querry="SELECT * FROM Measure"
+        querry="SELECT * FROM Measure "+condition
+        #print(querry)
         mycursor.execute(querry)
         try:
             result=mycursor.fetchall()
