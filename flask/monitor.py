@@ -95,7 +95,9 @@ def extract_last():
 def poll_value(home_station_url):
         time_stamp=str(datetime.datetime.now())
         stop=False
-        while not stop:
+        i=0
+        while not stop and i<30:
+            i=i+1
             temp = requests.get(home_station_url+"/temperature").json()
             stop = True if temp["temp1"]>-127 and temp["temp2"]>-127 else stop
         volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(3)]
