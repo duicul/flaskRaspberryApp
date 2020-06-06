@@ -4,7 +4,7 @@ from time import sleep
 import json
 from regressionaprox import aggregate_data,display_regions
 import requests
-from monitor import Monitor,extract_all_interval,extract_last,poll_value,clean_table
+from monitor import Monitor,extract_all_interval,extract_last,poll_value,clean_table,remove_wrong_value
 import traceback
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -94,6 +94,11 @@ def home_station_data():
         for i in data:
             t.append({"date":i[1],"temp1":i[2],"temp2":i[3],"volt1":i[4]})    
         return json.dumps(t)
+
+@app.route('/home_station/remove_wrong_value')
+def remove_wrong():
+        remove_wrong_value();
+        return ""
 
 @app.route('/home_station/clean')
 def home_station_clean():

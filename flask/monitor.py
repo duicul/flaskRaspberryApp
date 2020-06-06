@@ -35,12 +35,23 @@ def create_table():
             conn.close()
         except:
             logging.warning(str(traceback.format_exc()))
-        
+
+def remove_wrong_value():
+        conn = sqlite3.connect('measure.db')
+        mycursor=conn.cursor()
+        sql = "DELETE FROM Measure WHERE TEMP1 = -127 OR TEMP2 = -127"
+        result=mycursor.execute(sql)
+        try:
+            conn.commit()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.error(str(traceback.format_exc()))
 
 def insert(temp1,temp2,volt):
         conn = sqlite3.connect('measure.db')
         vals=[(temp1,temp2,volt)]
-        print(vals)
+        #print(vals)
         mycursor=conn.cursor()
         sql = """INSERT INTO Measure (TEMP1,TEMP2,VOLT) VALUES (?,?,?)"""
         initresp = time.time_ns()
@@ -96,13 +107,17 @@ def poll_value(home_station_url):
         time_stamp=str(datetime.datetime.now())
         stop=False
         i=0
-        while not stop and i<30:
+        temp1=-127
+        temp2=-127
+        while (temp1==-127 or temp2==-127) and i<30:
             i=i+1
             temp = requests.get(home_station_url+"/temperature").json()
-            stop = True if temp["temp1"]>-127 and temp["temp2"]>-127 else stop
+            temp1=float(temp["temp1"]) if float(temp["temp1"])!=-127 else temp1
+            temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
         volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(3)]
         volt=sum(volt)/len(volt)
-        insert(float(temp["temp1"]),float(temp["temp2"]),float(volt))       
+        if(temp1!=-127 and temp2!=-127):
+            insert(temp1,temp2,float(volt))       
 
 class Monitor():
     def __init__(self,home_station_url,period):
