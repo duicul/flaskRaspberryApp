@@ -158,7 +158,11 @@ class Monitor():
             time.sleep(int(self.period))
         
 if __name__ == "__main__":
-    logging.basicConfig(filename='error_monitor.log',level=logging.INFO)
-    time.sleep(30)
-    mon=Monitor("http://192.168.1.6",1800)
-    mon.run()
+    try:
+        logging.basicConfig(filename='error_monitor.log',level=logging.INFO)
+        time.sleep(30)
+        mon=Monitor("http://192.168.1.6",1800)
+        mon.run()
+    except:
+        now=time.asctime( time.localtime(time.time()) )
+        logging.error(str(now)+str(traceback.format_exc()))
