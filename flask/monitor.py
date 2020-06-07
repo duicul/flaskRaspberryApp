@@ -35,8 +35,8 @@ def create_table():
             cursor.close()
             conn.close()
         except:
-            now=time.asctime(str(now)+ time.localtime(time.time()) )
-            logging.warning(str(traceback.format_exc()))
+            now=time.asctime(time.localtime(time.time()) )
+            logging.warning(str(now)+ str(traceback.format_exc()))
 
 def remove_wrong_value():
         conn = sqlite3.connect('measure.db')
