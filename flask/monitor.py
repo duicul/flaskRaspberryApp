@@ -14,7 +14,8 @@ def clean_table():
         cursor.execute("DROP Table Measure;")
         mydb.commit()
     except Exception:
-        logging.debug(str(traceback.format_exc()))
+        now=time.asctime( time.localtime(time.time()) )
+        logging.debug(str(now)+str(traceback.format_exc()))
     cursor.close()
     conn.close()
     create_table()
@@ -34,6 +35,7 @@ def create_table():
             cursor.close()
             conn.close()
         except:
+            now=time.asctime(str(now)+ time.localtime(time.time()) )
             logging.warning(str(traceback.format_exc()))
 
 def remove_wrong_value():
@@ -46,6 +48,7 @@ def remove_wrong_value():
             mycursor.close()
             conn.close()
         except:
+            now=time.asctime(str(now)+ time.localtime(time.time()) )
             logging.error(str(traceback.format_exc()))
 
 def insert(temp1,temp2,volt):
@@ -61,6 +64,7 @@ def insert(temp1,temp2,volt):
             mycursor.close()
             conn.close()
         except:
+            now=time.asctime(str(now)+ time.localtime(time.time()) )
             logging.error(str(traceback.format_exc()))
 
 def extract_all_interval(items):
@@ -68,7 +72,8 @@ def extract_all_interval(items):
         try:
             items=int(items)
         except:
-            logging.error(str(traceback.format_exc()))
+            now=time.asctime( time.localtime(time.time()) )
+            logging.error(str(now)+str(traceback.format_exc()))
             return []
         if(items!=-1):
             condition=" WHERE ID >= ((SELECT MAX(ID)  FROM Measure) - "+str(items)+")"
@@ -85,7 +90,8 @@ def extract_all_interval(items):
             mycursor.close()
             conn.close()
         except:
-            logging.error(str(traceback.format_exc()))
+            now=time.asctime( time.localtime(time.time()) )
+            logging.error(str(now)+str(traceback.format_exc()))
         #print(result)
         return result
         
@@ -99,7 +105,8 @@ def extract_last():
             mycursor.close()
             conn.close()
         except:
-            logging.error(str(traceback.format_exc()))
+            now=time.asctime( time.localtime(time.time()) )
+            logging.error(str(now)+str(traceback.format_exc()))
         #print(result)
         return result[0] if len(result)>0 else None
 
@@ -135,7 +142,8 @@ class Monitor():
                 #extract_all()
                 #extract_last()
             except:
-                logging.error(str(traceback.format_exc()))
+                now=time.asctime( time.localtime(time.time()) )
+                logging.error(str(now)+str(traceback.format_exc()))
             try:
                 file=open("data.json","r")
                 file_json=json.load(file)

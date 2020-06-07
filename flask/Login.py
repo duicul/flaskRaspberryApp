@@ -100,10 +100,10 @@ def remove_wrong():
         remove_wrong_value();
         return ""
 
-@app.route('/home_station/clean')
-def home_station_clean():
-        clean_table();
-        return ""
+#@app.route('/home_station/clean')
+#def home_station_clean():
+#        clean_table();
+#        return ""
         
 @app.route('/home_station')
 def home_station():
