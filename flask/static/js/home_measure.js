@@ -5,7 +5,7 @@ function init(){
 	draw_graph();
 	setInterval(function(){ draw_gauge_temperature();
 							draw_gauge_voltage();
-							draw_graph();
+							//draw_graph();
 							}, 30000);
 }
 
