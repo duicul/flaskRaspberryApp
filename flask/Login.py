@@ -117,7 +117,22 @@ def index():
 	return render_template('login.html',name=username)
 
 if __name__ == '__main__':
-   import logging
-   logging.basicConfig(filename='error.log',level=logging.INFO)
+   from logging.config import dictConfig
+
+   dictConfig({
+            'version': 1,
+            'formatters': {'default': {
+                'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+                }},
+            'handlers': {'wsgi': {
+                'class': 'logging.FileHandler',
+                'filename': 'error.log',
+                'formatter': 'default'
+            }},
+            'root': {
+                'level': 'WARNING',
+                'handlers': ['wsgi']
+                    }
+                })
    app.run(debug = True,host='0.0.0.0')
    

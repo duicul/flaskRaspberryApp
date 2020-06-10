@@ -14,8 +14,7 @@ def clean_table():
         cursor.execute("DROP Table Measure;")
         mydb.commit()
     except Exception:
-        now=time.asctime( time.localtime(time.time()) )
-        logging.debug(str(now)+str(traceback.format_exc()))
+        logging.debug(str(traceback.format_exc()))
     cursor.close()
     conn.close()
     create_table()
@@ -35,8 +34,7 @@ def create_table():
             cursor.close()
             conn.close()
         except:
-            now=time.asctime(time.localtime(time.time()) )
-            logging.warning(str(now)+ str(traceback.format_exc()))
+            logging.warning(str(traceback.format_exc()))
 
 def remove_wrong_value():
         conn = sqlite3.connect('measure.db')
@@ -48,7 +46,6 @@ def remove_wrong_value():
             mycursor.close()
             conn.close()
         except:
-            now=time.asctime(str(now)+ time.localtime(time.time()) )
             logging.error(str(traceback.format_exc()))
 
 def insert(temp1,temp2,volt):
@@ -64,7 +61,6 @@ def insert(temp1,temp2,volt):
             mycursor.close()
             conn.close()
         except:
-            now=time.asctime(str(now)+ time.localtime(time.time()) )
             logging.error(str(traceback.format_exc()))
 
 def extract_all_interval(items):
@@ -72,8 +68,7 @@ def extract_all_interval(items):
         try:
             items=int(items)
         except:
-            now=time.asctime( time.localtime(time.time()) )
-            logging.error(str(now)+str(traceback.format_exc()))
+            logging.error(str(traceback.format_exc()))
             return []
         if(items!=-1):
             condition=" WHERE ID >= ((SELECT MAX(ID)  FROM Measure) - "+str(items)+")"
@@ -90,8 +85,7 @@ def extract_all_interval(items):
             mycursor.close()
             conn.close()
         except:
-            now=time.asctime( time.localtime(time.time()) )
-            logging.error(str(now)+str(traceback.format_exc()))
+            logging.error(str(traceback.format_exc()))
         #print(result)
         return result
         
@@ -105,8 +99,7 @@ def extract_last():
             mycursor.close()
             conn.close()
         except:
-            now=time.asctime( time.localtime(time.time()) )
-            logging.error(str(now)+str(traceback.format_exc()))
+            logging.error(str(traceback.format_exc()))
         #print(result)
         return result[0] if len(result)>0 else None
 
@@ -124,7 +117,8 @@ def poll_value(home_station_url):
         volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(3)]
         volt=sum(volt)/len(volt)
         if(temp1!=-127 and temp2!=-127):
-            insert(temp1,temp2,float(volt))       
+            insert(temp1,temp2,float(volt))
+        logging.info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt))
 
 class Monitor():
     def __init__(self,home_station_url,period):
@@ -142,8 +136,7 @@ class Monitor():
                 #extract_all()
                 #extract_last()
             except:
-                now=time.asctime( time.localtime(time.time()) )
-                logging.error(str(now)+str(traceback.format_exc()))
+                logging.error(str(traceback.format_exc()))
             try:
                 file=open("data.json","r")
                 file_json=json.load(file)
@@ -158,11 +151,28 @@ class Monitor():
             time.sleep(int(self.period))
         
 if __name__ == "__main__":
+    
+    from logging.config import dictConfig
+
+    dictConfig({
+            'version': 1,
+            'formatters': {'default': {
+                'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+                }},
+            'handlers': {'wsgi': {
+                'class': 'logging.FileHandler',
+                'filename': 'error_monitor.log',
+                'formatter': 'default'
+            }},
+            'root': {
+                'level': 'INFO',
+                'handlers': ['wsgi']
+                    }
+                })
     try:
-        logging.basicConfig(filename='error_monitor.log',level=logging.INFO)
+        logging.info("start")
         time.sleep(30)
         mon=Monitor("http://192.168.1.6",1800)
         mon.run()
     except:
-        now=time.asctime( time.localtime(time.time()) )
-        logging.error(str(now)+str(traceback.format_exc()))
+        logging.error(str(traceback.format_exc()))
