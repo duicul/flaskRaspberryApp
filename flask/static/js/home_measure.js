@@ -102,7 +102,7 @@ $.ajax({url: "/temperature", success: function(result){
 
 function draw_gauge_voltage(){
 $.ajax({url: "/voltage", success: function(result){
-	console.log(result)
+	//console.log(result)
     //result=JSON.parse(result)
 	div_html=""
 	div_html+=new Date(result["date"]).toString()+"</br>"
@@ -183,7 +183,7 @@ $.ajax({url: url, success: function(result){
 					toolTip: {
 						shared: true,
 						contentFormatter: function(e){
-							console.log(e.entries)
+							//console.log(e.entries)
 							var str = "";
 							str = str.concat(e.entries[0].dataPoint.x);
 							str = str.concat("</br>");
