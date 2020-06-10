@@ -199,9 +199,9 @@ $.ajax({url: url, success: function(result){
 						verticalAlign: "top", //"center", "bottom"
 						fontSize: 15
 						},
-					axisX:{  
+					/*axisX:{  
 						valueFormatString: "DD MMM YYYY HH : mm"
-					},
+					},*/
 					axisY:{includeZero: true},
 					data:eval(data)
 				});
