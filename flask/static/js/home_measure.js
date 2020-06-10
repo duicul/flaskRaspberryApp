@@ -5,7 +5,8 @@ function init(){
 	draw_graph();
 	setInterval(function(){ draw_gauge_temperature();
 							draw_gauge_voltage();
-							draw_graph}, 30000);
+							draw_graph();
+							}, 30000);
 }
 
 function force_refresh(){
@@ -170,6 +171,7 @@ $.ajax({url: url, success: function(result){
 			markerSize: 0,
 			dataPoints: []})
 	result.forEach(function(item){
+		//console.log(item["date"])
 		data[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
 		data[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 		data[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
@@ -179,13 +181,27 @@ $.ajax({url: url, success: function(result){
 					animationEnabled: true,
 					title:{	text: "Measurements"},
 					toolTip: {
-						shared: true
+						shared: true,
+						contentFormatter: function(e){
+							console.log(e.entries)
+							var str = "";
+							str = str.concat(e.entries[0].dataPoint.x);
+							str = str.concat("</br>");
+							for (var i = 0; i < e.entries.length; i++){
+								var  temp = "<div style=\"color: "+e.entries[i].dataSeries.color+";\">"+e.entries[i].dataSeries.name + " <strong>"+  e.entries[i].dataPoint.y + "</strong></div>" ; 
+								str = str.concat(temp);
+							}
+						return (str);
+						}
 					},
 					legend: {
 						horizontalAlign: "left", // "center" , "right"
 						verticalAlign: "top", //"center", "bottom"
 						fontSize: 15
 						},
+					axisX:{  
+						valueFormatString: "DD MMM YYYY HH : mm"
+					},
 					axisY:{includeZero: true},
 					data:eval(data)
 				});
