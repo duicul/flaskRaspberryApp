@@ -1,5 +1,5 @@
 import time
-import datetime
+#import datetime
 import requests
 import json
 import traceback
@@ -9,7 +9,7 @@ import logging
 
 
 
-def clean_table():
+'''def clean_table():
     conn = sqlite3.connect('measure.db')
     cursor=conn.cursor()
     try:
@@ -20,7 +20,7 @@ def clean_table():
     cursor.close()
     conn.close()
     create_table()
-    
+'''    
 def create_table():
         conn = sqlite3.connect('measure.db')
         cursor=conn.cursor()
@@ -42,7 +42,7 @@ def remove_wrong_value():
         conn = sqlite3.connect('measure.db')
         mycursor=conn.cursor()
         sql = "DELETE FROM Measure WHERE TEMP1 = -127 OR TEMP2 = -127"
-        result=mycursor.execute(sql)
+        mycursor.execute(sql)
         try:
             conn.commit()
             mycursor.close()
@@ -56,8 +56,8 @@ def insert(temp1,temp2,volt):
         #print(vals)
         mycursor=conn.cursor()
         sql = """INSERT INTO Measure (TEMP1,TEMP2,VOLT) VALUES (?,?,?)"""
-        initresp = time.time_ns()
-        result=mycursor.executemany(sql,vals)
+        #initresp = time.time_ns()
+        mycursor.executemany(sql,vals)
         try:
             conn.commit()
             mycursor.close()
@@ -106,8 +106,8 @@ def extract_last():
         return result[0] if len(result)>0 else None
 
 def poll_value(home_station_url):
-        time_stamp=str(datetime.datetime.now())
-        stop=False
+        #time_stamp=str(datetime.datetime.now())
+        #stop=False
         i=0
         temp1=-127
         temp2=-127
@@ -153,7 +153,7 @@ class Monitor():
             time.sleep(int(self.period))
         
 if __name__ == "__main__":
-    import logging
+    #import logging
     import logging.handlers
     handler = logging.handlers.RotatingFileHandler(
         'error_monitor.log',

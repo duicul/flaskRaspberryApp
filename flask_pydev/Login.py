@@ -1,10 +1,10 @@
-from flask import Flask,session, redirect, url_for, request,render_template
+from flask import Flask,session,request,render_template
 #from inputpin import InputPin
-from time import sleep
+#from time import sleep
 import json
 from regressionaprox import aggregate_data,display_regions
-import requests
-from monitor import Monitor,extract_all_interval,extract_last,poll_value,clean_table,remove_wrong_value
+#import requests
+from monitor import extract_all_interval,extract_last,poll_value,remove_wrong_value
 import traceback
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -76,7 +76,7 @@ def voltage():
         if data==None:
                 return {}
         #print(data)
-	#r = requests.get(home_station_url+"/voltage")
+        #r = requests.get(home_station_url+"/voltage")
         return {"date":data[1],"volt1":data[4]}
 
 
