@@ -6,7 +6,7 @@ function init(){
 	setInterval(function(){ draw_gauge_temperature();
 							draw_gauge_voltage();
 							//draw_graph();
-							}, 30000);
+							}, 300000);
 }
 
 function force_refresh(){
