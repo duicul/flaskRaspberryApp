@@ -165,7 +165,7 @@ if __name__ == "__main__":
     try:
         logging.getLogger('monitor_logger').info("start")
         time.sleep(30)
-        mon=Monitor("http://192.168.1.6",1800)
+        mon=Monitor("http://192.168.1.6",900)
         mon.run()
     except:
         logging.getLogger('monitor_logger').error(str(traceback.format_exc()))

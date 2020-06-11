@@ -1,5 +1,5 @@
 #!/bin/bash
-str=~/flaskRaspberryApp/flask/Login.py
+str=~/flaskRaspberryApp/flask_pydev/Login.py
 if test $# -ge 1
 then str=$1
 fi
