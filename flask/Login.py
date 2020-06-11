@@ -117,22 +117,14 @@ def index():
 	return render_template('login.html',name=username)
 
 if __name__ == '__main__':
-   from logging.config import dictConfig
-
-   dictConfig({
-            'version': 1,
-            'formatters': {'default': {
-                'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-                }},
-            'handlers': {'wsgi': {
-                'class': 'logging.FileHandler',
-                'filename': 'error.log',
-                'formatter': 'default'
-            }},
-            'root': {
-                'level': 'WARNING',
-                'handlers': ['wsgi']
-                    }
-                })
-   app.run(debug = True,host='0.0.0.0')
-   
+   import logging
+   import logging.handlers
+   handler = logging.handlers.RotatingFileHandler(
+        'error.log',
+        maxBytes=1024 * 1024)
+   handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+   logging.getLogger('werkzeug').setLevel(logging.INFO)
+   logging.getLogger('werkzeug').addHandler(handler)
+   app.logger.setLevel(logging.WARNING) 
+   app.logger.addHandler(handler)
+   app.run(debug = True,host='0.0.0.0')     

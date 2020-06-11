@@ -1,0 +1,6 @@
+[2020-06-11 08:57:49,018] INFO in monitor: start
+[2020-06-11 08:58:06,109] ERROR in monitor: Traceback (most recent call last):
+  File "D:\flaskRaspberryApp\flask\monitor.py", line 167, in <module>
+    time.sleep(30)
+KeyboardInterrupt
+

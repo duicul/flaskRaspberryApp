@@ -7,6 +7,8 @@ from  threading import Thread
 import sqlite3
 import logging
 
+
+
 def clean_table():
     conn = sqlite3.connect('measure.db')
     cursor=conn.cursor()
@@ -14,7 +16,7 @@ def clean_table():
         cursor.execute("DROP Table Measure;")
         mydb.commit()
     except Exception:
-        logging.debug(str(traceback.format_exc()))
+        logging.getLogger('monitor_logger').debug(str(traceback.format_exc()))
     cursor.close()
     conn.close()
     create_table()
@@ -30,11 +32,11 @@ def create_table():
         sql+="VOLT REAL NOT NULL);"
         try:
             cursor.execute(sql)
-            logging.debug('Table created')
+            logging.getLogger('monitor_logger').debug('Table created')
             cursor.close()
             conn.close()
         except:
-            logging.warning(str(traceback.format_exc()))
+            logging.getLogger('monitor_logger').warning(str(traceback.format_exc()))
 
 def remove_wrong_value():
         conn = sqlite3.connect('measure.db')
@@ -46,7 +48,7 @@ def remove_wrong_value():
             mycursor.close()
             conn.close()
         except:
-            logging.error(str(traceback.format_exc()))
+            logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
 
 def insert(temp1,temp2,volt):
         conn = sqlite3.connect('measure.db')
@@ -61,14 +63,14 @@ def insert(temp1,temp2,volt):
             mycursor.close()
             conn.close()
         except:
-            logging.error(str(traceback.format_exc()))
+            logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
 
 def extract_all_interval(items):
         #print("extract_all_interval")
         try:
             items=int(items)
         except:
-            logging.error(str(traceback.format_exc()))
+            logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
             return []
         if(items!=-1):
             condition=" WHERE ID >= ((SELECT MAX(ID)  FROM Measure) - "+str(items)+")"
@@ -85,7 +87,7 @@ def extract_all_interval(items):
             mycursor.close()
             conn.close()
         except:
-            logging.error(str(traceback.format_exc()))
+            logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
         #print(result)
         return result
         
@@ -99,7 +101,7 @@ def extract_last():
             mycursor.close()
             conn.close()
         except:
-            logging.error(str(traceback.format_exc()))
+            logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
         #print(result)
         return result[0] if len(result)>0 else None
 
@@ -118,7 +120,7 @@ def poll_value(home_station_url):
         volt=sum(volt)/len(volt)
         if(temp1!=-127 and temp2!=-127):
             insert(temp1,temp2,float(volt))
-        logging.info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt))
+        logging.getLogger('monitor_logger').info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt))
 
 class Monitor():
     def __init__(self,home_station_url,period):
@@ -136,7 +138,7 @@ class Monitor():
                 #extract_all()
                 #extract_last()
             except:
-                logging.error(str(traceback.format_exc()))
+                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
             try:
                 file=open("data.json","r")
                 file_json=json.load(file)
@@ -151,8 +153,24 @@ class Monitor():
             time.sleep(int(self.period))
         
 if __name__ == "__main__":
-    
-    from logging.config import dictConfig
+    import logging
+    import logging.handlers
+    handler = logging.handlers.RotatingFileHandler(
+        'error_monitor.log',
+        maxBytes=1024 * 1024)
+    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+    logger = logging.getLogger('monitor_logger')
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    try:
+        logging.getLogger('monitor_logger').info("start")
+        time.sleep(30)
+        mon=Monitor("http://192.168.1.6",1800)
+        mon.run()
+    except:
+        logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+    '''
+   from logging.config import dictConfig
 
     dictConfig({
             'version': 1,
@@ -168,11 +186,4 @@ if __name__ == "__main__":
                 'level': 'INFO',
                 'handlers': ['wsgi']
                     }
-                })
-    try:
-        logging.info("start")
-        time.sleep(30)
-        mon=Monitor("http://192.168.1.6",1800)
-        mon.run()
-    except:
-        logging.error(str(traceback.format_exc()))
+                })'''
