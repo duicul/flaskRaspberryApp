@@ -120,7 +120,7 @@ def poll_value(home_station_url):
         volt=sum(volt)/len(volt)
         if(temp1!=-127 and temp2!=-127):
             insert(temp1,temp2,float(volt))
-        logging.getLogger('monitor_logger').info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt))
+        logging.getLogger('monitor_logger').info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt))+" "+str(i)+"tries"
 
 class Monitor():
     def __init__(self,home_station_url,period):
