@@ -118,9 +118,9 @@ def poll_value(home_station_url):
             temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
         volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(3)]
         volt=sum(volt)/len(volt)
+        logging.getLogger('monitor_logger').info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt)+" "+str(i)+"tries")
         if(temp1!=-127 and temp2!=-127):
             insert(temp1,temp2,float(volt))
-        logging.getLogger('monitor_logger').info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt))+" "+str(i)+"tries"
 
 class Monitor():
     def __init__(self,home_station_url,period):
