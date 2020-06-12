@@ -109,7 +109,7 @@ def remove_wrong():
 def home_station():
 	return render_template('home_measure.html')
 
-@app.route('/')
+@app.route('/covid')
 def index():
 	if 'username' in session:
 		username = session['username']
