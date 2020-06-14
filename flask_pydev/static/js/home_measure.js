@@ -172,8 +172,10 @@ $.ajax({url: url, success: function(result){
 			dataPoints: []})
 	result.forEach(function(item){
 		//console.log(item["date"])
-		data[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
-		data[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
+		if(item["temp1"]!=-127)
+			data[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
+		if(item["temp2"]!=-127)
+			data[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 		data[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
 		
 	})
