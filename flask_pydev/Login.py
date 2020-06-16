@@ -3,7 +3,7 @@ from flask import Flask,session,request,render_template
 #from time import sleep
 import json
 from regressionaprox import aggregate_data,display_regions
-#import requests
+import requests
 from monitor import extract_all_interval,extract_last,poll_value,remove_wrong_value
 import traceback
 app = Flask(__name__)
@@ -108,6 +108,10 @@ def remove_wrong():
 @app.route('/home_station')
 def home_station():
 	return render_template('home_measure.html')
+
+@app.route('/home_station/restart')
+def home_station_restart():
+	requests.get(home_station_url+"/restart")
 
 @app.route('/covid')
 def index():
