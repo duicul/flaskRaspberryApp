@@ -111,7 +111,11 @@ def home_station():
 
 @app.route('/home_station/restart')
 def home_station_restart():
-	requests.get(home_station_url+"/restart")
+	try:
+		requests.get(home_station_url+"/restart")
+	except:
+		pass
+	return "restarted"
 
 @app.route('/covid')
 def index():
