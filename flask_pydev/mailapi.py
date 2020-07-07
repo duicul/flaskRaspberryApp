@@ -1,7 +1,8 @@
 import smtplib
 import json
 from email.mime.text import MIMEText
-
+import logging
+import traceback
 
 def read_mail_config():
     try:
@@ -36,7 +37,7 @@ def send_mail(msg):
             server.sendmail(sender, receivers, msg.as_string())
             #print("Successfully sent email")
     except:
-        pass
+        logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
 
 if __name__ == "__main__":
     send_mail("Temperatura atinsa : 95C ")
