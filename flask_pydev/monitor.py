@@ -6,8 +6,9 @@ import traceback
 from  threading import Thread
 import sqlite3
 import logging
+from mailapi import send_mail,read_mail_config
 
-
+notified_temp=[False,False]
 
 '''def clean_table():
     conn = sqlite3.connect('measure.db')
@@ -119,6 +120,25 @@ def poll_value(home_station_url):
         volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(4)]
         volt=sum(volt)/len(volt)
         logging.getLogger('monitor_logger').info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt)+" "+str(i)+"tries")
+        mail_config=read_mail_config()
+
+        try:
+                if (temp1>int(mail_config["temp1"]["max"]) or temp1<int(mail_config["temp1"]["min"])) and not notified_temp[0]:
+                        send_mail("Temperatura atinsa : "+str(temp1)+"C")
+                        notified_temp[0]=True
+                elif temp1>int(mail_config["temp1"]["min"]) and temp1<int(mail_config["temp1"]["max"]) and notified_temp[0]:
+                        notified_temp[0]=False
+        except:
+                pass
+
+        try:
+                if (temp2>int(mail_config["temp2"]["max"]) or temp2<int(mail_config["temp2"]["min"])) and not notified_temp[1]:
+                        send_mail("Temperatura atinsa : "+str(temp2)+"C")
+                        notified_temp[1]=True
+                elif temp2>int(mail_config["temp2"]["min"]) and temp2<int(mail_config["temp2"]["max"]) and notified_temp[1]:
+                        notified_temp[1]=False
+        except:
+                pass
         insert(temp1,temp2,float(volt))
 
 class Monitor():
@@ -133,12 +153,6 @@ class Monitor():
         create_table()
         while True:
             try:
-                poll_value(self.home_station_url)
-                #extract_all()
-                #extract_last()
-            except:
-                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
-            try:
                 file=open("data.json","r")
                 file_json=json.load(file)
                 file.close()
@@ -147,6 +161,14 @@ class Monitor():
                 file=open("data.json","w")
                 json.dump(file_json,file)
                 file.close()
+
+            try:
+                poll_value(self.home_station_url)
+                #extract_all()
+                #extract_last()
+            except:
+                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+
             self.period=file_json["period"]
             self.home_station_url=file_json["url"]
             time.sleep(int(self.period))
