@@ -30,14 +30,11 @@ def send_mail(msg):
     receivers = config_data["receivers"]
     main_acc= config_data["mail_account"]
     sender = main_acc["mail"]
-    try:
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
             server.login(main_acc["user"], main_acc["pass"])
             server.sendmail(sender, receivers, msg.as_string())
             #print("Successfully sent email")
-    except:
-        logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
 
 if __name__ == "__main__":
     send_mail("Temperatura atinsa : 95C ")

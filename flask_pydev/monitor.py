@@ -120,8 +120,11 @@ def poll_value(home_station_url):
         volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(4)]
         volt=sum(volt)/len(volt)
         logging.getLogger('monitor_logger').info(" polled "+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(volt)+" "+str(i)+"tries")
-        mail_config=read_mail_config()
-
+        try:
+                mail_config=read_mail_config()
+        except:
+                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+                
         try:
                 if (temp1>int(mail_config["temp1"]["max"]) or temp1<int(mail_config["temp1"]["min"])) and not notified_temp[0]:
                         send_mail("Temperatura atinsa : "+str(temp1)+"C")
@@ -130,7 +133,7 @@ def poll_value(home_station_url):
                 elif temp1>int(mail_config["temp1"]["min"]) and temp1<int(mail_config["temp1"]["max"]) and notified_temp[0]:
                         notified_temp[0]=False
         except:
-                pass
+                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
 
         try:
                 if (temp2>int(mail_config["temp2"]["max"]) or temp2<int(mail_config["temp2"]["min"])) and not notified_temp[1]:
@@ -140,7 +143,7 @@ def poll_value(home_station_url):
                 elif temp2>int(mail_config["temp2"]["min"]) and temp2<int(mail_config["temp2"]["max"]) and notified_temp[1]:
                         notified_temp[1]=False
         except:
-                pass
+                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
         insert(temp1,temp2,float(volt))
 
 class Monitor():
