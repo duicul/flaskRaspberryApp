@@ -125,6 +125,7 @@ def poll_value(home_station_url):
         try:
                 if (temp1>int(mail_config["temp1"]["max"]) or temp1<int(mail_config["temp1"]["min"])) and not notified_temp[0]:
                         send_mail("Temperatura atinsa : "+str(temp1)+"C")
+                        logging.getLogger('monitor_logger').info("Temperatura atinsa : "+str(temp1)+"C")
                         notified_temp[0]=True
                 elif temp1>int(mail_config["temp1"]["min"]) and temp1<int(mail_config["temp1"]["max"]) and notified_temp[0]:
                         notified_temp[0]=False
@@ -134,6 +135,7 @@ def poll_value(home_station_url):
         try:
                 if (temp2>int(mail_config["temp2"]["max"]) or temp2<int(mail_config["temp2"]["min"])) and not notified_temp[1]:
                         send_mail("Temperatura atinsa : "+str(temp2)+"C")
+                        logging.getLogger('monitor_logger').info("Temperatura atinsa : "+str(temp1)+"C")
                         notified_temp[1]=True
                 elif temp2>int(mail_config["temp2"]["min"]) and temp2<int(mail_config["temp2"]["max"]) and notified_temp[1]:
                         notified_temp[1]=False
@@ -183,6 +185,10 @@ if __name__ == "__main__":
     logger = logging.getLogger('monitor_logger')
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
+    
+    mail_config=read_mail_config()
+    logging.getLogger('monitor_logger').info(str(mail_config))
+    
     try:
         logging.getLogger('monitor_logger').info("start")
         time.sleep(30)
