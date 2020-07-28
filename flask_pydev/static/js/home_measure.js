@@ -238,9 +238,9 @@ function draw_graph(){
     $.ajax({url: url_temp, success: function(result){
 	    result=JSON.parse(result)
 	    result.forEach(function(item){
-		  if(item["temp1"]!=-127)
+		  if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
 			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
-		  if(item["temp2"]!=-127)
+		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 	       })
 	    chart["data"][0]=eval(data_array)[0]
@@ -252,7 +252,8 @@ function draw_graph(){
     $.ajax({url: url_volt, success: function(result){
         result=JSON.parse(result)
         result.forEach(function(item){
-                data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
+                if(volt_opt["volt1"]["checked"])
+                    data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
         })
         chart["data"][2]=eval(data_array)[2]
         chart.render();

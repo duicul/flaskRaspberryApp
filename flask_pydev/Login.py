@@ -122,8 +122,8 @@ def home_station_voltage_data():
             t.append({"date":i[1],"volt1":i[2]})    
         return json.dumps(t)
 
-@app.route('/home_station/temperature_data')
-def home_station_temperature_data():
+@app.route('/home_station/ac_data')
+def home_station_ac_data():
         items=int(request.args["items"])
         #print(items)
         temp=[]
@@ -137,8 +137,8 @@ def home_station_temperature_data():
             t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
         return json.dumps(t)
        
-@app.route('/home_station/ac_data')
-def home_station_ac_data():
+@app.route('/home_station/temperature_data')
+def  home_station_temperature_data():
         items=int(request.args["items"])
         #print(items)
         temp=[]
