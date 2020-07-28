@@ -565,18 +565,19 @@ function draw_graph_ac(){
          if(ac_opt["energyday"]["checked"]&&daily_energy.length!=0){
             last_daily=daily_energy[daily_energy.length-1]
             daily_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-last_daily["y"])})
-            console.log("last_daily ")
-            console.log(last_daily)
+            //console.log("last_daily ")
+            //console.log(last_daily)
             }
          if(ac_opt["energyhour"]["checked"]&&hourly_energy.length!=0){
             last_hourly=hourly_energy[hourly_energy.length-1]
             hourly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-last_hourly["y"])})
-            console.log("last_hourly ")
-            console.log(last_hourly)
+            //console.log("last_hourly ")
+            //console.log(last_hourly)
             }
-        console.log(last_item)
-        console.log(daily_energy)
-        console.log(hourly_energy)
+        
+        //console.log(last_item)
+        //console.log(daily_energy)
+        //console.log(hourly_energy)
         
         data_array[4]["dataPoints"]=daily_energy
         data_array[5]["dataPoints"]=hourly_energy
