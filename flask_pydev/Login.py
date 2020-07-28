@@ -95,24 +95,36 @@ def voltage():
                 return {}
         #print(data)
         #r = requests.get(home_station_url+"/voltage")
-        return {"date":data[1],"volt1":data[4]}
+        return {"date":data[1],"volt1":data[2]}
 
 
-@app.route('/home_station/data')
-def home_station_data():
+@app.route('/home_station/voltage_data')
+def home_station_voltage_data():
+        items=int(request.args["items"])
+        volt=[]
+        try:
+                volt = vd.extract_all_interval(items)
+        except:
+                logging.error(str(traceback.format_exc()))
+        #print(data)
+        t=[]
+        for i in volt:
+            t.append({"date":i[1],"volt1":i[2]})    
+        return json.dumps(t)
+
+@app.route('/home_station/temperature_data')
+def home_station_temperature_data():
         items=int(request.args["items"])
         #print(items)
         temp=[]
         try:
                 temp = td.extract_all_interval(items)
-                volt = vd.extract_all_interval(items)
         except:
                 logging.error(str(traceback.format_exc()))
-                data=[]
         #print(data)
         t=[]
-        for i in data:
-            t.append({"date":i[1],"temp1":i[2],"temp2":i[3],"volt1":i[4]})    
+        for i in temp:
+            t.append({"date":i[1],"temp1":i[2],"temp2":i[3]})    
         return json.dumps(t)
 
 @app.route('/home_station/remove_wrong_value')

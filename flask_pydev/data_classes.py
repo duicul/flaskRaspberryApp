@@ -211,8 +211,10 @@ class Voltage_Data(Table_Data):
         self.insert(float(volt))
     
 if __name__ == '__main__':
-    td=Voltage_Data("measure.db","random","random")
-    td.insert(12.6)
+    vd=Voltage_Data("measure.db","random","random")
+    vd.insert(12.6)
+    td=Temperature_Data("measure.db","random","random")
+    td.insert(20,30)
     print(td.extract_last())
     print(td.extract_all_interval(2))
     pass

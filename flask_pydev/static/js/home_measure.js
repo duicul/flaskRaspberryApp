@@ -147,67 +147,92 @@ items=$("#items_interval").val()
 //if(!Number.isInteger(items))
 //	return;
 //console.log(items)
-url="/home_station/data?items="+items
-$.ajax({url: url, success: function(result){
+url_temp="/home_station/temperature_data?items="+items
+url_volt="/home_station/voltage_data?items="+items
+
+data_array=[]
+
+data_array[0]={type:"line",
+            axisYType: "secondary",
+            name: "Temperature1",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+data_array[1]={type:"line",
+            axisYType: "secondary",
+            name: "Temperature2",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+data_array[2]={type:"line",
+            axisYType: "secondary",
+            name: "Voltage1",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+
+var chart = new CanvasJS.Chart("graph", {
+                    animationEnabled: true,
+                    title:{ text: "Measurements"},
+                    toolTip: {
+                        shared: true,
+                        contentFormatter: function(e){
+                            //console.log(e.entries)
+                            var str = "";
+                            str = str.concat(e.entries[0].dataPoint.x);
+                            str = str.concat("</br>");
+                            for (var i = 0; i < e.entries.length; i++){
+                                var  temp = "<div style=\"color: "+e.entries[i].dataSeries.color+";\">"+e.entries[i].dataSeries.name + " <strong>"+  e.entries[i].dataPoint.y + "</strong></div>" ; 
+                                str = str.concat(temp);
+                            }
+                        return (str);
+                        }
+                    },
+                    legend: {
+                        horizontalAlign: "left", // "center" , "right"
+                        verticalAlign: "top", //"center", "bottom"
+                        fontSize: 15
+                        },
+                    axisX:{  
+                        valueFormatString: "DD MMM HH:mm"
+                    },
+                    axisY:{includeZero: true},
+                    data:eval(data_array)
+                });
+chart["data"]=eval(data_array)
+//console.log(chart["data"])
+            
+$.ajax({url: url_temp, success: function(result){
 	//console.log(result)
     result=JSON.parse(result)
-	data=[]
-	data.push({type:"line",
-			axisYType: "secondary",
-			name: "Temperature1",
-			showInLegend: true,
-			markerSize: 0,
-			dataPoints: []})
-	data.push({type:"line",
-			axisYType: "secondary",
-			name: "Temperature2",
-			showInLegend: true,
-			markerSize: 0,
-			dataPoints: []})
-	data.push({type:"line",
-			axisYType: "secondary",
-			name: "Voltage1",
-			showInLegend: true,
-			markerSize: 0,
-			dataPoints: []})
 	result.forEach(function(item){
 		//console.log(item["date"])
 		if(item["temp1"]!=-127)
-			data[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
+			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
 		if(item["temp2"]!=-127)
-			data[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
-		data[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
-		
+			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 	})
-    var chart = new CanvasJS.Chart("graph", {
-					animationEnabled: true,
-					title:{	text: "Measurements"},
-					toolTip: {
-						shared: true,
-						contentFormatter: function(e){
-							//console.log(e.entries)
-							var str = "";
-							str = str.concat(e.entries[0].dataPoint.x);
-							str = str.concat("</br>");
-							for (var i = 0; i < e.entries.length; i++){
-								var  temp = "<div style=\"color: "+e.entries[i].dataSeries.color+";\">"+e.entries[i].dataSeries.name + " <strong>"+  e.entries[i].dataPoint.y + "</strong></div>" ; 
-								str = str.concat(temp);
-							}
-						return (str);
-						}
-					},
-					legend: {
-						horizontalAlign: "left", // "center" , "right"
-						verticalAlign: "top", //"center", "bottom"
-						fontSize: 15
-						},
-					axisX:{  
-						valueFormatString: "DD MMM HH:mm"
-					},
-					axisY:{includeZero: true},
-					data:eval(data)
-				});
-				chart.render();
+	chart["data"][0]=eval(data_array)[0]
+	chart["data"][1]=eval(data_array)[1]
+	//console.log(data_array)
+    chart.render();
+	}});
+	
+$.ajax({url: url_volt, success: function(result){
+    //console.log(result)
+    result=JSON.parse(result)
+    result.forEach(function(item){
+        //console.log(item["date"])
+        data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
+    })
+    chart["data"][2]=eval(data_array)[2]
+    //console.log(data_array)
+    chart.render();
     }});
+	
+	
+    
+				
+    
 }
 	
