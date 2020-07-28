@@ -5,7 +5,7 @@ import json
 from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
-from data_classes import Temperature_Data,Voltage_Data
+from data_classes import Temperature_Data,Voltage_Data,AC_Data
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -28,6 +28,7 @@ except:
 
 td=Temperature_Data("measure.db",home_station_url,'werkzeug')
 vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
+acd=AC_Data("measure.db",home_station_url,'werkzeug')
 
 @app.route('/data_retr')
 def data_status():
@@ -98,6 +99,15 @@ def voltage():
         return {"date":data[1],"volt1":data[2]}
 
 
+@app.route('/ac')
+def ac():
+        data=vd.extract_last()
+        if data==None:
+                return {}
+        #print(data)
+        #r = requests.get(home_station_url+"/voltage")
+        return {"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]}
+
 @app.route('/home_station/voltage_data')
 def home_station_voltage_data():
         items=int(request.args["items"])
@@ -114,6 +124,21 @@ def home_station_voltage_data():
 
 @app.route('/home_station/temperature_data')
 def home_station_temperature_data():
+        items=int(request.args["items"])
+        #print(items)
+        temp=[]
+        try:
+                data = acd.extract_all_interval(items)
+        except:
+                logging.error(str(traceback.format_exc()))
+        #print(data)
+        t=[]
+        for i in data:
+            t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
+        return json.dumps(t)
+       
+@app.route('/home_station/ac_data')
+def home_station_ac_data():
         items=int(request.args["items"])
         #print(items)
         temp=[]
