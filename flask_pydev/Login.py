@@ -106,7 +106,7 @@ def ac():
                 return {}
         #print(data)
         #r = requests.get(home_station_url+"/ac")
-        print("data "+str(data))
+        #print("data "+str(data))
         return {"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]}
 
 @app.route('/home_station/voltage_data')
