@@ -135,9 +135,7 @@ $.ajax({url: "/temperature", success: function(result){
 }
 
 function draw_gauge_voltage(){
-$.ajax({url: "/voltage", success: function(result){
-	//console.log(result)
-    //result=JSON.parse(result)
+    $.ajax({url: "/voltage", success: function(result){
 	div_html=""
 	div_html+=new Date(result["date"]).toString()+"</br>"
 	div_html+="<canvas id=\"gauge_voltage\"></canvas>";
@@ -177,35 +175,35 @@ $.ajax({url: "/voltage", success: function(result){
 }
 
 function draw_graph(){
-items=$("#items_interval").val()
-//if(!Number.isInteger(items))
-//	return;
-//console.log(items)
-url_temp="/home_station/temperature_data?items="+items
-url_volt="/home_station/voltage_data?items="+items
+    items=$("#items_interval").val()
+    
+    url_temp="/home_station/temperature_data?items="+items
+    url_volt="/home_station/voltage_data?items="+items
 
-data_array=[]
+    data_array=[]
 
-data_array[0]={type:"line",
+    data_array[0]={type:"line",
             axisYType: "secondary",
             name: "Temperature1",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
-data_array[1]={type:"line",
+
+    data_array[1]={type:"line",
             axisYType: "secondary",
             name: "Temperature2",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
-data_array[2]={type:"line",
+
+    data_array[2]={type:"line",
             axisYType: "secondary",
             name: "Voltage1",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
 
-var chart = new CanvasJS.Chart("graph", {
+    var chart = new CanvasJS.Chart("graph", {
                     animationEnabled: true,
                     title:{ text: "Measurements"},
                     toolTip: {
@@ -233,41 +231,31 @@ var chart = new CanvasJS.Chart("graph", {
                     axisY:{includeZero: true},
                     data:eval(data_array)
                 });
-chart["data"]=eval(data_array)
-//console.log(chart["data"])
-            
-$.ajax({url: url_temp, success: function(result){
-	//console.log(result)
-    result=JSON.parse(result)
-	result.forEach(function(item){
-		//console.log(item["date"])
-		if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
+
+    chart["data"]=eval(data_array)
+    
+    if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"])        
+    $.ajax({url: url_temp, success: function(result){
+	    result=JSON.parse(result)
+	    result.forEach(function(item){
+		  if(item["temp1"]!=-127)
 			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
-		if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
+		  if(item["temp2"]!=-127)
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
-	})
-	chart["data"][0]=eval(data_array)[0]
-	chart["data"][1]=eval(data_array)[1]
-	//console.log(data_array)
-    chart.render();
+	       })
+	    chart["data"][0]=eval(data_array)[0]
+	    chart["data"][1]=eval(data_array)[1]
+	    chart.render();
 	}});
 	
-$.ajax({url: url_volt, success: function(result){
-    //console.log(result)
-    result=JSON.parse(result)
-    result.forEach(function(item){
-        //console.log(item["date"])
-        if(volt_opt["volt1"]["checked"])
-        data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
-    })
-    chart["data"][2]=eval(data_array)[2]
-    //console.log(data_array)
-    chart.render();
-    }});
-	
-	
-    
-				
-    
-}
+	if(volt_opt["volt1"]["checked"])
+    $.ajax({url: url_volt, success: function(result){
+        result=JSON.parse(result)
+        result.forEach(function(item){
+                data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
+        })
+        chart["data"][2]=eval(data_array)[2]
+        chart.render();
+        }});    
+    }
 	
