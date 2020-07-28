@@ -4,13 +4,30 @@ from flask import Flask,session,request,render_template
 import json
 from regressionaprox import aggregate_data,display_regions
 import requests
-from monitor import extract_all_interval,extract_last,poll_value,remove_wrong_value
 import traceback
+from data_classes import Temperature_Data,Voltage_Data
+
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
+
+try:
+	file=open("data.json","r")
+	file_json=json.load(file)
+	home_station_url=file_json["url"]
+	polling_period=file_json["period"]
+	file.close()
+except:
+	file_json={"url":home_station_url,"period":polling_period}
+	file=open("data.json","w")
+	json.dump(file_json,file)
+	file.close()
+
+
+td=Temperature_Data("measure.db",home_station_url,'monitor_logger')
+vd=Voltage_Data("measure.db",home_station_url,'monitor_logger')
 
 @app.route('/data_retr')
 def data_status():
@@ -57,12 +74,13 @@ def extract_regions(api,case_type,data_type):
 
 @app.route('/force_poll')
 def force_poll():
-        poll_value(home_station_url)
-        return ""
+	td.poll_value()
+	vd.poll_value()
+	return ""
 
 @app.route('/temperature')
 def temperature():
-        data=extract_last()
+        data=td.extract_last()
         if data==None:
                 return {}
         #print(data)
@@ -72,7 +90,7 @@ def temperature():
 
 @app.route('/voltage')
 def voltage():
-        data=extract_last()
+        data=vd.extract_last()
         if data==None:
                 return {}
         #print(data)
@@ -84,8 +102,10 @@ def voltage():
 def home_station_data():
         items=int(request.args["items"])
         #print(items)
+        temp=[]
         try:
-                data = extract_all_interval(items)
+                temp = td.extract_all_interval(items)
+                volt = vd.extract_all_interval(items)
         except:
                 logging.error(str(traceback.format_exc()))
                 data=[]
@@ -97,7 +117,8 @@ def home_station_data():
 
 @app.route('/home_station/remove_wrong_value')
 def remove_wrong():
-        remove_wrong_value();
+        td.remove_wrong_value();
+        vd.remove_wrong_value()
         return ""
 
 #@app.route('/home_station/clean')
