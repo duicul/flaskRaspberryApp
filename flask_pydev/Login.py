@@ -126,7 +126,7 @@ def home_station_voltage_data():
 def home_station_ac_data():
         items=int(request.args["items"])
         #print(items)
-        temp=[]
+        data=[]
         try:
                 data = acd.extract_all_interval(items)
         except:
