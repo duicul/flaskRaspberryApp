@@ -26,8 +26,8 @@ except:
 	file.close()
 
 
-td=Temperature_Data("measure.db",home_station_url,'monitor_logger')
-vd=Voltage_Data("measure.db",home_station_url,'monitor_logger')
+td=Temperature_Data("measure.db",home_station_url,'werkzeug')
+vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
 
 @app.route('/data_retr')
 def data_status():

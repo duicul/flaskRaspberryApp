@@ -1,8 +1,42 @@
+var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp2":{"name":"Temperature2","checked":true}};
+var volt_opt={"volt1":{"name":"Voltage","checked":true}};
 
+function show_opt(){
+    data="";
+    checked=temp_opt["temp1"]["checked"]==true? "checked=\"checked\"" : "";
+    data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('temp',1,this)\">";
+    data+="<label>"+temp_opt["temp1"]["name"]+"</label></br>";
+    
+    checked=temp_opt["temp2"]["checked"]==true? "checked=\"checked\"" : "";
+    data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('temp',2,this)\">";
+    data+="<label>"+temp_opt["temp2"]["name"]+"</label></br>";
+    
+    checked=volt_opt["volt1"]["checked"]==true? "checked=\"checked\"" : "";
+    data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('volt',1,this)\">";
+    data+="<label>"+volt_opt["volt1"]["name"]+"</label></br>";
+    
+    $("#temp_volt_opt").html(data);
+}
+
+function check_state(type,index,elem){
+    if(type=="temp"){
+        if(index==1)
+            temp_opt["temp1"]["checked"]=elem.checked
+        else if(index==2)
+            temp_opt["temp2"]["checked"]=elem.checked
+        }
+    else if(type=="volt"){
+            if(index==1)
+                volt_opt["volt1"]["checked"]=elem.checked
+            }
+    console.log(temp_opt)
+    console.log(volt_opt)
+}   
 function init(){
 	draw_gauge_temperature();
 	draw_gauge_voltage();
 	draw_graph();
+	show_opt();
 	setInterval(function(){ draw_gauge_temperature();
 							draw_gauge_voltage();
 							//draw_graph();
@@ -207,9 +241,9 @@ $.ajax({url: url_temp, success: function(result){
     result=JSON.parse(result)
 	result.forEach(function(item){
 		//console.log(item["date"])
-		if(item["temp1"]!=-127)
+		if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
 			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
-		if(item["temp2"]!=-127)
+		if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 	})
 	chart["data"][0]=eval(data_array)[0]
@@ -223,6 +257,7 @@ $.ajax({url: url_volt, success: function(result){
     result=JSON.parse(result)
     result.forEach(function(item){
         //console.log(item["date"])
+        if(volt_opt["volt1"]["checked"])
         data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
     })
     chart["data"][2]=eval(data_array)[2]

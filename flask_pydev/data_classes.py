@@ -154,7 +154,7 @@ class Temperature_Data(Table_Data):
                 elif temp2>int(mail_config["temp2"]["min"]) and temp2<int(mail_config["temp2"]["max"]) and self.notified_temp[1]:
                         self.notified_temp[1]=False
         except:
-                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         
         if temp1 != -127 and temp2 != -127:
             self.insert(temp1,temp2)
