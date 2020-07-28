@@ -78,7 +78,7 @@ class Temperature_Data(Table_Data):
     def create_table(self):
         conn = sqlite3.connect(self.database)
         cursor=conn.cursor()
-        sql="CREATE TABLE "+self.table_name+" ("
+        sql="CREATE TABLE IF NOT EXISTS "+self.table_name+" ("
         sql+="ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
         sql+="TIMESTAMP TEXT NOT NULL DEFAULT (datetime('now','localtime')),"
         sql+="TEMP1 REAL NOT NULL,"
@@ -171,7 +171,7 @@ class Voltage_Data(Table_Data):
     def create_table(self):
         conn = sqlite3.connect(self.database)
         cursor=conn.cursor()
-        sql="CREATE TABLE "+self.table_name+" ("
+        sql="CREATE TABLE IF NOT EXISTS "+self.table_name+" ("
         sql+="ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
         sql+="TIMESTAMP TEXT NOT NULL DEFAULT (datetime('now','localtime')),"
         sql+="VOLT REAL NOT NULL);"
@@ -222,7 +222,7 @@ class AC_Data(Table_Data):
     def create_table(self):
         conn = sqlite3.connect(self.database)
         cursor=conn.cursor()
-        sql="CREATE TABLE "+self.table_name+" ("
+        sql="CREATE TABLE IF NOT EXISTS "+self.table_name+" ("
         sql+="ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
         sql+="TIMESTAMP TEXT NOT NULL DEFAULT (datetime('now','localtime')),"
         sql+="VOLT REAL NOT NULL,"
@@ -270,7 +270,7 @@ class AC_Data(Table_Data):
     
 if __name__ == '__main__':
     ac=AC_Data("measure.db","random","random")
-    ac.insert(24.3,7.8,210,54)
+    ac.insert(221,6.3,170,5478)
     #td=Temperature_Data("measure.db","random","random")
     #td.insert(20,30)
     print(ac.extract_last())
