@@ -207,7 +207,7 @@ class Voltage_Data(Table_Data):
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
         volt = sum(volt)/len(volt)
-        logging.getLogger('monitor_logger').info(" polled "+str(self.home_station_url)+" result: "+str(volt)+" "+str(i)+"tries")
+        logging.getLogger('monitor_logger').info(" polled "+str(self.home_station_url)+" result: "+str(volt))
         self.insert(float(volt))
     
 if __name__ == '__main__':
