@@ -207,14 +207,72 @@ class Voltage_Data(Table_Data):
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
         volt = sum(volt)/len(volt)
-        logging.getLogger('monitor_logger').info(" polled "+str(self.home_station_url)+" result: "+str(volt))
+        logging.getLogger(self.logger_name).info(" polled "+str(self.home_station_url)+" result: "+str(volt))
         self.insert(float(volt))
+
+class AC_Data(Table_Data):
+    
+    def __init__(self,database,home_station_url,logger_name):
+        self.database=database
+        self.home_station_url=home_station_url
+        self.logger_name=logger_name
+        self.table_name="AC_Data"
+        self.create_table()
+       
+    def create_table(self):
+        conn = sqlite3.connect(self.database)
+        cursor=conn.cursor()
+        sql="CREATE TABLE "+self.table_name+" ("
+        sql+="ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
+        sql+="TIMESTAMP TEXT NOT NULL DEFAULT (datetime('now','localtime')),"
+        sql+="VOLT REAL NOT NULL,"
+        sql+="CURRENT REAL NOT NULL,"
+        sql+="POWER REAL NOT NULL,"
+        sql+="ENERGY REAL NOT NULL);"
+        try:
+            cursor.execute(sql)
+            logging.getLogger(self.logger_name).debug(self.table_name+" created ")
+            cursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
+    
+    def remove_wrong_value(self):
+        """"  Not implemented """
+        pass
+    
+    def insert(self,volt,current,power,energy):
+        conn = sqlite3.connect(self.database)
+        vals=[(volt,current,power,energy)]
+        mycursor=conn.cursor()
+        sql = """INSERT INTO """+self.table_name+""" (VOLT,CURRENT,POWER,ENERGY) VALUES (?,?,?,?)"""
+        mycursor.executemany(sql,vals)
+        try:
+            conn.commit()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+    
+    def poll_value(self):
+        try:
+            ac = requests.get(self.home_station_url+"/ac").json()
+        except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+                return
+        volt = ac["voltage"]
+        current = ac["current"]
+        power = ac["power"]
+        energy = ac["energy"]
+        logging.getLogger(self.logger_name).info(" polled "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
+        self.insert(float(volt),float(current),float(power),float(energy))
+
     
 if __name__ == '__main__':
-    vd=Voltage_Data("measure.db","random","random")
-    vd.insert(12.6)
-    td=Temperature_Data("measure.db","random","random")
-    td.insert(20,30)
-    print(td.extract_last())
-    print(td.extract_all_interval(2))
+    ac=AC_Data("measure.db","random","random")
+    ac.insert(24.3,7.8,210,54)
+    #td=Temperature_Data("measure.db","random","random")
+    #td.insert(20,30)
+    print(ac.extract_last())
+    print(ac.extract_all_interval(2))
     pass
