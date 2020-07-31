@@ -155,8 +155,9 @@ def  home_station_temperature_data():
 
 @app.route('/home_station/remove_wrong_value')
 def remove_wrong():
-        td.remove_wrong_value();
+        td.remove_wrong_value()
         vd.remove_wrong_value()
+        acd.remove_wrong_value()
         return ""
 
 #@app.route('/home_station/clean')

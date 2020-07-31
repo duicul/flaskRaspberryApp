@@ -16,6 +16,9 @@ class Table_Data:
         self.home_station_url=home_station_url
         self.logger_name=logger_name
     
+    def change_url(self,new_url):
+        self.home_station_url=new_url    
+    
     def create_table(self):
         ''' Create corresponding table '''
         pass
@@ -130,34 +133,40 @@ class Temperature_Data(Table_Data):
             temp1=float(temp["temp1"]) if float(temp["temp1"])!=-127 else temp1
             temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
             
-        logging.getLogger(self.logger_name).info(" polled "+str(self.home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
+        logging.getLogger(self.logger_name).info(" polled temperature"+str(self.home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
         try:
                 mail_config=read_mail_config()
-        except:
-                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-                
-        try:
-                if (temp1>int(mail_config["temp1"]["max"]) or temp1<int(mail_config["temp1"]["min"])) and not self.notified_temp[0]:
-                        send_mail("Temperatura atinsa : "+str(temp1)+"C")
-                        logging.getLogger(self.logger_name).info("Temperatura atinsa : "+str(temp1)+"C")
-                        self.notified_temp[0]=True
-                elif temp1>int(mail_config["temp1"]["min"]) and temp1<int(mail_config["temp1"]["max"]) and self.notified_temp[0]:
-                        self.notified_temp[0]=False
-        except:
-                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-
-        try:
-                if (temp2>int(mail_config["temp2"]["max"]) or temp2<int(mail_config["temp2"]["min"])) and not self.notified_temp[1]:
-                        send_mail("Temperatura atinsa : "+str(temp2)+"C")
-                        logging.getLogger(self.logger_name).info("Temperatura atinsa : "+str(temp1)+"C")
-                        self.notified_temp[1]=True
-                elif temp2>int(mail_config["temp2"]["min"]) and temp2<int(mail_config["temp2"]["max"]) and self.notified_temp[1]:
-                        self.notified_temp[1]=False
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         
         if temp1 != -127 and temp2 != -127:
             self.insert(temp1,temp2)
+        elif temp1==-127 and temp2==-127:
+            return
+                
+        try:    
+                if(temp1!=-127):
+                    if (temp1>int(mail_config["temp1"]["max"]) or temp1<int(mail_config["temp1"]["min"])) and not self.notified_temp[0]:
+                        send_mail("Temperatura atinsa : "+str(temp1)+"C")
+                        logging.getLogger(self.logger_name).info("Temperatura atinsa : "+str(temp1)+"C")
+                        self.notified_temp[0]=True
+                    elif temp1>int(mail_config["temp1"]["min"]) and temp1<int(mail_config["temp1"]["max"]) and self.notified_temp[0]:
+                        self.notified_temp[0]=False
+        except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+
+        try:
+                if(temp2!=-127):
+                    if (temp2>int(mail_config["temp2"]["max"]) or temp2<int(mail_config["temp2"]["min"])) and not self.notified_temp[1]:
+                        send_mail("Temperatura atinsa : "+str(temp2)+"C")
+                        logging.getLogger(self.logger_name).info("Temperatura atinsa : "+str(temp1)+"C")
+                        self.notified_temp[1]=True
+                    elif temp2>int(mail_config["temp2"]["min"]) and temp2<int(mail_config["temp2"]["max"]) and self.notified_temp[1]:
+                        self.notified_temp[1]=False
+        except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        
+        
 
 class Voltage_Data(Table_Data):
     
@@ -207,7 +216,7 @@ class Voltage_Data(Table_Data):
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
         volt = sum(volt)/len(volt)
-        logging.getLogger(self.logger_name).info(" polled "+str(self.home_station_url)+" result: "+str(volt))
+        logging.getLogger(self.logger_name).info(" polled voltage "+str(self.home_station_url)+" result: "+str(volt))
         self.insert(float(volt))
 
 class AC_Data(Table_Data):
@@ -264,7 +273,7 @@ class AC_Data(Table_Data):
         current = ac["current"]
         power = ac["power"]
         energy = ac["energy"]
-        logging.getLogger(self.logger_name).info(" polled "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
+        logging.getLogger(self.logger_name).info(" polled AC"+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
         self.insert(float(volt),float(current),float(power),float(energy))
 
     

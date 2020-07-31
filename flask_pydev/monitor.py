@@ -1,12 +1,8 @@
 import time
-#import datetime
-import requests
 import json
 import traceback
 from  threading import Thread
-import sqlite3
 import logging
-from mailapi import send_mail,read_mail_config
 from data_classes import Temperature_Data,Voltage_Data
 
 class Monitor():
@@ -30,12 +26,15 @@ class Monitor():
                 file=open("data.json","w")
                 json.dump(file_json,file)
                 file.close()
-
+                
             try:
+                
+                td.change_url(self.home_station_url)
+                vd.change_url(self.home_station_url)
+                
                 td.poll_value()
                 vd.poll_value()
-                #extract_all()
-                #extract_last()
+
             except:
                 logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
 
@@ -54,8 +53,8 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     
-    mail_config=read_mail_config()
-    logging.getLogger('monitor_logger').info(str(mail_config))
+    #mail_config=read_mail_config()
+    #logging.getLogger('monitor_logger').info(str(mail_config))
     
     try:
         logging.getLogger('monitor_logger').info("start")
