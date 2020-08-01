@@ -333,7 +333,7 @@ function draw_gauge_ac(){
                             height: 200,
                             units: 'KWh',
                             title: "Energy",
-                            value: result["energy"],
+                            value: result["energy"]/1000,
                             minValue: floor_energy_val,
                             maxValue: floor_energy_val+1000,
                             majorTicks: [floor_energy_val,floor_energy_val+200,floor_energy_val+400,floor_energy_val+600,floor_energy_val+800,floor_energy_val+1000],
