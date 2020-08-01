@@ -273,7 +273,7 @@ class AC_Data(Table_Data):
         current = ac["current"]
         power = ac["power"]
         energy = ac["energy"]
-        logging.getLogger(self.logger_name).info(" polled AC"+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
+        logging.getLogger(self.logger_name).info(" polled AC "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
         self.insert(float(volt),float(current),float(power),float(energy))
 
     
