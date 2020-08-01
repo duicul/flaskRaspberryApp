@@ -267,15 +267,15 @@ function draw_gauge_ac(){
                             title: "Current",
                             value: result["current"],
                             minValue: 0,
-                            maxValue: 20,
-                            majorTicks: ['0','5','10','15','20'],
+                            maxValue: 4,
+                            majorTicks: ['0','1','2','3','4'],
                             minorTicks: 10,
                             strokeTicks: true,
                             highlights: [
-                                { from: 0, to: 5, color: 'rgba(0,0,155,.15)' },
-                                { from: 5, to: 10, color: 'rgba(0,255,255,.15)' },
-                                { from: 10, to: 15, color: 'rgba(0,155,0,.15)' },
-                                { from: 15, to: 20, color: 'rgba(255,30,0,.25)' }
+                                { from: 0, to: 1, color: 'rgba(0,0,155,.15)' },
+                                { from: 1, to: 2, color: 'rgba(0,255,255,.15)' },
+                                { from: 2, to: 3, color: 'rgba(0,155,0,.15)' },
+                                { from: 3, to: 4, color: 'rgba(255,30,0,.25)' }
                             ],
                             colorPlate: '#222',
                             colorMajorTicks: '#f5f5f5',
