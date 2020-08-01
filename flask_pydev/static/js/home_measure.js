@@ -324,7 +324,7 @@ function draw_gauge_ac(){
                     });
     radial3.draw();    
     
-    energy_val=result["energy"]
+    energy_val=result["energy"]/1000
     floor_energy_val=Math.floor(energy_val/1000)*1000
     var radial4 = new RadialGauge({
                             renderTo: 'gauge_ac_energy',
@@ -555,28 +555,28 @@ function draw_graph_ac(){
             if(ac_opt["power"]["checked"])
                 data_array[2]["dataPoints"].push({x:d,y:item["power"]})
             if(ac_opt["energy"]["checked"])
-                data_array[3]["dataPoints"].push({x:d,y:item["energy"]})
+                data_array[3]["dataPoints"].push({x:d,y:item["energy"]/1000})
             
             if(ac_opt["energysample"]["checked"])
             if(sample_energy.length==0)
-                sample_energy.push({x:new Date(item["date"]),y:item["energy"]})
+                sample_energy.push({x:new Date(item["date"]),y:item["energy"]/1000})
             else{
-                sample_energy[sample_energy.length-1].y=item["energy"]-sample_energy[sample_energy.length-1].y
-                sample_energy.push({x:new Date(item["date"]),y:item["energy"]})}
+                sample_energy[sample_energy.length-1].y=item["energy"]/1000-sample_energy[sample_energy.length-1].y
+                sample_energy.push({x:new Date(item["date"]),y:item["energy"]/1000})}
                 
             if(ac_opt["energyday"]["checked"])
             if(daily_energy.length==0)
-                daily_energy.push({x:new Date(item["date"]),y:item["energy"]})
+                daily_energy.push({x:new Date(item["date"]),y:item["energy"]/1000})
             else if(daily_energy[daily_energy.length-1].x.getDate()!=d.getDate()){
-                daily_energy[daily_energy.length-1].y=item["energy"]-daily_energy[daily_energy.length-1].y
-                daily_energy.push({x:new Date(item["date"]),y:item["energy"]})}
+                daily_energy[daily_energy.length-1].y=item["energy"]/1000-daily_energy[daily_energy.length-1].y
+                daily_energy.push({x:new Date(item["date"]),y:item["energy"]/1000})}
             
             if(ac_opt["energyhour"]["checked"])    
             if(hourly_energy.length==0)
-                hourly_energy.push({x:new Date(item["date"]),y:item["energy"]})
+                hourly_energy.push({x:new Date(item["date"]),y:item["energy"]/1000})
             else if(hourly_energy[hourly_energy.length-1].x.getDate()!=d.getDate()||hourly_energy[hourly_energy.length-1].x.getHours()!=d.getHours()){
-                hourly_energy[hourly_energy.length-1].y=item["energy"]-hourly_energy[hourly_energy.length-1].y
-                hourly_energy.push({x:new Date(item["date"]),y:item["energy"]})}            
+                hourly_energy[hourly_energy.length-1].y=item["energy"]/1000-hourly_energy[hourly_energy.length-1].y
+                hourly_energy.push({x:new Date(item["date"]),y:item["energy"]/1000})}            
             
            });
         
@@ -594,7 +594,7 @@ function draw_graph_ac(){
             lt=daily_energy.pop()
             last_daily=daily_energy[daily_energy.length-1]
             daily_energy.push({x:new Date(lt["x"]),y:(last_daily["y"])})
-            daily_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-last_daily["y"])})
+            daily_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]/1000-last_daily["y"])})
             console.log("last_daily ")
             console.log(daily_energy)
             }
