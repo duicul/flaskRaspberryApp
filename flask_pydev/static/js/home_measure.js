@@ -90,6 +90,7 @@ function force_refresh(){
 $.ajax({url: "/force_poll", success: function(result){
 	draw_gauge_temperature();
 	draw_gauge_voltage();
+	draw_gauge_ac();
 	draw_graph();
 	}});
 }
