@@ -571,7 +571,7 @@ function draw_graph_ac(){
                 daily_energy.push({x:new Date(item["date"]),y:item["energy"]})
             else if(daily_energy[daily_energy.length-1].x.getDate()!=d.getDate()){
                 daily_energy[daily_energy.length-1].y=item["energy"]-daily_energy[daily_energy.length-1].y
-                sample_energy[sample_energy.length-1].x=new Date(item["date"])
+                daily_energy[sample_energy.length-1].x=new Date(item["date"])
                 daily_energy.push({x:new Date(item["date"]),y:item["energy"]})}
             
             if(ac_opt["energyhour"]["checked"])    
@@ -579,7 +579,7 @@ function draw_graph_ac(){
                 hourly_energy.push({x:new Date(item["date"]),y:item["energy"]})
             else if(hourly_energy[hourly_energy.length-1].x.getDate()!=d.getDate()||hourly_energy[hourly_energy.length-1].x.getHours()!=d.getHours()){
                 hourly_energy[hourly_energy.length-1].y=item["energy"]-hourly_energy[hourly_energy.length-1].y
-                sample_energy[sample_energy.length-1].x=new Date(item["date"])
+                hourly_energy[sample_energy.length-1].x=new Date(item["date"])
                 hourly_energy.push({x:new Date(item["date"]),y:item["energy"]})}            
             
            });
