@@ -486,21 +486,21 @@ function draw_graph_ac(){
             markerSize: 0,
             dataPoints: []}
     
-    data_array[4]={type:"stepLine",
+    data_array[4]={type:"column",
             axisYType: "secondary",
             name: "Energy Daily",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-    data_array[5]={type:"stepLine",
+    data_array[5]={type:"column",
             axisYType: "secondary",
             name: "Energy Hourly",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
             
-    data_array[6]={type:"stepLine",
+    data_array[6]={type:"column",
             axisYType: "secondary",
             name: "Energy between Samples",
             showInLegend: true,
