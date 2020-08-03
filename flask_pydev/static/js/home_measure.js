@@ -598,9 +598,9 @@ function draw_graph_ac(){
             lt=daily_energy.pop()
             last_daily=daily_energy[daily_energy.length-1]
             daily_energy.push({x:new Date(lt["x"]),y:(last_daily["y"])})
-            daily_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-last_daily["y"])})
-            console.log("last_daily ")
-            console.log(daily_energy)
+            daily_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-lt["y"])})
+            //console.log("last_daily ")
+            //console.log(daily_energy)
             }
          if(ac_opt["energyhour"]["checked"]&&hourly_energy.length!=0){
             lt=hourly_energy.pop()
