@@ -500,7 +500,7 @@ function draw_graph_ac(){
             markerSize: 0,
             dataPoints: []}
             
-    data_array[6]={type:"column",
+    data_array[6]={type:"line",
             axisYType: "secondary",
             name: "Energy between Samples",
             showInLegend: true,
