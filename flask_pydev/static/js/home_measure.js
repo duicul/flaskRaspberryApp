@@ -606,7 +606,7 @@ function draw_graph_ac(){
             lt=hourly_energy.pop()
             last_hourly=hourly_energy[hourly_energy.length-1]
             hourly_energy.push({x:new Date(lt["x"]),y:(last_hourly["y"])})
-            //hourly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-last_hourly["y"])})
+            hourly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-lt["y"])})
             //console.log("last_hourly ")
             //console.log(hourly_energy)
             }
