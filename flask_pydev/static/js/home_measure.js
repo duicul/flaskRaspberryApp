@@ -453,7 +453,7 @@ function draw_graph(){
     
 function draw_graph_ac(){
     items=$("#items_interval_ac").val()
-    
+    //console.log(items)
     url_ac="/home_station/ac_data?items="+items
     
     data_array=[]

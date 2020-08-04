@@ -29,15 +29,45 @@ class Table_Data:
     
     def extract_all_interval(self,items):
         ''' Returns last items rows from the table '''
-        try:
-            items=int(items)
-        except:
-            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-            return []
-        if(items!=-1):
-            condition=" WHERE ID >= ((SELECT MAX(ID)  FROM "+self.table_name+") - "+str(items)+")"
-        else:
-            condition=""
+        condition=""
+        #print(items)
+        if items=="1":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-1 days' ) AND  date('now') "
+        elif items=="2":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 days' ) AND  date('now') "
+        elif items=="3":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-3 days' ) AND  date('now') "
+        elif items=="4":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-4 days' ) AND  date('now') "
+        elif items=="5":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-5 days' ) AND  date('now') "
+        elif items=="6":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-6 days' ) AND  date('now') "  
+        elif items=="7":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-7 days' ) AND  date('now') "
+        elif items=="8":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-8 days' ) AND  date('now') "
+        elif items=="9":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-9 days' ) AND  date('now') "
+        elif items=="10":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-10 days' ) AND  date('now') "
+        elif items=="1m":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-1 months' ) AND  date('now') "    
+        elif items=="2m":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 months' ) AND  date('now') "
+        elif items=="3m":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-3 months' ) AND  date('now') "                
+        #try:
+        #    items=int(items)
+        #except:
+        #    logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        #    return []
+        logging.getLogger(self.logger_name).info(condition)
+        #print(condition)
+        #if(items!=-1):
+        #    condition=querry #" WHERE ID >= ((SELECT MAX(ID)  FROM "+self.table_name+") - "+str(items)+")"
+        #else:
+        #    condition=""
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
         querry="SELECT * FROM "+self.table_name+" "+condition

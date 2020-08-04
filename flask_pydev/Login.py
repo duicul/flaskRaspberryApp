@@ -112,10 +112,10 @@ def ac():
 
 @app.route('/home_station/voltage_data')
 def home_station_voltage_data():
-        items=int(request.args["items"])
+        #items=int()
         volt=[]
         try:
-                volt = vd.extract_all_interval(items)
+                volt = vd.extract_all_interval(request.args["items"])
         except:
                 logging.error(str(traceback.format_exc()))
         #print(data)
@@ -126,11 +126,11 @@ def home_station_voltage_data():
 
 @app.route('/home_station/ac_data')
 def home_station_ac_data():
-        items=int(request.args["items"])
+        #items=int(request.args["items"])
         #print(items)
         data=[]
         try:
-                data = acd.extract_all_interval(items)
+                data = acd.extract_all_interval(request.args["items"])
         except:
                 logging.error(str(traceback.format_exc()))
         #print(data)
@@ -141,11 +141,11 @@ def home_station_ac_data():
        
 @app.route('/home_station/temperature_data')
 def  home_station_temperature_data():
-        items=int(request.args["items"])
+        #items=int(request.args["items"])
         #print(items)
         temp=[]
         try:
-                temp = td.extract_all_interval(items)
+                temp = td.extract_all_interval(request.args["items"])
         except:
                 logging.error(str(traceback.format_exc()))
         #print(data)
