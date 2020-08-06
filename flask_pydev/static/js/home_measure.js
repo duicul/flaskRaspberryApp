@@ -589,7 +589,8 @@ function draw_graph_ac(){
             if(ac_opt["energymonth"]["checked"]){    
                 if(monthly_energy.length==0){
                     monthly_energy.push({x:new Date(item["date"]),y:item["energy"]});
-                    console.log(monthly_energy);}
+                    //console.log(monthly_energy);
+                    }
                 else if(monthly_energy[monthly_energy.length-1].x.getMonth()!=d.getMonth()){
                     monthly_energy[monthly_energy.length-1].y=item["energy"]-monthly_energy[monthly_energy.length-1].y
                     monthly_energy[monthly_energy.length-1].x=new Date(item["date"])
@@ -626,10 +627,10 @@ function draw_graph_ac(){
             //console.log(daily_energy)
             }
         if(ac_opt["energymonth"]["checked"]&&monthly_energy.length!=0){
-            lt=monthly_energy.pop()
-            last_monthly=monthly_energy[monthly_energy.length-1]
+            lt=monthly_energy[monthly_energy.length-1]//monthly_energy.pop()
+            //last_monthly=monthly_energy[monthly_energy.length-1]
             //console.log(last_monthly)
-            monthly_energy.push({x:new Date(lt["x"]),y:(last_monthly["y"])})
+            monthly_energy.push({x:new Date(lt["x"]),y:(lt["y"])})
             monthly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-lt["y"])})
             //console.log("last_monthly ")
             //console.log(monthly_energy)
@@ -651,6 +652,7 @@ function draw_graph_ac(){
         data_array[4]["dataPoints"]=daily_energy
         data_array[5]["dataPoints"]=hourly_energy
         data_array[6]["dataPoints"]=sample_energy
+        data_array[7]["dataPoints"]=monthly_energy
         
         chart["data"][0]=eval(data_array)[0]
         chart["data"][1]=eval(data_array)[1]
@@ -658,6 +660,8 @@ function draw_graph_ac(){
         chart["data"][3]=eval(data_array)[3]
         chart["data"][4]=eval(data_array)[4]
         chart["data"][5]=eval(data_array)[5]
+        chart["data"][6]=eval(data_array)[6]
+        chart["data"][7]=eval(data_array)[7]
         
         chart.render();
     }});  
