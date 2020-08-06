@@ -627,13 +627,19 @@ function draw_graph_ac(){
             //console.log(daily_energy)
             }
         if(ac_opt["energymonth"]["checked"]&&monthly_energy.length!=0){
-            lt=monthly_energy[monthly_energy.length-1]//monthly_energy.pop()
+            if(monthly_energy.length==1){
+                lt=monthly_energy.pop()
+                monthly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-lt["y"])})}
+            else {
+                lt=monthly_energy.pop()
+                //monthly_energy.push({x:new Date(lt["x"]),y:(lt["y"])})
+                monthly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-lt["y"])})
+                }
             //last_monthly=monthly_energy[monthly_energy.length-1]
             //console.log(last_monthly)
-            monthly_energy.push({x:new Date(lt["x"]),y:(lt["y"])})
-            monthly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-lt["y"])})
-            //console.log("last_monthly ")
-            //console.log(monthly_energy)
+            
+            console.log("last_monthly ")
+            console.log(monthly_energy)
             }    
         
          if(ac_opt["energyhour"]["checked"]&&hourly_energy.length!=0){
