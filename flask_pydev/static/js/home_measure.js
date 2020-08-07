@@ -193,9 +193,9 @@ function draw_weather(power,date){
         html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud.svg\" />"
     }
     else if(power>0)
-        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud.svg\" />"
-    else{
         html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud-sun.svg\" />"
+    else{
+        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/moon.svg\" />"
     }
     $("#weather_status").html(html_val);
     
