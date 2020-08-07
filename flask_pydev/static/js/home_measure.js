@@ -182,6 +182,25 @@ $.ajax({url: "/temperature", success: function(result){
     }});
 }
 
+function draw_weather(power,date){
+    html_val="not found";
+    date_weather=new Date(date);
+    console.log(date);
+    if(power>100){
+        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/sun.svg\" />"  
+    }
+    else if(power>0 && date_weather.getHours()>10 && date_weather.getHours()<18){
+        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud.svg\" />"
+    }
+    else if(power>0)
+        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud.svg\" />"
+    else{
+        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud-sun.svg\" />"
+    }
+    $("#weather_status").html(html_val);
+    
+}
+
 function draw_gauge_voltage(){
     $.ajax({url: "/voltage", success: function(result){
 	div_html=""
@@ -224,6 +243,7 @@ function draw_gauge_voltage(){
 
 function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
+    draw_weather(result['power'],result['date'])
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
     div_html+="<canvas id=\"gauge_ac_voltage\"></canvas>";
