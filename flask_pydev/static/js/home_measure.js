@@ -189,10 +189,10 @@ function draw_weather(power,date){
     if(power>100){
         html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/sun.svg\" />"  
     }
-    else if(power>0 && date_weather.getHours()>10 && date_weather.getHours()<18){
+    else if(power>1 && date_weather.getHours()>10 && date_weather.getHours()<18){
         html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud.svg\" />"
     }
-    else if(power>0)
+    else if(power>1)
         html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud-sun.svg\" />"
     else{
         html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/moon.svg\" />"
