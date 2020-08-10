@@ -5,6 +5,7 @@ from  threading import Thread
 import logging
 from data_classes import Temperature_Data,Voltage_Data,AC_Data
 
+
 class Monitor():
     def __init__(self,home_station_url,period):
         self.home_station_url=home_station_url
@@ -12,21 +13,24 @@ class Monitor():
         # Call the Thread class's init function
         Thread.__init__(self)
        
+    def reset_config(self):
+        file_json={"url":self.home_station_url,"period":self.period}
+        file=open("data.json","w")
+        json.dump(file_json,file)
+        file.close()
   
     def run(self):
         td=Temperature_Data("measure.db",self.home_station_url,'monitor_logger')
         vd=Voltage_Data("measure.db",self.home_station_url,'monitor_logger')
         acd=AC_Data("measure.db",self.home_station_url,'monitor_logger')
+
         while True:
             try:
                 file=open("data.json","r")
                 file_json=json.load(file)
                 file.close()
             except:
-                file_json={"url":self.home_station_url,"period":self.period}
-                file=open("data.json","w")
-                json.dump(file_json,file)
-                file.close()
+                self.reset_config()
                 
             try:
                 
@@ -34,15 +38,18 @@ class Monitor():
                 vd.change_url(self.home_station_url)
                 acd.change_url(self.home_station_url)
                 
+                
                 td.poll_value()
                 vd.poll_value()
                 acd.poll_value()
-
             except:
                 logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
-
-            self.period=file_json["period"]
-            self.home_station_url=file_json["url"]
+            
+            try:
+                self.period=file_json["period"]
+                self.home_station_url=file_json["url"]
+            except:
+                self.reset_config()
             time.sleep(int(self.period))
         
 if __name__ == "__main__":

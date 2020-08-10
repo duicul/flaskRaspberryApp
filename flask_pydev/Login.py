@@ -6,6 +6,7 @@ from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
 from data_classes import Temperature_Data,Voltage_Data,AC_Data
+from weather import Weather
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -99,6 +100,27 @@ def voltage():
         #r = requests.get(home_station_url+"/voltage")
         return {"date":data[1],"volt1":data[2]}
 
+def reset_config_weather():
+	file_json={"api_key":"random","city":"random"}
+	file=open("config_weather.json","w")
+	json.dump(file_json,file)
+	file.close()
+
+@app.route('/weather')
+def weather():
+	city=""
+	api_key=""
+	try:
+		file=open("config_weather.json","r")
+		file_json=json.load(file)
+		file.close()
+		city=file_json["city"]
+		api_key=file_json["api_key"]
+	except:
+		reset_config_weather()
+	weat=Weather(api_key,city,'werkzeug')
+	weat.request_data()
+	return ""
 
 @app.route('/ac')
 def ac():
