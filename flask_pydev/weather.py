@@ -22,7 +22,7 @@ class Weather:
             logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
             return
         json_data=r.json()
-        print(json_data)
+        #print(json_data)
         logging.getLogger(self.logger_name).info(str(json_data))
         
 if __name__ == '__main__':
