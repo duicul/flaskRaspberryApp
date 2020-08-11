@@ -22,11 +22,13 @@ background-color:rgb(100,120,180);
 </head>
 <body onload="init();">
 <div>
-<div class="row">
-<div class="col-md-10">
-<button type="button" class="btn btn-primary" onclick="force_refresh();">Force refresh</button>
 
-</div>
+<div class="row">
+    <div class="col-md-1">
+        <button type="button" class="btn btn-primary" onclick="force_refresh();">Force refresh</button>
+    </div>
+    <div class="col-md-11" id="weather_status">
+    </div>
 </div>
 
 <div class="row">
@@ -86,8 +88,6 @@ background-color:rgb(100,120,180);
 </select>
 <button type="button" class="btn btn-primary" onclick="draw_graph_ac();">Display Graph AC</button>
 <div id="ac_opt"></div>
-<div id="weather_status">
-</div>
 </div>
 </div>
 

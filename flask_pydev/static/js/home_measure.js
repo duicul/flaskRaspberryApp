@@ -83,9 +83,11 @@ function init(){
 	draw_graph();
 	show_opt();
 	show_opt_ac();
+	draw_weather();
 	setInterval(function(){ draw_gauge_temperature();
 							draw_gauge_voltage();
 							draw_gauge_ac()
+							draw_weather();
 							//draw_graph();
 							}, 300000);
 }
@@ -182,23 +184,34 @@ $.ajax({url: "/temperature", success: function(result){
     }});
 }
 
-function draw_weather(power,date){
-    html_val="not found";
-    date_weather=new Date(date);
-    console.log(date);
-    if(power>100){
-        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/sun.svg\" />"  
-    }
-    else if(power>1 && date_weather.getHours()>10 && date_weather.getHours()<18){
-        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud.svg\" />"
-    }
-    else if(power>1)
-        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/cloud-sun.svg\" />"
-    else{
-        html_val="<img style=\"width:40px;height:40px;\" src=\"/static/svg/moon.svg\" />"
-    }
-    $("#weather_status").html(html_val);
-    
+function draw_weather(){
+    $.ajax({url: "/weather", success: function(result){
+        //console.log(result)
+        const weather_data = JSON.parse(result);
+        //console.log(weather_data)
+        html_val="<div class=\"row\">"
+        html_val+="<div class=\"col-md-2\">"
+        html_val+="<img src=\"https://openweathermap.org/img/wn/"+weather_data["weather"][0]["icon"]+"@2x.png\" /><br/>"
+        html_val+="</div>"
+        html_val+="<div class=\"col-md-3\">"
+        html_val+="Temp : "+weather_data["main"]["temp"]+" &#8451; <br/>"
+        html_val+="Feels like : "+weather_data["main"]["feels_like"]+" &#8451; <br/>"
+        html_val+="Humidity : "+weather_data["main"]["humidity"]+" % <br/>"
+        html_val+="Wind : "+(weather_data["wind"]["speed"]*3.6).toFixed(2)+" km/h "+weather_data["wind"]["deg"]+"&#176; <br/>"
+        html_val+="Clouds : "+weather_data["clouds"]["all"]+" % <br/>";
+        html_val+="</div>"
+        html_val+="<div class=\"col-md-7\">"
+        html_val+="City : "+weather_data["name"]+"<br/>" 
+        let sr=new Date(0);
+        sr.setUTCSeconds(weather_data["sys"]["sunrise"])
+        html_val+="Sunrise : "+sr+"<br/>"
+        let ss=new Date(0);
+        ss.setUTCSeconds(weather_data["sys"]["sunset"])
+        html_val+="Sunset : "+ss+"<br/>"
+        html_val+="</div></div>"
+        $("#weather_status").html(html_val);
+        }    
+    });
 }
 
 function draw_gauge_voltage(){
@@ -243,7 +256,6 @@ function draw_gauge_voltage(){
 
 function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
-    draw_weather(result['power'],result['date'])
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
     div_html+="<canvas id=\"gauge_ac_voltage\"></canvas>";

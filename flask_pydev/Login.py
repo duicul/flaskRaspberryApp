@@ -119,8 +119,7 @@ def weather():
 	except:
 		reset_config_weather()
 	weat=Weather(api_key,city,'werkzeug')
-	weat.request_data()
-	return ""
+	return json.dumps(weat.request_data())
 
 @app.route('/ac')
 def ac():
