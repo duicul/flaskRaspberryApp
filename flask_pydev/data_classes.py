@@ -52,11 +52,12 @@ class Table_Data:
         elif items=="10":
             condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-10 days' ) AND  date('now') "
         elif items=="1m":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-1 months' ) AND  date('now') "    
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month') AND  date('now') "    
         elif items=="2m":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 months' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-1 month') AND  date('now') "
+            #condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 months' ) AND  date('now') "
         elif items=="3m":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-3 months' ) AND  date('now') "                
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-2 month') AND  date('now') "                
         #try:
         #    items=int(items)
         #except:
