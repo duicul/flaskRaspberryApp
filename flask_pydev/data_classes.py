@@ -31,7 +31,9 @@ class Table_Data:
         ''' Returns last items rows from the table '''
         condition=""
         #print(items)
-        if items=="1":
+        if items=="0":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','0 days' ) AND  date('now') "
+        elif items=="1":
             condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-1 days' ) AND  date('now') "
         elif items=="2":
             condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 days' ) AND  date('now') "
