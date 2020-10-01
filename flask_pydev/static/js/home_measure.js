@@ -642,7 +642,7 @@ function draw_graph_ac(){
         
         last_item=result[result.length-1]
         
-         if(ac_opt["energysample"]["checked"]&&sample_energy.length!=0){
+         if(ac_opt["energysample"]["checked"]&&sample_energy.length>1){
             lt=sample_energy.pop()
             last_sample=sample_energy[sample_energy.length-1]
             sample_energy.push({x:new Date(lt["x"]),y:(last_sample["y"])})
@@ -650,7 +650,7 @@ function draw_graph_ac(){
             //console.log(sample_energy)
             }
         
-         if(ac_opt["energyday"]["checked"]&&daily_energy.length!=0){
+         if(ac_opt["energyday"]["checked"]&&daily_energy.length>1){
             lt=daily_energy.pop()
             last_daily=daily_energy[daily_energy.length-1]
             daily_energy.push({x:new Date(lt["x"]),y:(last_daily["y"])})
@@ -658,7 +658,7 @@ function draw_graph_ac(){
             //console.log("last_daily ")
             //console.log(daily_energy)
             }
-        if(ac_opt["energymonth"]["checked"]&&monthly_energy.length!=0){
+        if(ac_opt["energymonth"]["checked"]&&monthly_energy.length>1){
             if(monthly_energy.length==1){
                 lt=monthly_energy.pop()
                 monthly_energy.push({x:new Date(last_item["date"]),y:(last_item["energy"]-lt["y"])})}
@@ -674,7 +674,7 @@ function draw_graph_ac(){
             console.log(monthly_energy)
             }    
         
-         if(ac_opt["energyhour"]["checked"]&&hourly_energy.length!=0){
+         if(ac_opt["energyhour"]["checked"]&&hourly_energy.length>1){
             lt=hourly_energy.pop()
             last_hourly=hourly_energy[hourly_energy.length-1]
             hourly_energy.push({x:new Date(lt["x"]),y:(last_hourly["y"])})
