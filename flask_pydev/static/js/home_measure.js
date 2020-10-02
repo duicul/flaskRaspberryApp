@@ -1,6 +1,6 @@
 var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp2":{"name":"Temperature2","checked":true}};
 var volt_opt={"volt1":{"name":"Voltage","checked":false}};
-var ac_opt={"voltage":{"name":"Voltage","checked":false},"current":{"name":"Current","checked":false},"power":{"name":"Power","checked":true},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
+var ac_opt={"voltage":{"name":"Voltage","checked":false},"current":{"name":"Current","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
 
 function show_opt(){
     data="";
@@ -80,7 +80,7 @@ function init(){
 	draw_gauge_temperature();
 	draw_gauge_voltage();
 	draw_gauge_ac();
-	draw_graph();
+	draw_graph_all();
 	show_opt();
 	show_opt_ac();
 	draw_weather();
@@ -400,12 +400,9 @@ function draw_gauge_ac(){
 }
 
 
-function draw_graph(){
-    items=$("#items_interval").val()
-    
-    url_temp="/home_station/temperature_data?items="+items
-    url_volt="/home_station/voltage_data?items="+items
 
+function draw_graph_all(){
+    
     data_array=[]
 
     data_array[0]={type:"line",
@@ -428,8 +425,64 @@ function draw_graph(){
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
+    
+    data_array[3]={type:"line",
+            axisYType: "secondary",
+            name: "Voltage",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
 
-    var chart = new CanvasJS.Chart("graph", {
+    data_array[4]={type:"line",
+            axisYType: "secondary",
+            name: "Current",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+
+    data_array[5]={type:"line",
+            axisYType: "secondary",
+            name: "Power",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+            
+    data_array[6]={type:"line",
+            axisYType: "secondary",
+            name: "Energy",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+    
+    data_array[7]={type:"column",
+            axisYType: "secondary",
+            name: "Energy Daily",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+    
+    data_array[8]={type:"column",
+            axisYType: "secondary",
+            name: "Energy Hourly",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+            
+    data_array[9]={type:"line",
+            axisYType: "secondary",
+            name: "Energy between Samples",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+    
+    data_array[10]={type:"column",
+            axisYType: "secondary",
+            name: "Energy Monthly",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+            
+    chart = new CanvasJS.Chart("graph", {
                     animationEnabled: true,
                     title:{ text: "Measurements"},
                     toolTip: {
@@ -457,8 +510,16 @@ function draw_graph(){
                     axisY:{includeZero: true},
                     data:eval(data_array)
                 });
-
-    chart["data"]=eval(data_array)
+    draw_graph(chart,data_array);
+    draw_graph_ac(chart,data_array);
+}
+function draw_graph(chart,data_array){
+    items=$("#items_interval").val()
+    
+    url_temp="/home_station/temperature_data?items="+items
+    url_volt="/home_station/voltage_data?items="+items
+    
+    //chart["data"]=eval(data_array)
     
     if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"])        
     $.ajax({url: url_temp, success: function(result){
@@ -469,9 +530,10 @@ function draw_graph(){
 		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 	       })
-	    chart["data"][0]=eval(data_array)[0]
-	    chart["data"][1]=eval(data_array)[1]
+	    console.log(data_array)
+	    chart["data"]=eval(data_array)
 	    chart.render();
+	    
 	}});
 	
 	if(volt_opt["volt1"]["checked"])
@@ -481,105 +543,18 @@ function draw_graph(){
                 if(volt_opt["volt1"]["checked"])
                     data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
         })
-        chart["data"][2]=eval(data_array)[2]
+        console.log(data_array)
+        chart["data"]=eval(data_array)
         chart.render();
         }});    
     }
     
     
-function draw_graph_ac(){
+function draw_graph_ac(chart,data_array){
     items=$("#items_interval_ac").val()
     //console.log(items)
     url_ac="/home_station/ac_data?items="+items
     
-    data_array=[]
-
-    data_array[0]={type:"line",
-            axisYType: "secondary",
-            name: "Voltage",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-
-    data_array[1]={type:"line",
-            axisYType: "secondary",
-            name: "Current",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-
-    data_array[2]={type:"line",
-            axisYType: "secondary",
-            name: "Power",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-            
-    data_array[3]={type:"line",
-            axisYType: "secondary",
-            name: "Energy",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-    
-    data_array[4]={type:"column",
-            axisYType: "secondary",
-            name: "Energy Daily",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-    
-    data_array[5]={type:"column",
-            axisYType: "secondary",
-            name: "Energy Hourly",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-            
-    data_array[6]={type:"line",
-            axisYType: "secondary",
-            name: "Energy between Samples",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-    
-    data_array[7]={type:"column",
-            axisYType: "secondary",
-            name: "Energy Monthly",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-
-    var chart = new CanvasJS.Chart("graph", {
-                    animationEnabled: true,
-                    title:{ text: "Measurements"},
-                    toolTip: {
-                        shared: true,
-                        contentFormatter: function(e){
-                            //console.log(e.entries)
-                            var str = "";
-                            str = str.concat(e.entries[0].dataPoint.x);
-                            str = str.concat("</br>");
-                            for (var i = 0; i < e.entries.length; i++){
-                                var  temp = "<div style=\"color: "+e.entries[i].dataSeries.color+";\">"+e.entries[i].dataSeries.name + " <strong>"+  e.entries[i].dataPoint.y + "</strong></div>" ; 
-                                str = str.concat(temp);
-                            }
-                        return (str);
-                        }
-                    },
-                    legend: {
-                        horizontalAlign: "left", // "center" , "right"
-                        verticalAlign: "top", //"center", "bottom"
-                        fontSize: 15
-                        },
-                    axisX:{  
-                        valueFormatString: "DD MMM HH:mm"
-                    },
-                    axisY:{includeZero: true},
-                    data:eval(data_array)
-                });
-
-    chart["data"]=eval(data_array)
     //console.log(chart["data"])
     //console.log(ac_opt)
     if(ac_opt["voltage"]["checked"] || ac_opt["current"]["checked"]||ac_opt["power"]["checked"] || ac_opt["energy"]["checked"] || ac_opt["energyday"]["checked"] || ac_opt["energyhour"]["checked"] || ac_opt["energysample"]["checked"] || ac_opt["energymonth"]["checked"])        
@@ -594,13 +569,13 @@ function draw_graph_ac(){
         result.forEach(function(item){
             d=new Date(item["date"])
             if(ac_opt["voltage"]["checked"])
-                data_array[0]["dataPoints"].push({x:d,y:item["voltage"]})
+                data_array[3]["dataPoints"].push({x:d,y:item["voltage"]})
             if(ac_opt["current"]["checked"])
-                data_array[1]["dataPoints"].push({x:d,y:item["current"]})
+                data_array[4]["dataPoints"].push({x:d,y:item["current"]})
             if(ac_opt["power"]["checked"])
-                data_array[2]["dataPoints"].push({x:d,y:item["power"]})
+                data_array[5]["dataPoints"].push({x:d,y:item["power"]})
             if(ac_opt["energy"]["checked"])
-                data_array[3]["dataPoints"].push({x:d,y:item["energy"]/1000})
+                data_array[6]["dataPoints"].push({x:d,y:item["energy"]/1000})
             
             if(ac_opt["energysample"]["checked"])
                 if(sample_energy.length==0)
@@ -687,20 +662,20 @@ function draw_graph_ac(){
         //console.log(daily_energy)
         //console.log(hourly_energy)
         
-        data_array[4]["dataPoints"]=daily_energy
-        data_array[5]["dataPoints"]=hourly_energy
-        data_array[6]["dataPoints"]=sample_energy
-        data_array[7]["dataPoints"]=monthly_energy
+        data_array[7]["dataPoints"]=daily_energy
+        data_array[8]["dataPoints"]=hourly_energy
+        data_array[9]["dataPoints"]=sample_energy
+        data_array[10]["dataPoints"]=monthly_energy
         
-        chart["data"][0]=eval(data_array)[0]
-        chart["data"][1]=eval(data_array)[1]
-        chart["data"][2]=eval(data_array)[2]
         chart["data"][3]=eval(data_array)[3]
         chart["data"][4]=eval(data_array)[4]
         chart["data"][5]=eval(data_array)[5]
         chart["data"][6]=eval(data_array)[6]
         chart["data"][7]=eval(data_array)[7]
-        
+        chart["data"][8]=eval(data_array)[8]
+        chart["data"][9]=eval(data_array)[9]
+        chart["data"][10]=eval(data_array)[10]
+        console.log(data_array)
         chart.render();
     }});  
     

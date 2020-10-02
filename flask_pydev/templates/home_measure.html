@@ -21,7 +21,6 @@ background-color:rgb(100,120,180);
 <title>Home Station</title>
 </head>
 <body onload="init();">
-<div>
 
 <div class="row">
     <div class="col-md-1">
@@ -32,75 +31,62 @@ background-color:rgb(100,120,180);
 </div>
 
 <div class="row">
-<!--<div class="col-2"></div>-->
-<div class="col-md-4" >
-<h3>Temperatures: </h3>
-<div id="draw_gauge_temperature"></div>
-</div>
-<div class="col-md-4" >
-<h3>Voltages: </h3>
-<div id="draw_gauge_voltage"></div>
-</div>
-<div class="col-md-4" >
-<select id="items_interval">
-<option value="0">Current Day</option>
-<option value="1">1 Day</option>
-<option value="2">2 Days</option>
-<option value="3">3 Days</option>
-<option value="4">4 Days</option>
-<option value="5">5 Days</option>
-<option value="6">6 Days</option>
-<option value="7">7 Days</option>
-<option value="8">8 Days</option>
-<option value="9">9 Days</option>
-<option value="10">10 Days</option>
-<option value="1m">Last Month</option>
-<option value="2m">Last 2 Months</option>
-<option value="3m">Last 3 Months</option>
-<option value="-1">All</option>
-</select>
-<button type="button" class="btn btn-primary" onclick="draw_graph();">Display Graph</button>
-<div id="temp_volt_opt"></div>
-</div>
-</div>
+    <div class="col-md-8">
+        <div class="row">
+            <!--<div class="col-2"></div>-->
+            <div class="col" >
+                <h3>Temperatures: </h3>
+                <div id="draw_gauge_temperature"></div>
+            </div>
+            <div class="col" >
+                <h3>Voltages: </h3>
+                <div id="draw_gauge_voltage"></div>
+            </div>
+        </div>
+        <div class="row">
+            <!--<div class="col-2"></div>-->
+            <div class="col" >
+                <h3>AC: </h3>
+                <div id="draw_gauge_ac"></div>
+            </div>
+        </div>
+    </div>
 
-<div class="row">
-<!--<div class="col-2"></div>-->
-<div class="col-md-8" >
-<h3>AC: </h3>
-<div id="draw_gauge_ac"></div>
-</div>
-<div class="col-md-4" >
-<select id="items_interval_ac">
-<option value="0">Current Day</option>
-<option value="1">1 Day</option>
-<option value="2">2 Days</option>
-<option value="3">3 Days</option>
-<option value="4">4 Days</option>
-<option value="5">5 Days</option>
-<option value="6">6 Days</option>
-<option value="7">7 Days</option>
-<option value="8">8 Days</option>
-<option value="9">9 Days</option>
-<option value="10">10 Days</option>
-<option value="1m">Last Month</option>
-<option value="2m">Last 2 Months</option>
-<option value="3m">Last 3 Months</option>
-<option value="-1">All</option>
-</select>
-<button type="button" class="btn btn-primary" onclick="draw_graph_ac();">Display Graph AC</button>
-<div id="ac_opt"></div>
-</div>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col" >
+                <select id="items_interval">
+                    <option value="0">Current Day</option>
+                    <option value="1">1 Day</option>
+                    <option value="2">2 Days</option>
+                    <option value="3">3 Days</option>
+                    <option value="4">4 Days</option>
+                    <option value="5">5 Days</option>
+                    <option value="6">6 Days</option>
+                    <option value="7">7 Days</option>
+                    <option value="8">8 Days</option>
+                    <option value="9">9 Days</option>
+                    <option value="10">10 Days</option>
+                    <option value="1m">Last Month</option>
+                    <option value="2m">Last 2 Months</option>
+                    <option value="3m">Last 3 Months</option>
+                    <option value="-1">All</option>
+                </select>
+                <button type="button" class="btn btn-primary" onclick="draw_graph_all();">Display Graph</button>
+                <div id="temp_volt_opt"></div>
+                <div id="ac_opt"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row" >
-<div class="col-md-1" >
+    <div class="col-md-1" ></div>
+    <div class="col-md-10" >
+        <div id="graph" style="height: 500px; width: 100%;"></div>
+    </div>
 </div>
-<div class="col-md-10" >
-<div id="graph" style="height: 500px; width: 100%;"></div>
-</div></div>
 
-</div>
 <script src="/static/js/home_measure.js"></script>
 </body>
 </html>
