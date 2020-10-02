@@ -248,7 +248,7 @@ class Voltage_Data(Table_Data):
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
-        volt = sum(volt)/len(volt)
+        volt = round(sum(volt)/len(volt),2)
         logging.getLogger(self.logger_name).info(" polled voltage "+str(self.home_station_url)+" result: "+str(volt))
         self.insert(float(volt))
 
@@ -302,9 +302,9 @@ class AC_Data(Table_Data):
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
-        volt = sum([ac[i]["voltage"] for i in range(len(ac))])/len(ac)
-        current = sum([ac[i]["current"] for i in range(len(ac))])/len(ac)
-        power = sum([ac[i]["power"] for i in range(len(ac))])/len(ac)
+        volt = round(sum([ac[i]["voltage"] for i in range(len(ac))])/len(ac),2)
+        current = round(sum([ac[i]["current"] for i in range(len(ac))])/len(ac),2)
+        power = round(sum([ac[i]["power"] for i in range(len(ac))])/len(ac),2)
         energy = ac[len(ac)-1]["energy"]
         logging.getLogger(self.logger_name).info(" polled AC "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
         self.insert(float(volt),float(current),float(power),float(energy))
