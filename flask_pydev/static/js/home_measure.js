@@ -1,6 +1,6 @@
 var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp2":{"name":"Temperature2","checked":true}};
 var volt_opt={"volt1":{"name":"Voltage","checked":false}};
-var ac_opt={"voltage":{"name":"Voltage","checked":false},"current":{"name":"Current","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
+var ac_opt={"voltage":{"name":"Voltage AC","checked":false},"current":{"name":"Current AC","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
 
 function show_opt(){
     data="";
@@ -551,7 +551,7 @@ function draw_graph(chart,data_array){
     
     
 function draw_graph_ac(chart,data_array){
-    items=$("#items_interval_ac").val()
+    items=$("#items_interval").val()
     //console.log(items)
     url_ac="/home_station/ac_data?items="+items
     
