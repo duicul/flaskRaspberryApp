@@ -667,14 +667,18 @@ function draw_graph_ac(chart,data_array){
         data_array[9]["dataPoints"]=sample_energy
         data_array[10]["dataPoints"]=monthly_energy
         
-        chart["data"][3]=eval(data_array)[3]
-        chart["data"][4]=eval(data_array)[4]
-        chart["data"][5]=eval(data_array)[5]
-        chart["data"][6]=eval(data_array)[6]
-        chart["data"][7]=eval(data_array)[7]
-        chart["data"][8]=eval(data_array)[8]
-        chart["data"][9]=eval(data_array)[9]
-        chart["data"][10]=eval(data_array)[10]
+        if(chart["data"]==null)
+            chart["data"]=eval(data_array)
+        else {
+            chart["data"][3]=eval(data_array)[3]
+            chart["data"][4]=eval(data_array)[4]
+            chart["data"][5]=eval(data_array)[5]
+            chart["data"][6]=eval(data_array)[6]
+            chart["data"][7]=eval(data_array)[7]
+            chart["data"][8]=eval(data_array)[8]
+            chart["data"][9]=eval(data_array)[9]
+            chart["data"][10]=eval(data_array)[10]}
+        
         console.log(data_array)
         chart.render();
     }});  
