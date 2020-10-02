@@ -298,14 +298,14 @@ class AC_Data(Table_Data):
     
     def poll_value(self):
         try:
-            ac = requests.get(self.home_station_url+"/ac").json()
+            ac = [requests.get(self.home_station_url+"/ac").json() for i in range(4)]
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
-        volt = ac["voltage"]
-        current = ac["current"]
-        power = ac["power"]
-        energy = ac["energy"]
+        volt = sum([ac[i]["voltage"] for i in range(len(ac))])/len(ac)
+        current = sum([ac[i]["current"] for i in range(len(ac))])/len(ac)
+        power = sum([ac[i]["power"] for i in range(len(ac))])/len(ac)
+        energy = ac[len(ac)-1]["energy"]
         logging.getLogger(self.logger_name).info(" polled AC "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
         self.insert(float(volt),float(current),float(power),float(energy))
 
