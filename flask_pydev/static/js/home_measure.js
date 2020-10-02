@@ -421,21 +421,21 @@ function draw_graph_all(){
 
     data_array[2]={type:"line",
             axisYType: "secondary",
-            name: "Voltage1",
+            name: "Voltage DC",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
     data_array[3]={type:"line",
             axisYType: "secondary",
-            name: "Voltage",
+            name: "Voltage AC",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
 
     data_array[4]={type:"line",
             axisYType: "secondary",
-            name: "Current",
+            name: "Current AC",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
