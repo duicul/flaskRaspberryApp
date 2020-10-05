@@ -84,12 +84,15 @@ function init(){
 	show_opt();
 	show_opt_ac();
 	draw_weather();
+	display_rpi_data();
 	setInterval(function(){ draw_gauge_temperature();
 							draw_gauge_voltage();
 							draw_gauge_ac()
 							draw_weather();
 							//draw_graph();
 							}, 300000);
+	etInterval(function(){ display_rpi_data();
+                            }, 10000);
 }
 
 function force_refresh(){
@@ -686,3 +689,13 @@ function draw_graph_ac(chart,data_array){
     
     }
 	
+function display_rpi_data(){
+    $("#rpi_data").html("")
+    $.ajax({url: "/memory_usage", success: function(result){
+         $("#rpi_data").html($("#rpi_data").html()+"<br>"+result);
+        }
+    $.ajax({url: "/cpu_gpu_temp", success: function(result){
+        $("#rpi_data").html($("#rpi_data").html()+"<br>"+result);
+        }
+    
+}
