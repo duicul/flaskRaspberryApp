@@ -35,7 +35,7 @@ acd=AC_Data("measure.db",home_station_url,'werkzeug')
 
 @app.route('/cpu_gpu_temp')
 def cpu_gpu_temp():
-	temps = os.popen('$(/opt/vc/bin/vcgencmd measure_temp)').read().replace("\n","<br>")
+	temps = os.popen('vcgencmd measure_temp').read().replace("\n","<br>")
 	return temps
 
 @app.route('/memory_usage')
