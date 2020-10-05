@@ -91,7 +91,7 @@ function init(){
 							draw_weather();
 							//draw_graph();
 							}, 300000);
-	etInterval(function(){ display_rpi_data();
+	setInterval(function(){ display_rpi_data();
                             }, 10000);
 }
 
@@ -533,7 +533,7 @@ function draw_graph(chart,data_array){
 		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 	       })
-	    console.log(data_array)
+	    //console.log(data_array)
 	    chart["data"]=eval(data_array)
 	    chart.render();
 	    
