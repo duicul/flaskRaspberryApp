@@ -2,6 +2,7 @@ from flask import Flask,session,request,render_template
 #from inputpin import InputPin
 #from time import sleep
 import json
+import os
 from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
@@ -30,6 +31,22 @@ except:
 td=Temperature_Data("measure.db",home_station_url,'werkzeug')
 vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
 acd=AC_Data("measure.db",home_station_url,'werkzeug')
+
+
+@app.route('/cpu_gpu_temp')
+def cpu_gpu_temp():
+	cmd="cpu=$(</sys/class/thermal/thermal_zone0/temp) \n \
+		echo \"$(date) @ $(hostname)\" \n \
+		echo \"-------------------------------------------\" \n \
+		echo \"GPU => $(/opt/vc/bin/vcgencmd measure_temp)\" \n \
+		echo \"CPU => $((cpu/1000))'C\" "
+	temps = os.popen(cmd).read()
+	return temps
+
+@app.route('/memory_usage')
+def memory_usage():
+	memory = os.popen('free -ht').read()
+	return memory
 
 @app.route('/data_retr')
 def data_status():
