@@ -92,7 +92,7 @@ function init(){
 							//draw_graph();
 							}, 300000);
 	setInterval(function(){ display_rpi_data();
-                            }, 10000);
+                            }, 30000);
 }
 
 function force_refresh(){
