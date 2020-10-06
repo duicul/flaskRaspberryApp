@@ -19,7 +19,7 @@ class Table_Data:
     def current_timestamp(self):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        querry="SELECT datetime('now') "
+        querry="SELECT datetime('now','localtime') "
         mycursor.execute(querry)
         result=""
         try:
@@ -46,34 +46,34 @@ class Table_Data:
         condition=""
         #print(items)
         if items=="0":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','0 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','0 days' ,'localtime') AND  date('now','localtime') "
         elif items=="1":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-1 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-1 days' ,'localtime') AND  date('now','localtime') "
         elif items=="2":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 days' ,'localtime') AND  date('now','localtime') "
         elif items=="3":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-3 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-3 days' ,'localtime') AND  date('now','localtime') "
         elif items=="4":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-4 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-4 days' ,'localtime') AND  date('now','localtime') "
         elif items=="5":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-5 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-5 days','localtime') AND  date('now','localtime') "
         elif items=="6":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-6 days' ) AND  date('now') "  
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-6 days' ,'localtime') AND  date('now','localtime') "  
         elif items=="7":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-7 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-7 days' ,'localtime') AND  date('now','localtime') "
         elif items=="8":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-8 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-8 days' ,'localtime') AND  date('now','localtime') "
         elif items=="9":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-9 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-9 days' ,'localtime') AND  date('now','localtime') "
         elif items=="10":
-            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-10 days' ) AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-10 days','localtime' ) AND  date('now','localtime') "
         elif items=="1m":
-            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month') AND  date('now') "    
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','localtime') AND  date('now','localtime') "    
         elif items=="2m":
-            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-1 month') AND  date('now') "
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-1 month','localtime') AND  date('now','localtime') "
             #condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 months' ) AND  date('now') "
         elif items=="3m":
-            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-2 month') AND  date('now') "                
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-2 month','localtime') AND  date('now','localtime') "                
         #try:
         #    items=int(items)
         #except:
