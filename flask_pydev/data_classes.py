@@ -16,6 +16,20 @@ class Table_Data:
         self.home_station_url=home_station_url
         self.logger_name=logger_name
     
+    def current_timestamp(self):
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        querry="SELECT date('now') "
+        mycursor.execute(querry)
+        result=""
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        return result
+       
     def change_url(self,new_url):
         self.home_station_url=new_url    
     

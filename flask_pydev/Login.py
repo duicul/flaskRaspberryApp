@@ -33,6 +33,10 @@ vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
 acd=AC_Data("measure.db",home_station_url,'werkzeug')
 
 
+@app.route('/current_timestamp')
+def current_timestamp():
+	return str(td.current_timestamp())
+	
 @app.route('/cpu_gpu_temp')
 def cpu_gpu_temp():
 	temps = os.popen('vcgencmd measure_temp').read().replace("\n","<br>")
