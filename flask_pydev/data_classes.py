@@ -19,7 +19,7 @@ class Table_Data:
     def current_timestamp(self):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        querry="SELECT date('now') "
+        querry="SELECT datetime('now') "
         mycursor.execute(querry)
         result=""
         try:
