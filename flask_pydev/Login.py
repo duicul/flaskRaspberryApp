@@ -47,6 +47,11 @@ def memory_usage():
 	memory = os.popen('free -ht').read().replace("\n","<br>").replace(" ","&nbsp;")
 	return memory
 
+@app.route('/disk_usage')
+def disk_usage():
+	memory = os.popen('df -H').read().replace("\n","<br>").replace(" ","&nbsp;")
+	return memory
+
 @app.route('/data_retr')
 def data_status():
 	return "okay stubbed" #data_retr.showdata()

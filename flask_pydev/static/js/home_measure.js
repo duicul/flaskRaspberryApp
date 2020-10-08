@@ -692,10 +692,13 @@ function draw_graph_ac(chart,data_array){
 function display_rpi_data(){
     $("#rpi_data").html("")
     $.ajax({url: "/memory_usage", success: function(result){
-         $("#rpi_data").html($("#rpi_data").html()+"<br>"+result);
+         $("#rpi_data").html($("#rpi_data").html()+"<br><hr>"+result);
         }});
     $.ajax({url: "/cpu_gpu_temp", success: function(result){
-        $("#rpi_data").html($("#rpi_data").html()+"<br>"+result);
+        $("#rpi_data").html($("#rpi_data").html()+"<br><hr>"+result);
+        }});
+     $.ajax({url: "/disk_usage", success: function(result){
+         $("#rpi_data").html($("#rpi_data").html()+"<br><hr>"+result);
         }});
     
 }
