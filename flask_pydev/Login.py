@@ -44,12 +44,12 @@ def cpu_gpu_temp():
 
 @app.route('/memory_usage')
 def memory_usage():
-	memory = os.popen('free -ht').read().replace("\n","<br>").replace(" ","&nbsp;")
+	memory = os.popen('free -ht').read().replace("\n","<br>").replace(" ","&nbsp;&nbsp;")
 	return memory
 
 @app.route('/disk_usage')
 def disk_usage():
-	memory = os.popen('df -H').read().replace("\n","<br>").replace(" ","&nbsp;")
+	memory = os.popen('df -H').read().replace("\n","<br>").replace(" ","&nbsp;&nbsp;")
 	return memory
 
 @app.route('/data_retr')
