@@ -186,7 +186,7 @@ class Temperature_Data(Table_Data):
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         
-        if temp1 != -127 and temp2 != -127:
+        if temp1 != -127 or temp2 != -127:
             self.insert(temp1,temp2)
         elif temp1==-127 and temp2==-127:
             return
