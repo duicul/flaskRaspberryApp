@@ -197,7 +197,7 @@ def  home_station_temperature_data():
         for i in temp:
             t.append({"date":i[1],"temp1":i[2],"temp2":i[3]}) 
         
-        pol_grade=1
+        pol_grade=2
         predict_len=8
         dataset_size=pol_grade if len(t)>pol_grade else len(t)
         pol_regr_y_t1=[]
@@ -212,7 +212,7 @@ def  home_station_temperature_data():
         		
         		poly_fit_t2 = np.poly1d(np.polyfit(np.array(range(dataset_size)),np.array(data_t2),pol_grade))
         		pol_regr_y_t2=[poly_fit_t2(xi) for xi in range(dataset_size,dataset_size+predict_len)]  
-        except np.linalg.LinAlgError:
+        except Exception:
         	logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         	pol_regr_y_t1=[]
         	pol_regr_y_t2=[]
