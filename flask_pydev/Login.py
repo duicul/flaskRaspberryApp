@@ -197,7 +197,7 @@ def  home_station_temperature_data():
         for i in temp:
             t.append({"date":i[1],"temp1":i[2],"temp2":i[3]}) 
         
-        pol_grade=3
+        pol_grade=1
         predict_len=8
         dataset_size=pol_grade if len(t)>pol_grade else len(t)
         pol_regr_y_t1=[]
