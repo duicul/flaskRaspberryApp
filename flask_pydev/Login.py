@@ -211,7 +211,7 @@ def  home_station_temperature_data():
         		pol_regr_y_t1=[round(poly_fit_t1(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]
         		
         		poly_fit_t2 = np.poly1d(np.polyfit(np.array(range(dataset_size)),np.array(data_t2),pol_grade))
-        		pol_regr_y_t2=[round(poly_fit_t1(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]  
+        		pol_regr_y_t2=[round(poly_fit_t2(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]  
         except Exception:
         	logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         	pol_regr_y_t1=[]
