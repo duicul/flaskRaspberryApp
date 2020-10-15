@@ -199,7 +199,7 @@ def  home_station_temperature_data():
         
         pol_grade=2
         predict_len=8
-        dataset_size=pol_grade if len(t)>pol_grade else len(t)
+        dataset_size=10 if len(t)>10 else len(t)
         pol_regr_y_t1=[]
         pol_regr_y_t2=[]
         try:
