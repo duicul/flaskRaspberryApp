@@ -421,64 +421,79 @@ function draw_graph_all(){
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
-
+    
     data_array[2]={type:"line",
+            axisYType: "secondary",
+            name: "Temperature1 predicted",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+
+    data_array[3]={type:"line",
+            axisYType: "secondary",
+            name: "Temperature2 predicted",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+    
+
+    data_array[4]={type:"line",
             axisYType: "secondary",
             name: "Voltage DC",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-    data_array[3]={type:"line",
+    data_array[5]={type:"line",
             axisYType: "secondary",
             name: "Voltage AC",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
 
-    data_array[4]={type:"line",
+    data_array[6]={type:"line",
             axisYType: "secondary",
             name: "Current AC",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
 
-    data_array[5]={type:"line",
+    data_array[7]={type:"line",
             axisYType: "secondary",
             name: "Power",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
             
-    data_array[6]={type:"line",
+    data_array[8]={type:"line",
             axisYType: "secondary",
             name: "Energy",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-    data_array[7]={type:"column",
+    data_array[9]={type:"column",
             axisYType: "secondary",
             name: "Energy Daily",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-    data_array[8]={type:"column",
+    data_array[10]={type:"column",
             axisYType: "secondary",
             name: "Energy Hourly",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
             
-    data_array[9]={type:"line",
+    data_array[11]={type:"line",
             axisYType: "secondary",
             name: "Energy between Samples",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-    data_array[10]={type:"column",
+    data_array[12]={type:"column",
             axisYType: "secondary",
             name: "Energy Monthly",
             showInLegend: true,
@@ -526,13 +541,20 @@ function draw_graph(chart,data_array){
     
     if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"])        
     $.ajax({url: url_temp, success: function(result){
-	    result=JSON.parse(result)
-	    result.forEach(function(item){
+	    result_rec=JSON.parse(result)["recorded"]
+	    result_pred=JSON.parse(result)["predict"]
+	    result_rec.forEach(function(item){
 		  if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
 			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
 		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 	       })
+	    result_pred.forEach(function(item){
+          if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
+            data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
+          if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
+            data_array[3]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
+           })
 	    //console.log(data_array)
 	    chart["data"]=eval(data_array)
 	    chart.render();
@@ -544,7 +566,7 @@ function draw_graph(chart,data_array){
         result=JSON.parse(result)
         result.forEach(function(item){
                 if(volt_opt["volt1"]["checked"])
-                    data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
+                    data_array[4]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
         })
         console.log(data_array)
         chart["data"]=eval(data_array)
@@ -572,13 +594,13 @@ function draw_graph_ac(chart,data_array){
         result.forEach(function(item){
             d=new Date(item["date"])
             if(ac_opt["voltage"]["checked"])
-                data_array[3]["dataPoints"].push({x:d,y:item["voltage"]})
+                data_array[5]["dataPoints"].push({x:d,y:item["voltage"]})
             if(ac_opt["current"]["checked"])
-                data_array[4]["dataPoints"].push({x:d,y:item["current"]})
+                data_array[6]["dataPoints"].push({x:d,y:item["current"]})
             if(ac_opt["power"]["checked"])
-                data_array[5]["dataPoints"].push({x:d,y:item["power"]})
+                data_array[7]["dataPoints"].push({x:d,y:item["power"]})
             if(ac_opt["energy"]["checked"])
-                data_array[6]["dataPoints"].push({x:d,y:item["energy"]/1000})
+                data_array[8]["dataPoints"].push({x:d,y:item["energy"]/1000})
             
             if(ac_opt["energysample"]["checked"])
                 if(sample_energy.length==0)
@@ -665,22 +687,22 @@ function draw_graph_ac(chart,data_array){
         //console.log(daily_energy)
         //console.log(hourly_energy)
         
-        data_array[7]["dataPoints"]=daily_energy
-        data_array[8]["dataPoints"]=hourly_energy
-        data_array[9]["dataPoints"]=sample_energy
-        data_array[10]["dataPoints"]=monthly_energy
+        data_array[9]["dataPoints"]=daily_energy
+        data_array[10]["dataPoints"]=hourly_energy
+        data_array[11]["dataPoints"]=sample_energy
+        data_array[12]["dataPoints"]=monthly_energy
         
         if(chart["data"]==null)
             chart["data"]=eval(data_array)
         else {
-            chart["data"][3]=eval(data_array)[3]
-            chart["data"][4]=eval(data_array)[4]
             chart["data"][5]=eval(data_array)[5]
             chart["data"][6]=eval(data_array)[6]
             chart["data"][7]=eval(data_array)[7]
             chart["data"][8]=eval(data_array)[8]
             chart["data"][9]=eval(data_array)[9]
-            chart["data"][10]=eval(data_array)[10]}
+            chart["data"][10]=eval(data_array)[10]
+            chart["data"][11]=eval(data_array)[11]
+            chart["data"][12]=eval(data_array)[12]}
         
         console.log(data_array)
         chart.render();

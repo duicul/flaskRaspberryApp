@@ -3,11 +3,14 @@ from flask import Flask,session,request,render_template
 #from time import sleep
 import json
 import os
+import numpy as np
+import time
 from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
 from data_classes import Temperature_Data,Voltage_Data,AC_Data
 from weather import Weather
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -189,12 +192,40 @@ def  home_station_temperature_data():
         try:
                 temp = td.extract_all_interval(request.args["items"])
         except:
-                logging.error(str(traceback.format_exc()))
+                logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         #print(data)
         t=[]
         for i in temp:
-            t.append({"date":i[1],"temp1":i[2],"temp2":i[3]})    
-        return json.dumps(t)
+            t.append({"date":i[1],"temp1":i[2],"temp2":i[3]}) 
+        
+        pol_grade=3
+        predict_len=12
+        dataset_size=pol_grade if len(t)>pol_grade else len(t)
+        pol_regr_y_t1=[]
+        pol_regr_y_t2=[]
+        try:
+        	if dataset_size > 0:
+        		data_t1=[t[i]["temp1"] for i in range(len(t)-dataset_size,len(t))]
+        		data_t2=[t[i]["temp2"] for i in range(len(t)-dataset_size,len(t))]
+        		
+        		poly_fit_t1 = np.poly1d(np.polyfit(np.array(range(dataset_size)),np.array(data_t1),pol_grade))
+        		pol_regr_y_t1=[poly_fit_t1(xi) for xi in range(dataset_size,dataset_size+predict_len)]
+        		
+        		poly_fit_t2 = np.poly1d(np.polyfit(np.array(range(dataset_size)),np.array(data_t2),pol_grade))
+        		pol_regr_y_t2=[poly_fit_t2(xi) for xi in range(dataset_size,dataset_size+predict_len)]  
+        except np.linalg.LinAlgError:
+        	logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        	pol_regr_y_t1=[]
+        	pol_regr_y_t2=[]
+        predictions=[]
+        if len(pol_regr_y_t1)==len(pol_regr_y_t2):
+        	for i in range(len(pol_regr_y_t1)):
+        		pred_date_time=time.strptime(t[len(t)-1]["date"],"%a %b %d %Y %H:%M:%S")+ timedelta(minutes = (i+1)*15)
+        		predictions.append({"date":pred_date_time,"temp1":pol_regr_y_t1[i],"temp2":pol_regr_y_t2[i]})
+        
+        result={"recorded":t,"predict":predictions}
+        
+        return json.dumps(result)
 
 @app.route('/home_station/remove_wrong_value')
 def remove_wrong():
