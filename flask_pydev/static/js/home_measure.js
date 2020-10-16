@@ -429,7 +429,7 @@ function draw_graph_all(){
             markerSize: 0,
             dataPoints: []}
 
-    data_array[1]={type:"stepArea",
+    data_array[1]={type:"line",
             axisYType: "secondary",
             name: "Temperature2 [C]",
             showInLegend: true,
@@ -443,7 +443,7 @@ function draw_graph_all(){
             markerSize: 0,
             dataPoints: []}
     
-    data_array[3]={type:"column",
+    data_array[3]={type:"stepArea",
             axisYType: "secondary",
             name: "Temperature2 rate [C]",
             showInLegend: true,
