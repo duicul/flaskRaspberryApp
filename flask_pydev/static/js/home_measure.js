@@ -1,4 +1,4 @@
-var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp2":{"name":"Temperature2","checked":true}};
+var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp1_grad":{"name":"Temperature1 change rate","checked":false},"temp2":{"name":"Temperature2","checked":true},"temp2_grad":{"name":"Temperature2 change rate","checked":false}};
 var volt_opt={"volt1":{"name":"Voltage","checked":false}};
 var ac_opt={"voltage":{"name":"Voltage AC","checked":false},"current":{"name":"Current AC","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
 
@@ -8,9 +8,17 @@ function show_opt(){
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('temp',1,this)\">";
     data+="<label>"+temp_opt["temp1"]["name"]+"</label></br>";
     
+    checked=temp_opt["temp1_grad"]["checked"]==true? "checked=\"checked\"" : "";
+    data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('temp_grad',1,this)\">";
+    data+="<label>"+temp_opt["temp1_grad"]["name"]+"</label></br>";
+    
     checked=temp_opt["temp2"]["checked"]==true? "checked=\"checked\"" : "";
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('temp',2,this)\">";
     data+="<label>"+temp_opt["temp2"]["name"]+"</label></br>";
+    
+    checked=temp_opt["temp2_grad"]["checked"]==true? "checked=\"checked\"" : "";
+    data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('temp_grad',2,this)\">";
+    data+="<label>"+temp_opt["temp2_grad"]["name"]+"</label></br>";
     
     checked=volt_opt["volt1"]["checked"]==true? "checked=\"checked\"" : "";
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('volt',1,this)\">";
@@ -62,7 +70,13 @@ function check_state(type,index,elem){
             temp_opt["temp1"]["checked"]=elem.checked
         else if(index==2)
             temp_opt["temp2"]["checked"]=elem.checked
-        }
+    }
+    else if(type=="temp_grad"){
+        if(index==1)
+            temp_opt["temp1_grad"]["checked"]=elem.checked
+        else if(index==2)
+            temp_opt["temp2_grad"]["checked"]=elem.checked
+    }
     else if(type=="volt"){
             if(index==1)
                 volt_opt["volt1"]["checked"]=elem.checked
@@ -410,92 +424,107 @@ function draw_graph_all(){
 
     data_array[0]={type:"line",
             axisYType: "secondary",
-            name: "Temperature1",
+            name: "Temperature1 [C]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
 
     data_array[1]={type:"line",
             axisYType: "secondary",
-            name: "Temperature2",
+            name: "Temperature2 [C]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+            
+    data_array[2]={type:"column",
+            axisYType: "secondary",
+            name: "Temperature1 rate [C/min]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-    data_array[2]={type:"line",
+    data_array[3]={type:"column",
             axisYType: "secondary",
-            name: "Temperature1 predicted",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-
-    data_array[3]={type:"line",
-            axisYType: "secondary",
-            name: "Temperature2 predicted",
+            name: "Temperature2 rate [C/min]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-
+    
     data_array[4]={type:"line",
             axisYType: "secondary",
-            name: "Voltage DC",
+            name: "Temperature1 predicted [C]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+
+    data_array[5]={type:"line",
+            axisYType: "secondary",
+            name: "Temperature2 predicted [C]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
-    data_array[5]={type:"line",
-            axisYType: "secondary",
-            name: "Voltage AC",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
 
     data_array[6]={type:"line",
             axisYType: "secondary",
-            name: "Current AC",
+            name: "Voltage DC [V]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+    
+    data_array[7]={type:"line",
+            axisYType: "secondary",
+            name: "Voltage AC [V]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
 
-    data_array[7]={type:"line",
-            axisYType: "secondary",
-            name: "Power",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-            
     data_array[8]={type:"line",
             axisYType: "secondary",
-            name: "Energy",
+            name: "Current AC [A]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
-    
-    data_array[9]={type:"column",
+
+    data_array[9]={type:"line",
             axisYType: "secondary",
-            name: "Energy Daily",
-            showInLegend: true,
-            markerSize: 0,
-            dataPoints: []}
-    
-    data_array[10]={type:"column",
-            axisYType: "secondary",
-            name: "Energy Hourly",
+            name: "Power [W]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
             
-    data_array[11]={type:"line",
+    data_array[10]={type:"line",
             axisYType: "secondary",
-            name: "Energy between Samples",
+            name: "Energy [KWh]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+    
+    data_array[11]={type:"column",
+            axisYType: "secondary",
+            name: "Energy Daily [Wh]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
     data_array[12]={type:"column",
             axisYType: "secondary",
-            name: "Energy Monthly",
+            name: "Energy Hourly [Wh]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+            
+    data_array[13]={type:"line",
+            axisYType: "secondary",
+            name: "Energy between Samples [Wh]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
+    
+    data_array[14]={type:"column",
+            axisYType: "secondary",
+            name: "Energy Monthly [KWh]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
@@ -543,11 +572,37 @@ function draw_graph(chart,data_array){
     $.ajax({url: url_temp, success: function(result){
 	    result_rec=JSON.parse(result)["recorded"]
 	    result_pred=JSON.parse(result)["predict"]
+	    temp1_init=0
+	    temp1_date=null
+	    temp2_init=0
+	    temp2_date=null
 	    result_rec.forEach(function(item){
-		  if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
+		  if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"]){
 			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
-		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
+		    if(temp1_date==null){
+		      temp1_date=new Date(item["date"])
+		      temp1_init=item["temp1"] 
+		      }
+		    else {
+		        var diffMins = Math.round((((new Date(item["date"])-temp1_init) % 86400000) % 3600000) / 60000);
+		        data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]/diffMins})
+		        temp1_date=new Date(item["date"])
+                temp1_init=item["temp1"]
+		    }
+		  }
+		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"]){
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
+			if(temp2_date==null){
+              temp2_date=new Date(item["date"])
+              temp2_init=item["temp2"]
+              }
+            else {
+                var diffMins = Math.round((((new Date(item["date"])-temp2_init) % 86400000) % 3600000) / 60000);
+                data_array[3]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]/diffMins})
+                temp2_date=new Date(item["date"])
+                temp2_init=item["temp2"]
+            }
+			}
 	       })
 	    result_pred.forEach(function(item){
           if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
@@ -566,7 +621,7 @@ function draw_graph(chart,data_array){
         result=JSON.parse(result)
         result.forEach(function(item){
                 if(volt_opt["volt1"]["checked"])
-                    data_array[4]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
+                    data_array[6]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
         })
         console.log(data_array)
         chart["data"]=eval(data_array)
@@ -594,13 +649,13 @@ function draw_graph_ac(chart,data_array){
         result.forEach(function(item){
             d=new Date(item["date"])
             if(ac_opt["voltage"]["checked"])
-                data_array[5]["dataPoints"].push({x:d,y:item["voltage"]})
+                data_array[7]["dataPoints"].push({x:d,y:item["voltage"]})
             if(ac_opt["current"]["checked"])
-                data_array[6]["dataPoints"].push({x:d,y:item["current"]})
+                data_array[8]["dataPoints"].push({x:d,y:item["current"]})
             if(ac_opt["power"]["checked"])
-                data_array[7]["dataPoints"].push({x:d,y:item["power"]})
+                data_array[9]["dataPoints"].push({x:d,y:item["power"]})
             if(ac_opt["energy"]["checked"])
-                data_array[8]["dataPoints"].push({x:d,y:item["energy"]/1000})
+                data_array[10]["dataPoints"].push({x:d,y:item["energy"]/1000})
             
             if(ac_opt["energysample"]["checked"])
                 if(sample_energy.length==0)
@@ -687,22 +742,22 @@ function draw_graph_ac(chart,data_array){
         //console.log(daily_energy)
         //console.log(hourly_energy)
         
-        data_array[9]["dataPoints"]=daily_energy
-        data_array[10]["dataPoints"]=hourly_energy
-        data_array[11]["dataPoints"]=sample_energy
-        data_array[12]["dataPoints"]=monthly_energy
+        data_array[11]["dataPoints"]=daily_energy
+        data_array[12]["dataPoints"]=hourly_energy
+        data_array[13]["dataPoints"]=sample_energy
+        data_array[14]["dataPoints"]=monthly_energy
         
         if(chart["data"]==null)
             chart["data"]=eval(data_array)
         else {
-            chart["data"][5]=eval(data_array)[5]
-            chart["data"][6]=eval(data_array)[6]
             chart["data"][7]=eval(data_array)[7]
             chart["data"][8]=eval(data_array)[8]
             chart["data"][9]=eval(data_array)[9]
             chart["data"][10]=eval(data_array)[10]
             chart["data"][11]=eval(data_array)[11]
-            chart["data"][12]=eval(data_array)[12]}
+            chart["data"][12]=eval(data_array)[12]
+            chart["data"][13]=eval(data_array)[13]
+            chart["data"][14]=eval(data_array)[14]}
         
         console.log(data_array)
         chart.render();
