@@ -577,8 +577,9 @@ function draw_graph(chart,data_array){
 	    temp2_init=0
 	    temp2_date=null
 	    result_rec.forEach(function(item){
-		  if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"]){
-			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
+		  if(item["temp1"]!=-127){
+		    if(temp_opt["temp1"]["checked"])
+			 data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
 		    if(temp_opt["temp1_grad"]["checked"]){
 		      if(temp1_date==null){
 		          temp1_date=new Date(item["date"])
@@ -592,7 +593,8 @@ function draw_graph(chart,data_array){
 		      }
 		    }
 		  }
-		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"]){
+		  if(item["temp2"]!=-127){
+		    if(temp_opt["temp2"]["checked"])
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
 			if(temp_opt["temp2_grad"]["checked"]){
 			     if(temp2_date==null){
