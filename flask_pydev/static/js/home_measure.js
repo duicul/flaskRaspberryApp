@@ -1,4 +1,4 @@
-var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp1_grad":{"name":"Temperature1 change rate","checked":false},"temp2":{"name":"Temperature2","checked":true},"temp2_grad":{"name":"Temperature2 change rate","checked":false}};
+var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp1_grad":{"name":"Temperature1 change","checked":false},"temp2":{"name":"Temperature2","checked":true},"temp2_grad":{"name":"Temperature2 change","checked":false}};
 var volt_opt={"volt1":{"name":"Voltage","checked":false}};
 var ac_opt={"voltage":{"name":"Voltage AC","checked":false},"current":{"name":"Current AC","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
 
@@ -438,14 +438,14 @@ function draw_graph_all(){
             
     data_array[2]={type:"stepArea",
             axisYType: "secondary",
-            name: "Temperature1 rate [C]",
+            name: "Temperature1 change [C]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
     
     data_array[3]={type:"stepArea",
             axisYType: "secondary",
-            name: "Temperature2 rate [C]",
+            name: "Temperature2 change [C]",
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
