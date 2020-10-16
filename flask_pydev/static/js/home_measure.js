@@ -568,7 +568,7 @@ function draw_graph(chart,data_array){
     
     //chart["data"]=eval(data_array)
     
-    if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"])        
+    if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"]||temp_opt["temp1_grad"]["checked"] || temp_opt["temp2_grad"]["checked"])        
     $.ajax({url: url_temp, success: function(result){
 	    result_rec=JSON.parse(result)["recorded"]
 	    result_pred=JSON.parse(result)["predict"]
@@ -616,7 +616,7 @@ function draw_graph(chart,data_array){
           if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
             data_array[5]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
            })
-	    console.log(data_array)
+	    //console.log(data_array)
 	    chart["data"]=eval(data_array)
 	    chart.render();
 	    
