@@ -610,9 +610,9 @@ function draw_graph(chart,data_array){
 	       })
 	    result_pred.forEach(function(item){
           if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
-            data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
+            data_array[4]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
           if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
-            data_array[3]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
+            data_array[5]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
            })
 	    //console.log(data_array)
 	    chart["data"]=eval(data_array)
