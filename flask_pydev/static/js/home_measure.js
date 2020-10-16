@@ -579,28 +579,32 @@ function draw_graph(chart,data_array){
 	    result_rec.forEach(function(item){
 		  if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"]){
 			data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
-		    if(temp1_date==null){
-		      temp1_date=new Date(item["date"])
-		      temp1_init=item["temp1"] 
-		      }
-		    else {
+		    if(temp_opt["temp1_grad"]["checked"]){
+		      if(temp1_date==null){
+		          temp1_date=new Date(item["date"])
+		          temp1_init=item["temp1"] 
+		          }
+		       else {
 		        var diffMins = Math.round((((new Date(item["date"])-temp1_init) % 86400000) % 3600000) / 60000);
 		        data_array[2]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]/diffMins})
 		        temp1_date=new Date(item["date"])
                 temp1_init=item["temp1"]
+		      }
 		    }
 		  }
 		  if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"]){
 			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
-			if(temp2_date==null){
-              temp2_date=new Date(item["date"])
-              temp2_init=item["temp2"]
-              }
-            else {
-                var diffMins = Math.round((((new Date(item["date"])-temp2_init) % 86400000) % 3600000) / 60000);
-                data_array[3]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]/diffMins})
-                temp2_date=new Date(item["date"])
-                temp2_init=item["temp2"]
+			if(temp_opt["temp2_grad"]["checked"]){
+			     if(temp2_date==null){
+                    temp2_date=new Date(item["date"])
+                    temp2_init=item["temp2"]
+                }
+                else {
+                    var diffMins = Math.round((((new Date(item["date"])-temp2_init) % 86400000) % 3600000) / 60000);
+                    data_array[3]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]/diffMins})
+                    temp2_date=new Date(item["date"])
+                    temp2_init=item["temp2"]
+                }
             }
 			}
 	       })
