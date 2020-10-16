@@ -616,7 +616,7 @@ function draw_graph(chart,data_array){
           if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
             data_array[5]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
            })
-	    //console.log(data_array)
+	    console.log(data_array)
 	    chart["data"]=eval(data_array)
 	    chart.render();
 	    
