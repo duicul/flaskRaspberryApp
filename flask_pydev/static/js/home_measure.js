@@ -122,9 +122,9 @@ function draw_gauge_temperature(){
 $.ajax({url: "/temperature", success: function(result){
     //result=JSON.parse(result)
     result=eval(result)
-    console.log(result)
-    console.log(result[0])
-    console.log(result[1])
+    //console.log(result)
+    //console.log(result[0])
+    //console.log(result[1])
 	div_html=""
 	div_html+="Temperature "+result[0]["temp_id"]+" : "+new Date(result[0]["date"]).toString()+"</br>"
 	div_html+="Temperature "+result[1]["temp_id"]+" : "+new Date(result[1]["date"]).toString()+"</br>"
@@ -620,7 +620,7 @@ function draw_graph(chart,data_array){
           if(item["temp_id"]==2&&item["temp"]!=-127 && temp_opt["temp2"]["checked"])
             data_array[5]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
            })
-	    //console.log(data_array)
+	    console.log(data_array)
 	    chart["data"]=eval(data_array)
 	    chart.render();
 	    
@@ -769,7 +769,7 @@ function draw_graph_ac(chart,data_array){
             chart["data"][13]=eval(data_array)[13]
             chart["data"][14]=eval(data_array)[14]}
         
-        console.log(data_array)
+        //console.log(data_array)
         chart.render();
     }});  
     

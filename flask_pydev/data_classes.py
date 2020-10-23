@@ -79,7 +79,7 @@ class Table_Data:
         #except:
         #    logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         #    return []
-        logging.getLogger(self.logger_name).info(condition)
+        #logging.getLogger(self.logger_name).info(condition)
         #print(condition)
         #if(items!=-1):
         #    condition=querry #" WHERE ID >= ((SELECT MAX(ID)  FROM "+self.table_name+") - "+str(items)+")"
@@ -88,6 +88,7 @@ class Table_Data:
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
         querry="SELECT * FROM "+self.table_name+" "+condition
+        logging.getLogger(self.logger_name).info(querry)
         mycursor.execute(querry)
         try:
             result=mycursor.fetchall()
