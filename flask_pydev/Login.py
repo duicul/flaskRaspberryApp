@@ -219,7 +219,7 @@ def  home_station_temperature_data():
         	pol_regr_y_t1=[]
         	pol_regr_y_t2=[]
         predictions=[]
-        if len(pol_regr_y_t1)==len(pol_regr_y_t2):
+        if len(pol_regr_y_t1)==len(pol_regr_y_t2) or ( (len(pol_regr_y_t1)==0 or len(pol_regr_y_t2)==0 ) and len(pol_regr_y_t1)!=len(pol_regr_y_t2)):
         	for i in range(len(pol_regr_y_t1)):
         		pred_date_time=datetime.strptime(t[len(t)-1]["date"],"%Y-%m-%d %H:%M:%S")+ timedelta(minutes = (i+1)*15)
         		predictions.append({"date":str(pred_date_time),"temp1":-127 if len(pol_regr_y_t1)==0 else pol_regr_y_t1[i],"temp2":-127 if len(pol_regr_y_t2)==0 else pol_regr_y_t2[i]})
