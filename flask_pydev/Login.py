@@ -261,6 +261,12 @@ def home_station_restart():
 		pass
 	return "restarted"
 
+@app.route('/remove_wrong_value')
+def remove_wrong_value():
+	tsd.remove_wrong_value()
+	acd.remove_wrong_value()
+	vd.remove_wrong_value()
+
 @app.route('/covid')
 def index():
 	if 'username' in session:
