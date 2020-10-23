@@ -323,12 +323,139 @@ class AC_Data(Table_Data):
         logging.getLogger(self.logger_name).info(" polled AC "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
         self.insert(float(volt),float(current),float(power),float(energy))
 
+class Temperature_Split_Data(Table_Data):
     
+    def __init__(self,database,home_station_url,logger_name):
+        self.database=database
+        self.home_station_url=home_station_url
+        self.logger_name=logger_name
+        self.table_name="Temperature_Split_Data"
+        self.notified_temp=[False,False]
+        self.create_table()
+       
+    def create_table(self):
+        conn = sqlite3.connect(self.database)
+        cursor=conn.cursor()
+        sql="CREATE TABLE IF NOT EXISTS "+self.table_name+" ("
+        sql+="ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
+        sql+="TIMESTAMP TEXT NOT NULL DEFAULT (datetime('now','localtime')),"
+        sql+="TEMP_ID INTEGER NOT NULL , "
+        sql+="TEMP REAL NOT NULL, "
+        sql+="UNIQUE(TIMESTAMP,TEMP_ID));"
+        try:
+            cursor.execute(sql)
+            logging.getLogger(self.logger_name).debug(self.table_name+" created ")
+            cursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
+    
+    def remove_wrong_value(self):
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        sql = "DELETE FROM "+self.table_name+" WHERE TEMP=-127"
+        mycursor.execute(sql)
+        try:
+            conn.commit()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))    
+    
+    def insert(self,temp,temp_id,timestamp=None):
+        conn = sqlite3.connect(self.database)
+        vals=[(temp,temp_id)] if timestamp==None else [(temp,temp_id,timestamp)]
+        mycursor=conn.cursor()
+        timestamp_string="" if timestamp==None else " , TIMESTAMP "
+        sql = """INSERT INTO """+self.table_name+""" (TEMP_ID,TEMP"""+timestamp_string+""") VALUES (?,?"""+("" if timestamp==None else ",?")+""")"""
+        print(sql)
+        mycursor.executemany(sql,vals)
+        try:
+            conn.commit()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+    
+    def convert_old(self):
+        td=Temperature_Data(self.database,self.home_station_url,self.logger_name)
+        for temp_rec in td.extract_all_interval(""):
+            self.insert(1,temp_rec[2], temp_rec[1])
+            self.insert(2,temp_rec[3], temp_rec[1])
+    
+    def poll_value(self):
+        i=0
+        temp1=-127
+        temp2=-127
+        while (temp1==-127 or temp2==-127) and i<30:
+            i=i+1
+            try:
+                temp = requests.get(self.home_station_url+"/temperature").json()
+            except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+                return 
+            temp1=float(temp["temp1"]) if float(temp["temp1"])!=-127 else temp1
+            temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
+            
+        logging.getLogger(self.logger_name).info(" polled temperature"+str(self.home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
+        try:
+                mail_config=read_mail_config()
+        except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        
+        if temp1 != -127:
+            self.insert(temp1, 1)
+        if temp2 != -127:
+            self.insert(temp2,2)
+                            
+        try:    
+                if(temp1!=-127):
+                    if (temp1>int(mail_config["temp1"]["max"]) or temp1<int(mail_config["temp1"]["min"])) and not self.notified_temp[0]:
+                        send_mail("Temperatura atinsa : "+str(temp1)+"C")
+                        logging.getLogger(self.logger_name).info("Temperatura atinsa : "+str(temp1)+"C")
+                        self.notified_temp[0]=True
+                    elif temp1>int(mail_config["temp1"]["min"]) and temp1<int(mail_config["temp1"]["max"]) and self.notified_temp[0]:
+                        self.notified_temp[0]=False
+        except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+
+        try:
+                if(temp2!=-127):
+                    if (temp2>int(mail_config["temp2"]["max"]) or temp2<int(mail_config["temp2"]["min"])) and not self.notified_temp[1]:
+                        send_mail("Temperatura atinsa : "+str(temp2)+"C")
+                        logging.getLogger(self.logger_name).info("Temperatura atinsa : "+str(temp1)+"C")
+                        self.notified_temp[1]=True
+                    elif temp2>int(mail_config["temp2"]["min"]) and temp2<int(mail_config["temp2"]["max"]) and self.notified_temp[1]:
+                        self.notified_temp[1]=False
+        except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+
+    def extract_last(self):
+        """Extracts the latest row from the table"""
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        querry="SELECT ID,MAX(TIMESTAMP),TEMP_ID,TEMP FROM Temperature_Split_Data  GROUP BY TEMP_ID;"
+        mycursor.execute(querry)
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        ret_val=[]
+        for rec in result:
+            ret_val.append({"date":rec[1],"temp_id":rec[2],"temp":rec[3]})
+        
+        return ret_val
 if __name__ == '__main__':
-    ac=AC_Data("measure.db","random","random")
-    ac.insert(221,6.3,170,5478)
-    #td=Temperature_Data("measure.db","random","random")
+    #ac=AC_Data("measure.db","random","random")
+    #ac.insert(221,6.3,170,5478)
+    tsd=Temperature_Split_Data("measure.db","random","random")
+    tsd.create_table()
+    #tsd.insert(1,42.3)
+    print(tsd.extract_all_interval(""))
+    #tsd.convert_old()
     #td.insert(20,30)
-    print(ac.extract_last())
-    print(ac.extract_all_interval(2))
+    #print(ac.extract_last())
+    #print(ac.extract_all_interval(2))
     pass

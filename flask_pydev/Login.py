@@ -7,7 +7,7 @@ import numpy as np
 from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
-from data_classes import Temperature_Data,Voltage_Data,AC_Data
+from data_classes import Temperature_Data,Temperature_Split_Data,Voltage_Data,AC_Data
 from weather import Weather
 from datetime import datetime, timedelta
 
@@ -31,6 +31,7 @@ except:
 
 
 td=Temperature_Data("measure.db",home_station_url,'werkzeug')
+tsd=Temperature_Split_Data("measure.db",home_station_url,'werkzeug')
 vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
 acd=AC_Data("measure.db",home_station_url,'werkzeug')
 
@@ -106,12 +107,12 @@ def force_poll():
 
 @app.route('/temperature')
 def temperature():
-        data=td.extract_last()
+        data=tsd.extract_last()
         if data==None:
                 return {}
         #print(data)
         #r = requests.get(home_station_url+"/temperature")
-        return {"date":data[1],"temp1":data[2],"temp2":data[3]}
+        return str(data)#{"date":data[1],"temp1":data[2],"temp2":data[3]}
         
 
 @app.route('/voltage')
@@ -189,13 +190,13 @@ def  home_station_temperature_data():
         #print(items)
         temp=[]
         try:
-                temp = td.extract_all_interval(request.args["items"])
+                temp = tsd.extract_all_interval(request.args["items"])
         except:
                 logging.getLogger('werkzeug').error(str(traceback.format_exc()))
-        #print(data)
+        #print(data)      
         t=[]
         for i in temp:
-            t.append({"date":i[1],"temp1":i[2],"temp2":i[3]}) 
+            t.append({"date":i[1],"temp_id":i[2],"temp":i[3]}) 
         
         pol_grade=2
         predict_len=8
@@ -204,9 +205,13 @@ def  home_station_temperature_data():
         pol_regr_y_t2=[]
         try:
         	if dataset_size > 0:
-        		data_t1=list(filter(lambda x:x[1]>-127,[(i-dataset_size,t[i]["temp1"]) for i in range(len(t)-dataset_size,len(t))]))
-        		data_t2=list(filter(lambda x:x[1]>-127,[(i-dataset_size,t[i]["temp2"]) for i in range(len(t)-dataset_size,len(t))]))
+        		temps1=list(filter(lambda x: x["temp_id"]==1,t))
+        		temps2=list(filter(lambda x: x["temp_id"]==2,t))
+        		data_t1=list(filter(lambda x:x[1]>-127,[(i-dataset_size,temps1[i]["temp"]) for i in range(len(temps1)-dataset_size,len(temps1))]))
+        		data_t2=list(filter(lambda x:x[1]>-127,[(i-dataset_size,temps2[i]["temp"]) for i in range(len(temps2)-dataset_size,len(temps2))]))
         		
+        		print(data_t1)
+        		print(data_t2)
         		if len(data_t1)>0:
         			poly_fit_t1 = np.poly1d(np.polyfit(np.array([x[0] for x in data_t1]),np.array([x[1] for x in data_t1]),pol_grade))
         			pol_regr_y_t1=[round(poly_fit_t1(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]

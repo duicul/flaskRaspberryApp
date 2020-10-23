@@ -120,10 +120,14 @@ $.ajax({url: "/force_poll", success: function(result){
 
 function draw_gauge_temperature(){
 $.ajax({url: "/temperature", success: function(result){
-	//console.log(result)
     //result=JSON.parse(result)
+    result=eval(result)
+    console.log(result)
+    console.log(result[0])
+    console.log(result[1])
 	div_html=""
-	div_html+=new Date(result["date"]).toString()+"</br>"
+	div_html+="Temperature "+result[0]["temp_id"]+" : "+new Date(result[0]["date"]).toString()+"</br>"
+	div_html+="Temperature "+result[1]["temp_id"]+" : "+new Date(result[1]["date"]).toString()+"</br>"
 	div_html+="<canvas id=\"gauge_temp_1\"></canvas>";
 	div_html+="<canvas id=\"gauge_temp_2\"></canvas>";
     $("#draw_gauge_temperature").html(div_html);
@@ -132,8 +136,8 @@ $.ajax({url: "/temperature", success: function(result){
 							width: 200,
 							height: 200,
 							units: 'C',
-							title: false,
-							value: result["temp1"],
+							title: "Temperature "+result[0]["temp_id"],
+							value: result[0]["temp"],
 							minValue: -10,
 							maxValue: 110,
 							majorTicks: ['-10','5','20','35','50','65','80','95','110'],
@@ -167,8 +171,8 @@ $.ajax({url: "/temperature", success: function(result){
 							width: 200,
 							height: 200,
 							units: 'C',
-							title: false,
-							value: result["temp2"],
+							title: "Temperature "+result[1]["temp_id"],
+							value: result[1]["temp"],
 							minValue: -10,
 							maxValue: 110,
 							majorTicks: ['-10','5','20','35','50','65','80','95','110'],
@@ -577,43 +581,43 @@ function draw_graph(chart,data_array){
 	    temp2_init=0
 	    temp2_date=null
 	    result_rec.forEach(function(item){
-		  if(item["temp1"]!=-127){
+		  if(item["temp_id"]==1&&item["temp"]!=-127){
 		    if(temp_opt["temp1"]["checked"])
-			 data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
+			 data_array[0]["dataPoints"].push({x:new Date(item["date"]),y:item["temp"]})
 		    if(temp_opt["temp1_grad"]["checked"]){
 		      if(temp1_date==null){
 		          temp1_date=new Date(item["date"])
-		          temp1_init=item["temp1"] 
+		          temp1_init=item["temp"] 
 		          }
 		       else {
 		        var diffMins = Math.round((((new Date(item["date"])-temp1_init) % 86400000) % 3600000) / 60000);
-		        data_array[2]["dataPoints"].push({x:temp1_date,y:item["temp1"]-temp1_init/*/diffMins*/})
+		        data_array[2]["dataPoints"].push({x:temp1_date,y:item["temp"]-temp1_init/*/diffMins*/})
 		        temp1_date=new Date(item["date"])
-                temp1_init=item["temp1"]
+                temp1_init=item["temp"]
 		      }
 		    }
 		  }
-		  if(item["temp2"]!=-127){
+		  if(item["temp_id"]==2&&item["temp"]!=-127){
 		    if(temp_opt["temp2"]["checked"])
-			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
+			data_array[1]["dataPoints"].push({x:new Date(item["date"]),y:item["temp"]})
 			if(temp_opt["temp2_grad"]["checked"]){
 			     if(temp2_date==null){
                     temp2_date=new Date(item["date"])
-                    temp2_init=item["temp2"]
+                    temp2_init=item["temp"]
                 }
                 else {
                     var diffMins = Math.round((((new Date(item["date"])-temp2_init) % 86400000) % 3600000) / 60000);
-                    data_array[3]["dataPoints"].push({x:temp2_date,y:item["temp2"]-temp2_init/*/diffMins*/})
+                    data_array[3]["dataPoints"].push({x:temp2_date,y:item["temp"]-temp2_init/*/diffMins*/})
                     temp2_date=new Date(item["date"])
-                    temp2_init=item["temp2"]
+                    temp2_init=item["temp"]
                 }
             }
 			}
 	       })
 	    result_pred.forEach(function(item){
-          if(item["temp1"]!=-127 && temp_opt["temp1"]["checked"])
+          if(item["temp_id"]==1&&item["temp"]!=-127 && temp_opt["temp1"]["checked"])
             data_array[4]["dataPoints"].push({x:new Date(item["date"]),y:item["temp1"]})
-          if(item["temp2"]!=-127 && temp_opt["temp2"]["checked"])
+          if(item["temp_id"]==2&&item["temp"]!=-127 && temp_opt["temp2"]["checked"])
             data_array[5]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
            })
 	    //console.log(data_array)
