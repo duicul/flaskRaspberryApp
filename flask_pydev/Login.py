@@ -207,11 +207,13 @@ def  home_station_temperature_data():
         		data_t1=list(filter(lambda x:x[1]>-127,[(i-dataset_size,t[i]["temp1"]) for i in range(len(t)-dataset_size,len(t))]))
         		data_t2=list(filter(lambda x:x[1]>-127,[(i-dataset_size,t[i]["temp2"]) for i in range(len(t)-dataset_size,len(t))]))
         		
-        		poly_fit_t1 = np.poly1d(np.polyfit(np.array([x[0] for x in data_t1]),np.array([x[1] for x in data_t1]),pol_grade))
-        		pol_regr_y_t1=[round(poly_fit_t1(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]
+        		if len(data_t1)>0:
+					poly_fit_t1 = np.poly1d(np.polyfit(np.array([x[0] for x in data_t1]),np.array([x[1] for x in data_t1]),pol_grade))
+					pol_regr_y_t1=[round(poly_fit_t1(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]
         		
-        		poly_fit_t2 = np.poly1d(np.polyfit(np.array([x[0] for x in data_t2]),np.array([x[1] for x in data_t2]),pol_grade))
-        		pol_regr_y_t2=[round(poly_fit_t2(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]  
+        		if len(data_t2)>0:
+        			poly_fit_t2 = np.poly1d(np.polyfit(np.array([x[0] for x in data_t2]),np.array([x[1] for x in data_t2]),pol_grade))
+        		 	pol_regr_y_t2=[round(poly_fit_t2(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]  
         except Exception:
         	logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         	pol_regr_y_t1=[]
