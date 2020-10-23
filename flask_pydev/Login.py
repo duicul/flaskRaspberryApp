@@ -105,6 +105,10 @@ def force_poll():
 	acd.poll_value()
 	return ""
 
+@app.route('/convert_old')
+def convert_old():
+	tsd.convert_old()
+
 @app.route('/temperature')
 def temperature():
         data=tsd.extract_last()
