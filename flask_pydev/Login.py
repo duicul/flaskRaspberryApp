@@ -100,7 +100,7 @@ def extract_regions(api,case_type,data_type):
 
 @app.route('/force_poll')
 def force_poll():
-	td.poll_value()
+	tsd.poll_value()
 	vd.poll_value()
 	acd.poll_value()
 	return ""
