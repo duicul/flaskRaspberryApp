@@ -30,7 +30,7 @@ except:
 	file.close()
 
 
-td=Temperature_Data("measure.db",home_station_url,'werkzeug')
+#td=Temperature_Data("measure.db",home_station_url,'werkzeug')
 tsd=Temperature_Split_Data("measure.db",home_station_url,'werkzeug')
 vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
 acd=AC_Data("measure.db",home_station_url,'werkzeug')
@@ -38,7 +38,7 @@ acd=AC_Data("measure.db",home_station_url,'werkzeug')
 
 @app.route('/current_timestamp')
 def current_timestamp():
-	return str(td.current_timestamp())
+	return str(tsd.current_timestamp())
 	
 @app.route('/cpu_gpu_temp')
 def cpu_gpu_temp():
@@ -239,7 +239,7 @@ def  home_station_temperature_data():
 
 @app.route('/home_station/remove_wrong_value')
 def remove_wrong():
-        td.remove_wrong_value()
+        tsd.remove_wrong_value()
         vd.remove_wrong_value()
         acd.remove_wrong_value()
         return ""
