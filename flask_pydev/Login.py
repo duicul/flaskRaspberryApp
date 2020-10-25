@@ -266,6 +266,7 @@ def remove_wrong_value():
 	tsd.remove_wrong_value()
 	acd.remove_wrong_value()
 	vd.remove_wrong_value()
+	return ""
 
 @app.route('/covid')
 def index():

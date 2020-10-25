@@ -368,7 +368,7 @@ class Temperature_Split_Data(Table_Data):
         vals=[(temp,temp_id)] if timestamp==None else [(temp,temp_id,timestamp)]
         mycursor=conn.cursor()
         timestamp_string="" if timestamp==None else " , TIMESTAMP "
-        sql = """INSERT INTO """+self.table_name+""" (TEMP_ID,TEMP"""+timestamp_string+""") VALUES (?,?"""+("" if timestamp==None else ",?")+""")"""
+        sql = """INSERT INTO """+self.table_name+""" (TEMP,TEMP_ID"""+timestamp_string+""") VALUES (?,?"""+("" if timestamp==None else ",?")+""")"""
         print(sql)
         mycursor.executemany(sql,vals)
         try:
