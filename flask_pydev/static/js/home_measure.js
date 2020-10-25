@@ -580,6 +580,7 @@ function draw_graph(chart,data_array){
 	    temp1_date=null
 	    temp2_init=0
 	    temp2_date=null
+	    console.log(result_rec)
 	    result_rec.forEach(function(item){
 		  if(item["temp_id"]==1&&item["temp"]!=-127){
 		    if(temp_opt["temp1"]["checked"])
