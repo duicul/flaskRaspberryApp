@@ -3,7 +3,8 @@ import json
 import traceback
 from  threading import Thread
 import logging
-from data_classes import Temperature_Data,Voltage_Data,AC_Data
+from data_classes import Temperature_Data,Voltage_Data,AC_Data,\
+    Temperature_Split_Data
 
 
 class Monitor():
@@ -20,7 +21,7 @@ class Monitor():
         file.close()
   
     def run(self):
-        td=Temperature_Data("measure.db",self.home_station_url,'monitor_logger')
+        td=Temperature_Split_Data("measure.db",self.home_station_url,'monitor_logger')
         vd=Voltage_Data("measure.db",self.home_station_url,'monitor_logger')
         acd=AC_Data("measure.db",self.home_station_url,'monitor_logger')
 
