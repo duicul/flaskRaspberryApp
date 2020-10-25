@@ -398,7 +398,7 @@ class Temperature_Split_Data(Table_Data):
             temp1=float(temp["temp1"]) if float(temp["temp1"])!=-127 else temp1
             temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
             
-        logging.getLogger(self.logger_name).info(" polled temperature"+str(self.home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
+        logging.getLogger(self.logger_name).info("Temperature_Split_Data polled temperature"+str(self.home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
         try:
                 mail_config=read_mail_config()
         except:
