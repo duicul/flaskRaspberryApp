@@ -354,7 +354,7 @@ class Temperature_Split_Data(Table_Data):
     def remove_wrong_value(self):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        sql = "DELETE FROM "+self.table_name+" WHERE TEMP=-127"
+        sql = "DELETE FROM "+self.table_name+" WHERE TEMP=-127 OR TEMP_ID >4"
         mycursor.execute(sql)
         try:
             conn.commit()
