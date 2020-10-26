@@ -8,6 +8,8 @@ import logging
 import traceback
 import requests
 from mailapi import send_mail,read_mail_config
+from weather import Weather
+import json 
 
 class Table_Data:
     
@@ -354,7 +356,7 @@ class Temperature_Split_Data(Table_Data):
     def remove_wrong_value(self):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        sql = "DELETE FROM "+self.table_name+" WHERE TEMP=-127 OR TEMP_ID >4"
+        sql = "DELETE FROM "+self.table_name+" WHERE TEMP=-127 OR TEMP_ID >5"
         mycursor.execute(sql)
         try:
             conn.commit()
@@ -448,6 +450,32 @@ class Temperature_Split_Data(Table_Data):
             ret_val.append({"date":rec[1],"temp_id":rec[2],"temp":rec[3]})
         
         return ret_val
+
+class Outside_Data(Temperature_Split_Data):
+    
+    def poll_value(self):
+        city=""
+        api_key=""
+        try:
+            file=open("config_weather.json","r")
+            file_json=json.load(file)
+            file.close()
+            city=file_json["city"]
+            api_key=file_json["api_key"]
+        except:
+            file_json={"api_key":"random","city":"random"}
+            file=open("config_weather.json","w")
+            json.dump(file_json,file)
+            file.close()
+            weat=Weather(api_key,city,'werkzeug')
+            
+        data=weat.request_data()
+        temp=data["main"]["temp"]
+        humid=data["main"]["humidity"]
+        self.insert(temp, 3)
+        self.insert(humid, 4)
+
+
 if __name__ == '__main__':
     #ac=AC_Data("measure.db","random","random")
     #ac.insert(221,6.3,170,5478)

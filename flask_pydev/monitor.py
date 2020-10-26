@@ -4,7 +4,7 @@ import traceback
 from  threading import Thread
 import logging
 from data_classes import Temperature_Data,Voltage_Data,AC_Data,\
-    Temperature_Split_Data
+    Temperature_Split_Data,Outside_Data
 
 
 class Monitor():
@@ -24,7 +24,7 @@ class Monitor():
         td=Temperature_Split_Data("measure.db",self.home_station_url,'monitor_logger')
         vd=Voltage_Data("measure.db",self.home_station_url,'monitor_logger')
         acd=AC_Data("measure.db",self.home_station_url,'monitor_logger')
-
+        od=Outside_Data("measure.db",self.home_station_url,'monitor_logger')
         while True:
             try:
                 file=open("data.json","r")
@@ -38,11 +38,13 @@ class Monitor():
                 td.change_url(self.home_station_url)
                 vd.change_url(self.home_station_url)
                 acd.change_url(self.home_station_url)
-                
+                od.change_url(self.home_station_url)
                 
                 td.poll_value()
                 vd.poll_value()
                 acd.poll_value()
+                od.poll_value()
+                
             except:
                 logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
             

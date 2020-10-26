@@ -7,9 +7,8 @@ import numpy as np
 from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
-from data_classes import Temperature_Data,Temperature_Split_Data,Voltage_Data,AC_Data
+from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
 from weather import Weather
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -34,7 +33,7 @@ except:
 tsd=Temperature_Split_Data("measure.db",home_station_url,'werkzeug')
 vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
 acd=AC_Data("measure.db",home_station_url,'werkzeug')
-
+od=Outside_Data("measure.db",home_station_url,'werkzeug')
 
 @app.route('/current_timestamp')
 def current_timestamp():
@@ -103,6 +102,7 @@ def force_poll():
 	tsd.poll_value()
 	vd.poll_value()
 	acd.poll_value()
+	od.poll_value()
 	return ""
 
 @app.route('/convert_old')
@@ -198,10 +198,15 @@ def  home_station_temperature_data():
         except:
                 logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         #print(data)      
-        t=[]
-        for i in temp:
+        t={}
+        """for i in temp:
             t.append({"date":i[1],"temp_id":i[2],"temp":i[3]}) 
-        
+        temp1=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==1,temp))]
+        temp2=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==2,temp))]
+        """
+        for id in range(1,11):
+        	t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
+        print(t)
         pol_grade=2
         predict_len=8
         dataset_size=20 if len(t)>10 else len(t)
