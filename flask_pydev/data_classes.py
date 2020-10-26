@@ -472,6 +472,7 @@ class Outside_Data(Temperature_Split_Data):
         data=weat.request_data()
         temp=data["main"]["temp"]
         humid=data["main"]["humidity"]
+        logging.getLogger(self.logger_name).info("Outside_Data polled "+" result: "+str(temp)+" "+str(humid))
         if temp!=None:
             self.insert(temp, 3)
         if humid!=None:
