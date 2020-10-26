@@ -553,7 +553,7 @@ function draw_graph_all(){
             markerSize: 0,
             dataPoints: []}
             
-    data_array[16]={type:"column",
+    data_array[16]={type:"line",
             axisYType: "secondary",
             name: "Humidity Outside [%]",
             showInLegend: true,
