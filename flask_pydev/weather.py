@@ -21,7 +21,7 @@ class Weather:
             #print(req_url)
         except:
             #print(str(traceback.format_exc()))
-            logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+            logging.getLogger( self.logger_name).error(str(traceback.format_exc()))
             return
         json_data=r.json()
         #print(json_data)
