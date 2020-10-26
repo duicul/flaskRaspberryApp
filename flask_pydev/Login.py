@@ -136,18 +136,7 @@ def reset_config_weather():
 
 @app.route('/weather')
 def weather():
-	city=""
-	api_key=""
-	try:
-		file=open("config_weather.json","r")
-		file_json=json.load(file)
-		file.close()
-		city=file_json["city"]
-		api_key=file_json["api_key"]
-	except:
-		reset_config_weather()
-	weat=Weather(api_key,city,'werkzeug')
-	return json.dumps(weat.request_data())
+	return json.dumps(od.poll_value())
 
 @app.route('/ac')
 def ac():
