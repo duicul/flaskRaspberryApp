@@ -462,6 +462,15 @@ class Outside_Data(Temperature_Split_Data):
             file.close()
             city=file_json["city"]
             api_key=file_json["api_key"]
+            weat=Weather(api_key,city,'werkzeug')
+            data=weat.request_data()
+            temp=data["main"]["temp"]
+            humid=data["main"]["humidity"]
+            logging.getLogger(self.logger_name).info("Outside_Data polled "+" result: "+str(temp)+" "+str(humid))
+            if temp!=None:
+                self.insert(temp, 3)
+            if humid!=None:
+                self.insert(humid, 4)
         except:
             file_json={"api_key":"random","city":"random"}
             file=open("config_weather.json","w")
@@ -469,15 +478,6 @@ class Outside_Data(Temperature_Split_Data):
             file.close()
             weat=Weather(api_key,city,'werkzeug')
             
-        data=weat.request_data()
-        temp=data["main"]["temp"]
-        humid=data["main"]["humidity"]
-        logging.getLogger(self.logger_name).info("Outside_Data polled "+" result: "+str(temp)+" "+str(humid))
-        if temp!=None:
-            self.insert(temp, 3)
-        if humid!=None:
-            self.insert(humid, 4)
-
 
 if __name__ == '__main__':
     #ac=AC_Data("measure.db","random","random")
