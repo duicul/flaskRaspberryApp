@@ -85,8 +85,11 @@ if __name__ == "__main__":
                 'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
                 }},
             'handlers': {'wsgi': {
-                'class': 'logging.FileHandler',
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
                 'filename': 'error_monitor.log',
+                'maxBytes' :1024 * 1024,
+                'backupCount' : 20,
                 'formatter': 'default'
             }},
             'root': {
