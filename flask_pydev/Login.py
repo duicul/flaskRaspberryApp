@@ -274,6 +274,7 @@ if __name__ == '__main__':
    import logging.handlers
    handler = logging.handlers.RotatingFileHandler(
         'error.log',
+        backupCount=20,
         maxBytes=1024 * 1024)
    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
    logging.getLogger('werkzeug').setLevel(logging.INFO)
