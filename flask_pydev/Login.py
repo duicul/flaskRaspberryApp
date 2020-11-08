@@ -15,6 +15,17 @@ app.secret_key = '571ba9$#/~90'
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
+import logging
+import logging.handlers
+handler = logging.handlers.RotatingFileHandler(
+        'logs/error.log',
+        backupCount=20,
+        maxBytes=1024 * 1024)
+handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+logging.getLogger('werkzeug').setLevel(logging.INFO)
+logging.getLogger('werkzeug').addHandler(handler)
+app.logger.setLevel(logging.WARNING) 
+app.logger.addHandler(handler)
 
 try:
 	file=open("data.json","r")
@@ -303,15 +314,4 @@ def index():
 	return render_template('login.html',name=username)
 
 if __name__ == '__main__':
-   import logging
-   import logging.handlers
-   handler = logging.handlers.RotatingFileHandler(
-        'error.log',
-        backupCount=20,
-        maxBytes=1024 * 1024)
-   handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
-   logging.getLogger('werkzeug').setLevel(logging.INFO)
-   logging.getLogger('werkzeug').addHandler(handler)
-   app.logger.setLevel(logging.WARNING) 
-   app.logger.addHandler(handler)
    app.run(debug = True,host='0.0.0.0')     
