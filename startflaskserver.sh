@@ -9,6 +9,7 @@
 # Short-Description: Track pi.
 # Description:       This service is used to track a pi.
 ### END INIT INFO
-HOME=/home/pi/flaskRaspberryApp/flask_pydev
+HOME=/home/pi
 USER=pi
+cd /home/pi/flaskRaspberryApp/flask_pydev
 (python3 ~/flaskRaspberryApp/flask_pydev/monitor.py)&
