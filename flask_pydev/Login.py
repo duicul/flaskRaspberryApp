@@ -159,7 +159,7 @@ def home_station_voltage_data():
         	pass
         if(interval):
         	try:
-        		data = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
+        		volt = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
         	except:
         		logging.error(str(traceback.format_exc()))
         else:
@@ -211,7 +211,7 @@ def  home_station_temperature_data():
         	pass
         if(interval):
         	try:
-        		data = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
+        		temp = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
         	except:
         		logging.error(str(traceback.format_exc()))
         else:
