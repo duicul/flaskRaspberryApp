@@ -18,7 +18,7 @@ polling_period=1800
 import logging
 import logging.handlers
 handler = logging.handlers.RotatingFileHandler(
-        'logs/error.log',
+        'logs/error_flask.log',
         backupCount=20,
         maxBytes=1024 * 1024)
 handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
