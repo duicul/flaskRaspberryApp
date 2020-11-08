@@ -59,7 +59,7 @@ def start():
     #import logging
     import logging.handlers
     handler = logging.handlers.RotatingFileHandler(
-        'error_monitor.log',
+        'logs/error_monitor.log',
         maxBytes=1024 * 1024)
     handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
     logger = logging.getLogger('monitor_logger')
