@@ -1,8 +1,8 @@
 import Login
 from Login import app
-import monitor
+
+
 if __name__ == '__main__':
-    monitor.start()
     import logging
     import logging.handlers
     handler = logging.handlers.RotatingFileHandler(
