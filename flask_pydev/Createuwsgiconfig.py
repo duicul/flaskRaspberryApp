@@ -6,15 +6,11 @@ Created on Oct 27, 2020
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 print(BASE_DIR)
-str_out="[Unit]\n"
-str_out+="Description=uWSGI instance to serve myproject\n"
-str_out+="After=network.target\n"
-
 
 str_out="[uwsgi] \nchdir = "
 str_out+=BASE_DIR
 str_out+="\n"
-str_out+="logto = "+BASE_DIR+"/logs/django-uwsgi.log\n"
+str_out+="logto = "+BASE_DIR+"/logs/flaskRaspPi-uwsgi.log\n"
 str_out+="plugins = python3\n"
 str_out+="module=wsgi:app\n"
 str_out+="wsgi-file = "+BASE_DIR+"/wsgi.py # customize with the relative path to your wsgi.py file \n"
