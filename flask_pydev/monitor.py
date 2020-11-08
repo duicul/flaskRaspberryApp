@@ -81,7 +81,7 @@ if __name__ == "__main__":
     #import logging
     import logging.handlers
     handler = logging.handlers.RotatingFileHandler(
-        'error_monitor.log',
+        'logs/error_monitor.log',
         backupCount=20,
         maxBytes=1024 * 1024)
     handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
