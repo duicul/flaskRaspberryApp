@@ -11,6 +11,4 @@
 ### END INIT INFO
 HOME=/home/pi
 USER=pi
-chmod a+x ~/flaskRaspberryApp/flask_pydev/flask.sh;
-~/flaskRaspberryApp/flask_pydev/flask.sh&
 (python3 ~/flaskRaspberryApp/flask_pydev/monitor.py)&
