@@ -54,7 +54,29 @@ class Monitor():
             except:
                 self.reset_config()
             time.sleep(int(self.period))
-        
+
+def start():
+    #import logging
+    import logging.handlers
+    handler = logging.handlers.RotatingFileHandler(
+        'error_monitor.log',
+        maxBytes=1024 * 1024)
+    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+    logger = logging.getLogger('monitor_logger')
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    
+    #mail_config=read_mail_config()
+    #logging.getLogger('monitor_logger').info(str(mail_config))
+    
+    try:
+        logging.getLogger('monitor_logger').info("start")
+        time.sleep(30)
+        mon=Monitor("http://192.168.1.6",900)
+        mon.run()
+    except:
+        logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+     
 if __name__ == "__main__":
     #import logging
     import logging.handlers
