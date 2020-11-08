@@ -43,6 +43,22 @@ class Table_Data:
         ''' Remove incorrect values from the database '''
         pass
     
+    def extract_all_between(self,fdate,ldate):
+        condition=" WHERE date(TIMESTAMP) BETWEEN '"+str(fdate)+"' AND  '"+str(ldate)+"' ;"
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        querry="SELECT * FROM "+self.table_name+" "+condition
+        logging.info(querry)
+        logging.getLogger(self.logger_name).info(querry)
+        mycursor.execute(querry)
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        return result
+    
     def extract_all_interval(self,items):
         ''' Returns last items rows from the table '''
         condition=""

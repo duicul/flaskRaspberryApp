@@ -435,7 +435,7 @@ function draw_gauge_ac(){
 
 
 
-function draw_graph_all(){
+function draw_graph_all(interval){
     
     data_array=[]
 
@@ -588,14 +588,23 @@ function draw_graph_all(){
                     axisY:{includeZero: true},
                     data:eval(data_array)
                 });
-    draw_graph(chart,data_array);
-    draw_graph_ac(chart,data_array);
+    draw_graph(chart,data_array,interval);
+    draw_graph_ac(chart,data_array,interval);
 }
-function draw_graph(chart,data_array){
+function draw_graph(chart,data_array,interval){
+
+    if(interval == true){
+    fdate=$("#fdate").val()
+    ldate=$("#ldate").val()
+    url_temp="/home_station/temperature_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";
+    url_volt="/home_station/voltage_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";}
+    else{
     items=$("#items_interval").val()
+    //console.log(items)    
+    url_temp="/home_station/temperature_data?items="+items+"&interval=false";
+    url_volt="/home_station/voltage_data?items="+items+"&interval=false";}
     
-    url_temp="/home_station/temperature_data?items="+items
-    url_volt="/home_station/voltage_data?items="+items
+    
     
     //chart["data"]=eval(data_array)
     
@@ -664,7 +673,7 @@ function draw_graph(chart,data_array){
           if(item["temp_id"]==2&&item["temp"]!=-127 && temp_opt["temp2"]["checked"])
             data_array[5]["dataPoints"].push({x:new Date(item["date"]),y:item["temp2"]})
            })
-	    console.log(data_array)
+	    //console.log(data_array)
 	    chart["data"]=eval(data_array)
 	    chart.render();
 	    
@@ -677,17 +686,23 @@ function draw_graph(chart,data_array){
                 if(volt_opt["volt1"]["checked"])
                     data_array[6]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
         })
-        console.log(data_array)
+        //console.log(data_array)
         chart["data"]=eval(data_array)
         chart.render();
         }});    
     }
     
     
-function draw_graph_ac(chart,data_array){
+function draw_graph_ac(chart,data_array,interval){
+    
+    if(interval == true){
+    fdate=$("#fdate").val()
+    ldate=$("#ldate").val()
+    url_ac="/home_station/ac_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";}
+    else{
     items=$("#items_interval").val()
     //console.log(items)
-    url_ac="/home_station/ac_data?items="+items
+    url_ac="/home_station/ac_data?items="+items+"&interval=false";}
     
     //console.log(chart["data"])
     //console.log(ac_opt)
@@ -779,8 +794,8 @@ function draw_graph_ac(chart,data_array){
             //last_monthly=monthly_energy[monthly_energy.length-1]
             //console.log(last_monthly)
             
-            console.log("last_monthly ")
-            console.log(monthly_energy)
+            //console.log("last_monthly ")
+            //console.log(monthly_energy)
             }    
         
          if(ac_opt["energyhour"]["checked"]&&hourly_energy.length!=0){

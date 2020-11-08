@@ -152,10 +152,21 @@ def ac():
 def home_station_voltage_data():
         #items=int()
         volt=[]
+        interval=False
         try:
-                volt = vd.extract_all_interval(request.args["items"])
+        	interval=True if request.args["interval"] == "true" else False
         except:
-                logging.error(str(traceback.format_exc()))
+        	pass
+        if(interval):
+        	try:
+        		data = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
+        	except:
+        		logging.error(str(traceback.format_exc()))
+        else:
+        	try:
+        		volt = vd.extract_all_interval(request.args["items"])
+        	except:
+        		logging.error(str(traceback.format_exc()))
         #print(data)
         t=[]
         for i in volt:
@@ -167,10 +178,21 @@ def home_station_ac_data():
         #items=int(request.args["items"])
         #print(items)
         data=[]
+        interval=False
         try:
-                data = acd.extract_all_interval(request.args["items"])
+        	interval=True if request.args["interval"] == "true" else False
         except:
-                logging.error(str(traceback.format_exc()))
+        	pass
+        if(interval):
+        	try:
+        		data = acd.extract_all_between(request.args["fdate"], request.args["ldate"])
+        	except:
+        		logging.error(str(traceback.format_exc()))
+        else:
+        	try:
+        		data = acd.extract_all_interval(request.args["items"])
+        	except:
+        		logging.error(str(traceback.format_exc()))
         #print(data)
         t=[]
         for i in data:
@@ -182,10 +204,21 @@ def  home_station_temperature_data():
         #items=int(request.args["items"])
         #print(items)
         temp=[]
+        interval=False
         try:
-                temp = tsd.extract_all_interval(request.args["items"])
+        	interval=True if request.args["interval"] == "true" else False
         except:
-                logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        	pass
+        if(interval):
+        	try:
+        		data = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
+        	except:
+        		logging.error(str(traceback.format_exc()))
+        else:
+        	try:
+        		temp = tsd.extract_all_interval(request.args["items"])
+        	except:
+        		logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         #print(data)      
         t={}
         """for i in temp:

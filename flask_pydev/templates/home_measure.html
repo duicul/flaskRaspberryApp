@@ -59,6 +59,10 @@ background-color:rgb(100,120,180);
     <div class="col-md-3">
         <div class="row">
             <div class="col" >
+                <input type="date" id="fdate">
+                <input type="date" id="ldate"><br/>
+                <button type="button" class="btn btn-primary" onclick="draw_graph_all(true);">Display Graph Between</button><br/>
+            
                 <select id="items_interval">
                     <option value="0">Current Day</option>
                     <option value="1">1 Day</option>
@@ -76,7 +80,7 @@ background-color:rgb(100,120,180);
                     <option value="3m">Last 3 Months</option>
                     <option value="-1">All</option>
                 </select>
-                <button type="button" class="btn btn-primary" onclick="draw_graph_all();">Display Graph</button>
+                <button type="button" class="btn btn-primary" onclick="draw_graph_all(false);">Display Graph</button>
                 <div id="temp_volt_opt"></div>
                 <div id="ac_opt"></div>
             </div>
