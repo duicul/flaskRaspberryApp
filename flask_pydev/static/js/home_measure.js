@@ -136,7 +136,7 @@ $.ajax({url: "/temperature", success: function(result){
     //result=JSON.parse(result)
     
     console.log(result)
-    result=eval(result)
+    //result=eval(result)
     
     console.log(result[0]["date"])
     console.log(result[1]["date"])
@@ -254,7 +254,7 @@ function draw_gauge_voltage(){
     $.ajax({url: "/voltage", success: function(result){
     
     console.log(result);
-    result=eval(result);
+    //result=eval(result);
     
     console.log(result["date"]);
 	div_html=""
@@ -298,7 +298,7 @@ function draw_gauge_voltage(){
 function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
     console.log(result);
-    result=eval(result)
+    //result=eval(result)
     console.log(result["date"]);
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
