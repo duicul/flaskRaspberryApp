@@ -137,7 +137,7 @@ def voltage():
                 return {}
         #print(data)
         #r = requests.get(home_station_url+"/voltage")
-        return str({"date":data[1],"volt1":data[2]})
+        return {"date":data[1],"volt1":data[2]}
 
 def reset_config_weather():
 	file_json={"api_key":"random","city":"random"}
@@ -157,7 +157,7 @@ def ac():
         #print(data)
         #r = requests.get(home_station_url+"/ac")
         #print("data "+str(data))
-        return str({"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]})
+        return {"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]}
 
 @app.route('/home_station/voltage_data')
 def home_station_voltage_data():
