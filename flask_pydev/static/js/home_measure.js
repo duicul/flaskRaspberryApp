@@ -250,6 +250,8 @@ function draw_weather(){
 
 function draw_gauge_voltage(){
     $.ajax({url: "/voltage", success: function(result){
+    result=eval(result);
+    console.log(result);
 	div_html=""
 	div_html+=new Date(result["date"]).toString()+"</br>"
 	div_html+="<canvas id=\"gauge_voltage\"></canvas>";
@@ -290,6 +292,8 @@ function draw_gauge_voltage(){
 
 function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
+    result=eval(result)
+    console.log(result);
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
     div_html+="<canvas id=\"gauge_ac_voltage\"></canvas>";
@@ -620,7 +624,7 @@ function draw_graph(chart,data_array,interval){
 	    temp1_date=null
 	    temp2_init=0
 	    temp2_date=null
-	    //console.log(result_rec)
+	    console.log(result_rec)
 	    temp1_data.forEach(function(item){
           if(item["value"]!=-127){
             if(temp_opt["temp1"]["checked"])
