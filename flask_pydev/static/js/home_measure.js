@@ -134,8 +134,8 @@ $.ajax({url: "/force_poll", success: function(result){
 function draw_gauge_temperature(){
 $.ajax({url: "/temperature", success: function(result){
     //result=JSON.parse(result)
-    result=eval(result)
-    //console.log(result)
+    //result=eval(result)
+    console.log(result)
     //console.log(result[0])
     //console.log(result[1])
 	div_html=""
@@ -250,7 +250,7 @@ function draw_weather(){
 
 function draw_gauge_voltage(){
     $.ajax({url: "/voltage", success: function(result){
-    result=eval(result);
+    //result=eval(result);
     console.log(result);
 	div_html=""
 	div_html+=new Date(result["date"]).toString()+"</br>"
@@ -292,7 +292,7 @@ function draw_gauge_voltage(){
 
 function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
-    result=eval(result)
+    //result=eval(result)
     console.log(result);
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
