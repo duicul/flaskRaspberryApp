@@ -136,8 +136,8 @@ $.ajax({url: "/temperature", success: function(result){
     //result=JSON.parse(result)
     //result=eval(result)
     //console.log(result)
-    console.log(new Date(result[0]["date"]))
-    console.log(new Date(result[1]["date"]))
+    console.log(result[0]["date"])
+    console.log(result[1]["date"])
 	div_html=""
 	div_html+="Temperature "+result[0]["temp_id"]+" : "+new Date(result[0]["date"]).toString()+"</br>"
 	div_html+="Temperature "+result[1]["temp_id"]+" : "+new Date(result[1]["date"]).toString()+"</br>"
@@ -252,7 +252,7 @@ function draw_gauge_voltage(){
     $.ajax({url: "/voltage", success: function(result){
     //result=eval(result);
     console.log(result);
-    console.log(new Date(result["date"]));
+    console.log(result["date"]);
 	div_html=""
 	div_html+=new Date(result["date"]).toString()+"</br>"
 	div_html+="<canvas id=\"gauge_voltage\"></canvas>";
@@ -295,7 +295,7 @@ function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
     //result=eval(result)
     console.log(result);
-    console.log(new Date(result["date"]));
+    console.log(result["date"]);
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
     div_html+="<canvas id=\"gauge_ac_voltage\"></canvas>";
