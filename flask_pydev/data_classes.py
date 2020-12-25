@@ -422,8 +422,10 @@ class Temperature_Split_Data(Table_Data):
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         
-        self.insert(temp1, 1)
-        self.insert(temp2,2)
+        if temp1 != -127:
+            self.insert(temp1,1)
+        if temp2 != -127:
+            self.insert(temp2,2)
                             
         try:    
                 if(temp1!=-127):
