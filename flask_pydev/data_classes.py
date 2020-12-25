@@ -448,12 +448,74 @@ class Temperature_Split_Data(Table_Data):
                         self.notified_temp[1]=False
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-
+    
+    def extract_all_between(self,fdate,ldate):
+        condition=" WHERE date(TIMESTAMP) BETWEEN '"+str(fdate)+"' AND  '"+str(ldate)+"' and TEMP!=-127 ;"
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        querry="SELECT * FROM "+self.table_name+" "+condition
+        logging.info(querry)
+        logging.getLogger(self.logger_name).info(querry)
+        mycursor.execute(querry)
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        return result
+    
+    def extract_all_interval(self,items):
+        ''' Returns last items rows from the table '''
+        condition=""
+        #print(items)
+        if items=="0":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','0 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="1":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-1 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="2":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="3":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-3 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="4":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-4 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="5":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-5 days','localtime') AND  date('now','localtime') "
+        elif items=="6":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-6 days' ,'localtime') AND  date('now','localtime') "  
+        elif items=="7":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-7 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="8":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-8 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="9":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-9 days' ,'localtime') AND  date('now','localtime') "
+        elif items=="10":
+            condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-10 days','localtime' ) AND  date('now','localtime') "
+        elif items=="1m":
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','localtime') AND  date('now','localtime') "    
+        elif items=="2m":
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-1 month','localtime') AND  date('now','localtime') "
+            #condition=" WHERE date(TIMESTAMP) BETWEEN date('now','-2 months' ) AND  date('now') "
+        elif items=="3m":
+            condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-2 month','localtime') AND  date('now','localtime') "                
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        querry="SELECT * FROM "+self.table_name+" "+condition+" AND TEMP!=-127"
+        logging.getLogger(self.logger_name).info(querry)
+        mycursor.execute(querry)
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        return result
+    
     def extract_last(self):
         """Extracts the latest row from the table"""
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        querry="SELECT ID,MAX(TIMESTAMP),TEMP_ID,TEMP FROM Temperature_Split_Data  GROUP BY TEMP_ID;"
+        querry="SELECT ID,MAX(TIMESTAMP),TEMP_ID,TEMP FROM Temperature_Split_Data WHERE TEMP!=-127 GROUP BY TEMP_ID;"
         mycursor.execute(querry)
         try:
             result=mycursor.fetchall()
