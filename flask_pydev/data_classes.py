@@ -551,11 +551,14 @@ class Outside_Data(Temperature_Split_Data):
         try:
             temp=data["main"]["temp"]
             humid=data["main"]["humidity"]
+            wind_speed=data["wind"]["speed"]
             logging.getLogger(self.logger_name).info("Outside_Data polled "+" result: "+str(temp)+" "+str(humid))
             if temp!=None:
                 self.insert(temp, 3)
             if humid!=None:
                 self.insert(humid, 4)
+            if wind_speed!=None:
+                self.insert(wind_speed, 5)
         except:
             pass
         return data

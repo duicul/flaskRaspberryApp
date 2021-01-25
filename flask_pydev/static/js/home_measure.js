@@ -1,4 +1,4 @@
-var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp1_grad":{"name":"Temperature1 change","checked":false},"temp2":{"name":"Temperature2","checked":true},"temp2_grad":{"name":"Temperature2 change","checked":false},"temp_out":{"name":"Temperature outside","checked":true},"humid_out":{"name":"Humidity outside","checked":false}};
+var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp1_grad":{"name":"Temperature1 change","checked":false},"temp2":{"name":"Temperature2","checked":true},"temp2_grad":{"name":"Temperature2 change","checked":false},"temp_out":{"name":"Temperature outside","checked":true},"humid_out":{"name":"Humidity outside","checked":false},"wind_speed":{"name":"Wind speed m/s","checked":false}};
 var volt_opt={"volt1":{"name":"Voltage","checked":false}};
 var ac_opt={"voltage":{"name":"Voltage AC","checked":false},"current":{"name":"Current AC","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
 
@@ -12,6 +12,10 @@ function show_opt(){
     checked=temp_opt["humid_out"]["checked"]==true? "checked=\"checked\"" : "";
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('humid_out',1,this)\">";
     data+="<label>"+temp_opt["humid_out"]["name"]+"</label></br>";
+    
+    checked=temp_opt["wind_speed"]["checked"]==true? "checked=\"checked\"" : "";
+    data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('wind_speed',1,this)\">";
+    data+="<label>"+temp_opt["wind_speed"]["name"]+"</label></br>";
     
     checked=temp_opt["temp1"]["checked"]==true? "checked=\"checked\"" : "";
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('temp',1,this)\">";
@@ -78,6 +82,8 @@ function check_state(type,index,elem){
          temp_opt["temp_out"]["checked"]=elem.checked
     if(type=="humid_out")
          temp_opt["humid_out"]["checked"]=elem.checked
+    if(type=="wind_speed")
+         temp_opt["wind_speed"]["checked"]=elem.checked
     if(type=="temp"){
         if(index==1)
             temp_opt["temp1"]["checked"]=elem.checked
@@ -569,6 +575,13 @@ function draw_graph_all(interval){
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
+    
+    data_array[17]={type:"line",
+            axisYType: "secondary",
+            name: "Wind Speed [m/s]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
             
     chart = new CanvasJS.Chart("graph", {
                     animationEnabled: true,
@@ -618,13 +631,14 @@ function draw_graph(chart,data_array,interval){
     
     //chart["data"]=eval(data_array)
     
-    if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"]||temp_opt["temp1_grad"]["checked"] || temp_opt["temp2_grad"]["checked"]|| temp_opt["humid_out"]["checked"]|| temp_opt["temp_out"]["checked"])        
+    if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"]||temp_opt["temp1_grad"]["checked"] || temp_opt["temp2_grad"]["checked"]|| temp_opt["humid_out"]["checked"]|| temp_opt["wind_speed"]["checked"]|| temp_opt["temp_out"]["checked"])        
     $.ajax({url: url_temp, success: function(result){
 	    result_rec=JSON.parse(result)["recorded"]
 	    temp1_data=result_rec[1]
         temp2_data=result_rec[2]
         temp3_temp_out=result_rec[3]
         temp4_humid_out=result_rec[4]
+        temp5_wind_speed=result_rec[5]
 	    result_pred=JSON.parse(result)["predict"]
 	    temp1_init=0
 	    temp1_date=null
@@ -676,6 +690,11 @@ function draw_graph(chart,data_array,interval){
         if(temp_opt["humid_out"]["checked"])
             temp4_humid_out.forEach(function(item){        
              data_array[16]["dataPoints"].push({x:new Date(item["date"]),y:item["value"]})
+             })
+        
+        if(temp_opt["wind_speed"]["checked"])
+            temp5_wind_speed.forEach(function(item){        
+             data_array[17]["dataPoints"].push({x:new Date(item["date"]),y:item["value"]})
              })
         
 	    result_pred.forEach(function(item){
