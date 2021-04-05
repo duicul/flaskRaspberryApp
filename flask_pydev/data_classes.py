@@ -134,6 +134,9 @@ class Table_Data:
         """ Poll sensor values from the sensor """
         pass
     
+    def restart_device(self):
+        requests.get(self.home_station_url+"/restart")
+    
 class Temperature_Data(Table_Data):
     
     def __init__(self,database,home_station_url,logger_name):
@@ -209,6 +212,9 @@ class Temperature_Data(Table_Data):
             self.insert(temp1,temp2)
         elif temp1==-127 and temp2==-127:
             return
+        
+        if temp1 == -127 or temp2 == -127:
+            self.restart_device()
                 
         try:    
                 if(temp1!=-127):
