@@ -135,6 +135,7 @@ class Table_Data:
         pass
     
     def restart_device(self):
+        logging.getLogger(self.logger_name).info("Restart")
         requests.get(self.home_station_url+"/restart")
     
 class Temperature_Data(Table_Data):
@@ -210,11 +211,10 @@ class Temperature_Data(Table_Data):
         
         if temp1 != -127 or temp2 != -127:
             self.insert(temp1,temp2)
-        elif temp1==-127 and temp2==-127:
-            return
-        
-        if temp1 == -127 or temp2 == -127:
             self.restart_device()
+        elif temp1==-127 and temp2==-127:
+            self.restart_device()
+            return
                 
         try:    
                 if(temp1!=-127):
