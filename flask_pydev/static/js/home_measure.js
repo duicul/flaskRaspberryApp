@@ -708,7 +708,10 @@ function draw_graph(chart,data_array,interval){
         
         if(temp_opt["wind_speed"]["checked"])
             temp5_wind_speed.forEach(function(item){        
-             data_array[17]["dataPoints"].push({x:new Date(item["date"]),y:item["value"]});
+             data_array[17]["dataPoints"].push({x:new Date(item["date"]),y:item["value"]});})
+        
+        if(temp_opt["wind_power"]["checked"])
+            temp5_wind_speed.forEach(function(item){
              data_array[18]["dataPoints"].push({x:new Date(item["date"]),y:Math.PI/2*blade_length*blade_length*item["value"]*item["value"]*item["value"]*1.2*0.4})
              })
         
