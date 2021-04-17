@@ -18,6 +18,8 @@ function show_opt(){
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('wind_speed',1,this)\">";
     data+="<label>"+temp_opt["wind_speed"]["name"]+"</label></br>";
     
+    data+="Blade length: <input type=\"number\" id=\"blade_length\" step=\"0.01\"><br/>";
+    
     checked=temp_opt["wind_power"]["checked"]==true? "checked=\"checked\"" : "";
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state('wind_power',1,this)\">";
     data+="<label>"+temp_opt["wind_power"]["name"]+"</label></br>";
@@ -43,6 +45,8 @@ function show_opt(){
     data+="<label>"+volt_opt["volt1"]["name"]+"</label></br>";
     
     $("#temp_volt_opt").html(data);
+    $("#blade_length").val(blade_length);
+    $("#blade_length").change(function(){blade_length=parseFloat($("#blade_length").val());});
 }
 
 function show_opt_ac(){
@@ -148,11 +152,11 @@ function draw_gauge_temperature(){
 $.ajax({url: "/temperature", success: function(result){
     //result=JSON.parse(result)
     
-    console.log(result)
+    //console.log(result)
     result=eval(result)
     
-    console.log(result[0]["date"])
-    console.log(result[1]["date"])
+    //console.log(result[0]["date"])
+    //console.log(result[1]["date"])
 	div_html=""
 	div_html+="Temperature "+result[0]["temp_id"]+" : "+new Date(result[0]["date"]).toString()+"</br>"
 	div_html+="Temperature "+result[1]["temp_id"]+" : "+new Date(result[1]["date"]).toString()+"</br>"
@@ -266,10 +270,10 @@ function draw_weather(){
 function draw_gauge_voltage(){
     $.ajax({url: "/voltage", success: function(result){
     
-    console.log(result);
+    //console.log(result);
     result=JSON.parse(result);
     
-    console.log(result["date"]);
+    //console.log(result["date"]);
 	div_html=""
 	div_html+=new Date(result["date"]).toString()+"</br>"
 	div_html+="<canvas id=\"gauge_voltage\"></canvas>";
@@ -310,9 +314,9 @@ function draw_gauge_voltage(){
 
 function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
-    console.log(result);
+    //console.log(result);
     result=JSON.parse(result);
-    console.log(result["date"]);
+    //console.log(result["date"]);
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
     div_html+="<canvas id=\"gauge_ac_voltage\"></canvas>";
@@ -658,7 +662,7 @@ function draw_graph(chart,data_array,interval){
 	    temp1_date=null
 	    temp2_init=0
 	    temp2_date=null
-	    console.log(result_rec)
+	    //console.log(result_rec)
 	    temp1_data.forEach(function(item){
           if(item["value"]!=-127){
             if(temp_opt["temp1"]["checked"])
