@@ -321,7 +321,7 @@ class AC_Data(Table_Data):
     def remove_wrong_value(self):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        sql = "DELETE FROM "+self.table_name+" ENERGY = -1"
+        sql = "DELETE FROM "+self.table_name+" ENERGY = 0"
         mycursor.execute(sql)
         try:
             conn.commit()
@@ -355,7 +355,7 @@ class AC_Data(Table_Data):
         energy = ac[len(ac)-1]["energy"]
         logging.getLogger(self.logger_name).info(" polled AC "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
         self.remove_wrong_value()
-        if(float(energy)==-1):
+        if(float(energy)==0):
             self.restart_device()
         else:
             self.insert(float(volt),float(current),float(power),float(energy))
