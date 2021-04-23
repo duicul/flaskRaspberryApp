@@ -319,8 +319,16 @@ class AC_Data(Table_Data):
             logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
     
     def remove_wrong_value(self):
-        """"  Not implemented """
-        pass
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        sql = "DELETE FROM "+self.table_name+" ENERGY = -1"
+        mycursor.execute(sql)
+        try:
+            conn.commit()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
     def insert(self,volt,current,power,energy):
         conn = sqlite3.connect(self.database)
@@ -346,7 +354,11 @@ class AC_Data(Table_Data):
         power = round(sum([ac[i]["power"] for i in range(len(ac))])/len(ac),2)
         energy = ac[len(ac)-1]["energy"]
         logging.getLogger(self.logger_name).info(" polled AC "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
-        self.insert(float(volt),float(current),float(power),float(energy))
+        self.remove_wrong_value()
+        if(float(energy)==-1):
+            self.restart_device()
+        else:
+            self.insert(float(volt),float(current),float(power),float(energy))
 
 class Temperature_Split_Data(Table_Data):
     
@@ -412,6 +424,7 @@ class Temperature_Split_Data(Table_Data):
         i=0
         temp1=-127
         temp2=-127
+        self.remove_wrong_value()
         while (temp1==-127 or temp2==-127) and i<30:
             i=i+1
             try:
