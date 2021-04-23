@@ -321,7 +321,7 @@ class AC_Data(Table_Data):
     def remove_wrong_value(self):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        sql = "DELETE FROM "+self.table_name+" ENERGY = 0"
+        sql = "DELETE FROM "+self.table_name+" ENERGY = '-1' "
         mycursor.execute(sql)
         try:
             conn.commit()
