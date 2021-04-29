@@ -1,4 +1,4 @@
-var blade_length = 1.5;
+var blade_length = 1;
 var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp1_grad":{"name":"Temperature1 change","checked":false},"temp2":{"name":"Temperature2","checked":true},"temp2_grad":{"name":"Temperature2 change","checked":false},"temp_out":{"name":"Temperature outside","checked":true},"humid_out":{"name":"Humidity outside","checked":false},"wind_speed":{"name":"Wind speed m/s","checked":false},"wind_power":{"name":("Wind power [w] "+blade_length+" m"),"checked":false}};
 var volt_opt={"volt1":{"name":"Voltage","checked":false}};
 var ac_opt={"voltage":{"name":"Voltage AC","checked":false},"current":{"name":"Current AC","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
