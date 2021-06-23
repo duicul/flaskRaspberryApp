@@ -14,7 +14,6 @@ from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
-app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=30)
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
@@ -53,7 +52,7 @@ aut=Authorization()
 @app.before_request
 def make_session_permanent():
     session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=5)
+    app.permanent_session_lifetime = timedelta(minutes=30)
 
 @app.route('/logout')
 def logout():
