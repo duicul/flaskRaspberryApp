@@ -57,6 +57,7 @@ def make_session_permanent():
 @app.route('/logout')
 def logout():
     session.clear()
+    return redirect(url_for('home_station'))
 
 @app.route('/login',methods = ['POST'])
 def login():
