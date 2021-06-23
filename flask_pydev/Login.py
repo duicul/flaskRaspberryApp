@@ -49,10 +49,10 @@ acd=AC_Data("measure.db",home_station_url,'werkzeug')
 od=Outside_Data("measure.db",home_station_url,'werkzeug')
 aut=Authorization()
 
-@app.before_request
-def make_session_permanent():
-    session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=30)
+#@app.before_request
+#def make_session_permanent():
+#    session.permanent = True
+#    app.permanent_session_lifetime = timedelta(minutes=30)
 
 @app.route('/logout')
 def logout():
