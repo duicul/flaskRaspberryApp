@@ -9,7 +9,7 @@ myCmd = 'mkdir '+BASE_DIR+'/logs;chmod a+w '+BASE_DIR+'/logs;'
 os.system(myCmd)
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
 os.system(myCmd)
-myCmd = 'sudo pip install pysha3'
+myCmd = 'sudo pip3 install pysha3'
 os.system(myCmd)
 myCmd = 'chmod a+w .'
 os.system(myCmd)
