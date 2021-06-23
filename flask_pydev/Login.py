@@ -1,4 +1,4 @@
-from flask import Flask,session,request,render_template
+from flask import Flask,session,request,render_template,redirect, url_for
 #from inputpin import InputPin
 #from time import sleep
 import json
@@ -9,9 +9,12 @@ import requests
 import traceback
 from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
 from weather import Weather
+from authorization import Authorization
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=30)
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
@@ -45,7 +48,29 @@ tsd=Temperature_Split_Data("measure.db",home_station_url,'werkzeug')
 vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
 acd=AC_Data("measure.db",home_station_url,'werkzeug')
 od=Outside_Data("measure.db",home_station_url,'werkzeug')
+aut=Authorization()
 
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=5)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+
+@app.route('/login',methods = ['POST'])
+def login():
+    try:
+        user_name = request.form['user_name']
+        password = request.form['password']
+        user = aut.loginUser(user_name, password)
+        if(user != None):
+            session["user_name"]=user_name
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+    return redirect(url_for('home_station'))
+    
 @app.route('/current_timestamp')
 def current_timestamp():
 	return str(tsd.current_timestamp())
@@ -88,24 +113,13 @@ def extract_data_pol(api,predict_len,pol_grade,case_type,data_type):
 
 @app.route('/covid_data/<case_type>/<api>/<data_type>',methods = ['POST'])
 def extract_data(api,case_type,data_type):
-        #print(api)
-        #print(case_type)
-        #print(data_type)
-        #print(request.form)
-        #print(request.form['countries'])
         countries=json.loads(request.form['countries'])
         return aggregate_data(0,countries,data_type,case_type,0,api)
 
 @app.route('/regions/<case_type>/<api>/<data_type>',methods = ['POST'])
 def extract_regions(api,case_type,data_type):
-        #print(api)
-        #print(case_type)
-        #print(data_type)
-        #print(request.form)
-        #print(request.form['countries'])
         countries=json.loads(request.form['countries'])
         ret = display_regions(countries,data_type,case_type,api)
-        #print(ret)
         return ret
 
 @app.route('/force_poll')
@@ -245,32 +259,6 @@ def  home_station_temperature_data():
         dataset_size=20 if len(t)>10 else len(t)
         pol_regr_y_t1=[]
         pol_regr_y_t2=[]
-        """try:
-        	if dataset_size > 0:
-        		temps1=list(filter(lambda x: x["temp_id"]==1,t))
-        		temps2=list(filter(lambda x: x["temp_id"]==2,t))
-        		data_t1=list(filter(lambda x:x[1]>-127,[(i-dataset_size,temps1[i]["temp"]) for i in range(len(temps1)-dataset_size,len(temps1))]))
-        		data_t2=list(filter(lambda x:x[1]>-127,[(i-dataset_size,temps2[i]["temp"]) for i in range(len(temps2)-dataset_size,len(temps2))]))
-        		
-        		print(data_t1)
-        		print(data_t2)
-        		if len(data_t1)>0:
-        			poly_fit_t1 = np.poly1d(np.polyfit(np.array([x[0] for x in data_t1]),np.array([x[1] for x in data_t1]),pol_grade))
-        			pol_regr_y_t1=[round(poly_fit_t1(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]
-        		if len(data_t2)>0:
-        			poly_fit_t2 = np.poly1d(np.polyfit(np.array([x[0] for x in data_t2]),np.array([x[1] for x in data_t2]),pol_grade))
-        			pol_regr_y_t2=[round(poly_fit_t2(xi),2) for xi in range(dataset_size,dataset_size+predict_len)]
-        			
-        except Exception:
-        	logging.getLogger('werkzeug').error(str(traceback.format_exc()))
-        	pol_regr_y_t1=[]
-        	pol_regr_y_t2=[]
-        predictions=[]
-        if len(pol_regr_y_t1)==len(pol_regr_y_t2) or ( (len(pol_regr_y_t1)==0 or len(pol_regr_y_t2)==0 ) and len(pol_regr_y_t1)!=len(pol_regr_y_t2)):
-        	for i in range(len(pol_regr_y_t1)):
-        		pred_date_time=datetime.strptime(t[len(t)-1]["date"],"%Y-%m-%d %H:%M:%S")+ timedelta(minutes = (i+1)*15)
-        		predictions.append({"date":str(pred_date_time),"temp1":-127 if len(pol_regr_y_t1)==0 else pol_regr_y_t1[i],"temp2":-127 if len(pol_regr_y_t2)==0 else pol_regr_y_t2[i]})
-        """
         result={"recorded":t,"predict":[]}
         
         return json.dumps(result)
@@ -289,7 +277,17 @@ def remove_wrong():
         
 @app.route('/home_station')
 def home_station():
-	return render_template('home_measure.html')
+    user_name = None
+    try:
+        user_name = session["user_name"]
+        print(user_name)
+        if(user_name == None):
+            return render_template("login.html")
+        else:
+            return render_template('home_measure.html')
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return render_template('login.html')    
 
 @app.route('/home_station/restart')
 def home_station_restart():
