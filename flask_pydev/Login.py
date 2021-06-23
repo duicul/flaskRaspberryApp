@@ -61,11 +61,21 @@ def logout():
 
 @app.route('/login',methods = ['POST'])
 def login():
+    att = 0
+    try:
+        att=session["attempt"]
+    except:
+        session["attempt"]=0
+        pass
+    session["attempt"]=att+1
+    if(att>5):
+        return redirect(url_for('home_station'))
     try:
         user_name = request.form['user_name']
         password = request.form['password']
         user = aut.loginUser(user_name, password)
         if(user != None):
+            session["attempt"]=0
             session["user_name"]=user_name
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))

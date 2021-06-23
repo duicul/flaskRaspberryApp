@@ -28,7 +28,9 @@ background-color:rgb(100,120,180);
 <input type="password" name="password" id="password" required>
  <input type="submit" value="Login">
 </form>	
-
+{% if session["attempt"]>5 %}
+<div style="color:red"> Maximum attempt number reached</div>
+{%endif%}
 <script src="/static/js/hello.js?v=1.14"></script>
 </body>
 </html>
