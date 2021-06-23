@@ -18,16 +18,28 @@ background-color:rgb(100,120,180);
 }
 
 </style>
-<title>Home Station Login</title>
+<title>Covid data</title>
 </head>
-<body>
-<form action="/login" method="post">
-<label for="user_name">Enter your user_name: </label>
-<input type="text" name="user_name" id="name" required>
-<label for="password">Enter your password: </label>
-<input type="password" name="password" id="password" required>
- <input type="submit" value="Login">
-</form>	
+<body onload="load_main_menu();">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        {% if name=="anonymous" %}
+        <div class="navbar-brand">Try to login</div>
+        {%else%}
+        <font color="blue" class="mr-auto link">{{name}}</font>
+        <a class="btn btn-primary" href="/logout">Logout</a>
+        {%endif%}
+    </nav> 
+     <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+        <div id="main_menu"></div>
+    </div>
+    <div class="col-md-8 settingscol">
+        <div id="graph"  style="width: 100%;"></div>
+        <br/>
+        <div id="dataregions"></div>
+    </div>
+    </div>  
 
 <script src="/static/js/hello.js?v=1.14"></script>
 </body>

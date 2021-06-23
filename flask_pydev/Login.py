@@ -308,7 +308,7 @@ def index():
 	if 'username' in session:
 		username = session['username']
 	else:   username="anonymous"
-	return render_template('login.html',name=username)
+	return render_template('covid.html',name=username)
 
 if __name__ == '__main__':
    app.run(debug = True,host='0.0.0.0')     
