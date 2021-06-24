@@ -12,56 +12,31 @@ from config_class import Config_Handler
 class Monitor():
     def __init__(self,user_name,logger_name):
         self.user_name=user_name
-        self.config_data=Config_Data("config.db",logger_name)
-        self.config=self.config_data.getConfig(user_name)
+        self.config_handler=Config_Handler("monitor_config.json",self.logger_name)
+        self.config=self.config_handler.loadUsingFile()
         self.url=self.config.url
         self.period=self.config.period
         # Call the Thread class's init function
         Thread.__init__(self)
-       
-    def reset_config(self):
-        file_json={"url":self.home_station_url,"period":self.period}
-        file=open("data.json","w")
-        json.dump(file_json,file)
-        file.close()
   
     def run(self):
-        td=Temperature_Split_Data("measure.db",self.home_station_url,'monitor_logger')
-        vd=Voltage_Data("measure.db",self.home_station_url,'monitor_logger')
-        acd=AC_Data("measure.db",self.home_station_url,'monitor_logger')
-        od=Outside_Data("measure.db",self.home_station_url,'monitor_logger')
-        while True:
-            try:
-                file=open("data.json","r")
-                file_json=json.load(file)
-                file.close()
-            except:
-                self.reset_config()
-                
+        td=Temperature_Split_Data("measure.db",self.logger_name)
+        vd=Voltage_Data("measure.db",self.logger_name)
+        acd=AC_Data("measure.db",self.logger_name)
+        od=Outside_Data("measure.db",self.logger_name)
+        while True:                
             try:
                 
-                td.change_url(self.home_station_url)
-                vd.change_url(self.home_station_url)
-                acd.change_url(self.home_station_url)
-                od.change_url(self.home_station_url)
-                
-                td.poll_value()
-                vd.poll_value()
-                acd.poll_value()
-                od.poll_value()
+                td.poll_value(self.url)
+                vd.poll_value(self.url)
+                acd.poll_value(self.url)
+                od.poll_value(self.url)
                 
             except:
-                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
-            
-            try:
-                self.period=file_json["period"]
-                self.home_station_url=file_json["url"]
-            except:
-                self.reset_config()
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
             time.sleep(int(self.period))
 
 def start():
-    #import logging
     import logging.handlers
     handler = logging.handlers.RotatingFileHandler(
         'logs/error_monitor.log',
@@ -71,8 +46,6 @@ def start():
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     
-    #mail_config=read_mail_config()
-    #logging.getLogger('monitor_logger').info(str(mail_config))
     ch = Config_Handler("monitor_config.json",'monitor_logger')
     config = ch.loadUsingFile()
     try:
@@ -106,24 +79,3 @@ if __name__ == "__main__":
         mon.run()
     except:
         logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
-    '''
-   from logging.config import dictConfig
-
-    dictConfig({
-            'version': 1,
-            'formatters': {'default': {
-                'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-                }},
-            'handlers': {'wsgi': {
-                'level': 'INFO',
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': 'error_monitor.log',
-                'maxBytes' :1024 * 1024,
-                'backupCount' : 20,
-                'formatter': 'default'
-            }},
-            'root': {
-                'level': 'INFO',
-                'handlers': ['wsgi']
-                    }
-                })'''
