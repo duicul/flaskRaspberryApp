@@ -1,0 +1,4 @@
+commit_dialog_history_messages=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<messages>\r\n<message>Add remember login</message>\r\n<message>Add banner</message>\r\n<message>Fix password change</message>\r\n<message>Add config change</message>\r\n<message>Add config and control pages</message>\r\n<message>Fix outsidedata poll</message>\r\n<message>Update config admin</message>\r\n<message>Fix logger name</message>\r\n<message>Fix Monitor exception</message>\r\n<message>Store config in DB</message>\r\n</messages>
+eclipse.preferences.version=1
+resourcehistory_graph_split=500,500
+resourcehistory_rev_split=700,300

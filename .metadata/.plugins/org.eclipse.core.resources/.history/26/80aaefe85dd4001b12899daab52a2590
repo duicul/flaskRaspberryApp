@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/static/js/jquery.canvasjs.min.js"></script>
+
+<!--<link rel="stylesheet" href="/static/css/bootstrap.css">
+<script src="/static/js/bootstrap.js"></script>-->
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<style>
+.settingscol{
+background-color:rgb(100,120,180);
+}
+
+</style>
+<title>Covid data</title>
+</head>
+<body>
+<form action="/login" method="post">
+<label for="user_name">Enter your user_name: </label>
+<input type="text" name="user_name" id="name" required>
+<label for="password">Enter your password: </label>
+<input type="text" name="password" id="password" required>
+ <input type="submit" value="Login">
+</form>	
+
+<script src="/static/js/hello.js?v=1.14"></script>
+</body>
+</html>

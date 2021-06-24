@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;flask_pydev/user.db&apos;" deleteContents="false" description="Delete resource &apos;flask_pydev/user.db&apos;" element1="/flask_pydev/user.db" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1624544482871"/>
+</session>

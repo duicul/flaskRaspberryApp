@@ -1,0 +1,84 @@
+import time
+import json
+import traceback
+from  threading import Thread
+import logging
+from data_classes import Temperature_Data,Voltage_Data,AC_Data,\
+    Temperature_Split_Data,Outside_Data
+from config_class import Config_Data
+
+from config_class import Config_Handler
+
+class Monitor():
+    def __init__(self,user_name,logger_name):
+        self.user_name=user_name
+        self.config_data=Config_Data("config.db",logger_name)
+        self.config=self.config_data.getConfig(user_name)
+        self.url=self.config.url
+        self.period=self.config.period
+        # Call the Thread class's init function
+        Thread.__init__(self)
+  
+    def run(self):
+        td=Temperature_Split_Data("measure.db",'monitor_logger')
+        vd=Voltage_Data("measure.db",'monitor_logger')
+        acd=AC_Data("measure.db",'monitor_logger')
+        od=Outside_Data("measure.db",'monitor_logger')
+        while True:
+            ch = Config_Handler("monitor_config.json",'monitor_logger')
+            config = ch.loadUsingFile()
+                
+            try:
+                
+                td.poll_value(config.url)
+                vd.poll_value(config.url)
+                acd.poll_value(config.url)
+                od.poll_value(config.url)
+                
+            except:
+                logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+            time.sleep(int(self.period))
+
+def start():
+    import logging.handlers
+    handler = logging.handlers.RotatingFileHandler(
+        'logs/error_monitor.log',
+        maxBytes=1024 * 1024)
+    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+    logger = logging.getLogger('monitor_logger')
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    
+    ch = Config_Handler("monitor_config.json",'monitor_logger')
+    config = ch.loadUsingFile()
+    try:
+        logging.getLogger('monitor_logger').info("start")
+        time.sleep(30)
+        mon=Monitor(config.user_name,"monitor_logger")
+        mon.run()
+    except:
+        logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
+     
+if __name__ == "__main__":
+    #import logging
+    import logging.handlers
+    handler = logging.handlers.RotatingFileHandler(
+        'logs/error_monitor.log',
+        backupCount=20,
+        maxBytes=1024 * 1024)
+    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+    logger = logging.getLogger('monitor_logger')
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    
+    ch = Config_Handler("monitor_config.json",'monitor_logger')
+    config = ch.loadUsingFile()
+    #mail_config=read_mail_config()
+    #logging.getLogger('monitor_logger').info(str(mail_config))
+    try:
+        logging.getLogger('monitor_logger').info("start")
+        time.sleep(30)
+        mon=Monitor(config.user_name,"monitor_logger")
+        mon.run()
+    except:
+        logging.getLogger('monitor_logger').error(str(traceback.format_exc()))

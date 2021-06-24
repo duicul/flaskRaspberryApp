@@ -1,0 +1,26 @@
+import sys
+import hashlib
+import sha3
+from user_class import User_Data,User
+
+class Authorization:
+    
+    def __init__(self):
+        self.user_data = User_Data()
+    
+    def loginUser(self,user_name,password):
+        user= self.user_data.getUser(user_name)  
+        hash_sha3_512 = hashlib.new("sha3_512", password.encode())
+        if(user.password == hash_sha3_512.hexdigest()):
+            return True
+        return False
+    
+    def registerUser(self,user_name,password,mail):
+        hash_sha3_512 = hashlib.new("sha3_512", password.encode())
+        return self.user_data.addUser(User(user_name,hash_sha3_512.hexdigest(),mail))
+    
+    def removeUser(self,user_name): 
+        return self.user_data.removeUser(user_name)
+  
+if __name__ == '__main__':
+    
