@@ -27,6 +27,7 @@ class Config_Data:
         self.database=database
         self.logger_name=logger_name
         self.table_name="Config"
+        self.create_table()
         if(len(self.getAllConfigs())==0):
            self.addConfig(Config("admin","http://192.168.0.6",900))
     

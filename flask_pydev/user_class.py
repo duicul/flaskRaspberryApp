@@ -57,6 +57,7 @@ class User_Data:
         self.database=database
         self.logger_name=logger_name
         self.table_name="User"
+        self.create_table()
     
     def getUser(self,user_name):
         conn = sqlite3.connect(self.database)
