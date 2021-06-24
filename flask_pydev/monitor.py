@@ -8,9 +8,11 @@ from data_classes import Temperature_Data,Voltage_Data,AC_Data,\
 from config_class import Config_Data
 
 from config_class import Config_Handler
+from multiprocessing.util import LOGGER_NAME
 
 class Monitor():
     def __init__(self,user_name,logger_name):
+        self.logger_name=logger_name
         self.user_name=user_name
         self.config_handler=Config_Handler("monitor_config.json",self.logger_name)
         self.config=self.config_handler.loadUsingFile()
