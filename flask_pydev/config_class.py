@@ -129,6 +129,7 @@ class Config_Handler:
 if __name__ == '__main__':
     cd=Config_Data("config.db","random")
     cd.create_table()
-    cd.addConfig(Config("admin","http://192.168.1.6",900))
+    cd.removeConfig("admin")
+    cd.addConfig(Config("admin","http://192.168.0.6",900))
     for c in cd.getAllConfigs():
         print(c)
