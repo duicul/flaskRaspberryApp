@@ -9,10 +9,14 @@ import traceback
 from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
 from authorization import Authorization
 from datetime import timedelta
-from config_class import Config_Data,Config_Handler,Config
+from config_class import Config_Data,Config
+
+from flask_login import LoginManager,login_user,login_required,logout_user
+login_manager = LoginManager()
+
 
 app = Flask(__name__)
-app.secret_key = '571ba9$#/~90'
+app.secret_key = os.urandom(24)
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
@@ -21,35 +25,47 @@ handler = logging.handlers.RotatingFileHandler(
         'logs/error_flask.log',
         backupCount=20,
         maxBytes=1024 * 1024)
+handlerconsole = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
 logging.getLogger('werkzeug').setLevel(logging.INFO)
 logging.getLogger('werkzeug').addHandler(handler)
+logging.getLogger('werkzeug').addHandler(handlerconsole)
 app.logger.setLevel(logging.WARNING) 
 app.logger.addHandler(handler)
+login_manager.init_app(app)
+
+
+login_manager.login_view = 'login'
 
 tsd=Temperature_Split_Data("measure.db",'werkzeug')
 vd=Voltage_Data("measure.db",'werkzeug')
 acd=AC_Data("measure.db",'werkzeug')
 od=Outside_Data("measure.db",'werkzeug')
 aut=Authorization()
-
 cd=Config_Data("config.db",'werkzeug')
 
 @app.errorhandler(401)
 def custom_401(error):
     return Response('<Why access is denied string goes here...>', 401, {'WWW-Authenticate':'Basic realm="Login Required"'})
 
-@app.before_request
-def make_session_permanent():
-    session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=30)
+#@app.before_request
+#def make_session_permanent():
+#    session.permanent = True
+#    app.permanent_session_lifetime = timedelta(minutes=30)
+
+@login_manager.user_loader
+def load_user(user_id):
+    user = aut.user_data.getUser(user_id)
+    return user
 
 @app.route('/logout')
 def logout():
     session.clear()
+    logout_user()
     return redirect(url_for('home_station'))
 
 @app.route('/change_password',methods = ['POST'])
+@login_required
 def change_password():
     user = None
     try:
@@ -74,6 +90,7 @@ def change_password():
     return redirect(url_for('home_station'))
 
 @app.route('/register',methods = ['POST'])
+@login_required
 def register():
     session.clear()
     try:
@@ -104,8 +121,16 @@ def login():
     try:
         user_name = request.form['user_name']
         password = request.form['password']
+        remember=False
+        try:
+            remember = request.form['remember']
+        except:
+            logging.getLogger('werkzeug').info("remeber is False")
+            
         user = aut.loginUser(user_name, password)
         if(user != None):
+            remember_duration = timedelta(days=20) if remember else timedelta(hours=1)                
+            login_user(user,True,remember_duration)
             session["attempt"]=0
             session["user_name"]=user.user_name
             session["mail"]=user.mail
@@ -114,47 +139,32 @@ def login():
     return redirect(url_for('home_station'))
     
 @app.route('/current_timestamp')
+@login_required
 def current_timestamp():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     return str(tsd.current_timestamp())
 
 
 @app.route('/cpu_gpu_temp')
+@login_required
 def cpu_gpu_temp():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     temps = os.popen('vcgencmd measure_temp').read().replace("\n","<br>")
     return temps
 
 @app.route('/memory_usage')
+@login_required
 def memory_usage():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     memory = os.popen('free -ht').read().replace("\n","<br>").replace(" ","&nbsp;&nbsp;")
     return memory
 
 @app.route('/disk_usage')
+@login_required
 def disk_usage():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     memory = os.popen('df -H').read().replace("\n","<br>").replace(" ","&nbsp;&nbsp;")
     return memory
 
 @app.route('/data_retr')
+@login_required
 def data_status():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     return "okay stubbed" #data_retr.showdata()
 
 @app.route('/success/<name>')
@@ -186,12 +196,13 @@ def extract_regions(api,case_type,data_type):
         return ret
 
 @app.route('/force_poll')
+@login_required
 def force_poll():
     user = None
     try:
         user = session["user_name"]
     except:
-        return redirect(url_for('home_station'))
+        return ""
     if(user!=None):
         config=cd.getConfig(user)
         tsd.poll_value(config.url)
@@ -201,23 +212,21 @@ def force_poll():
     return ""
 
 @app.route('/convert_old')
+@login_required
 def convert_old():
     user=None
     try:
         user = session["user_name"]
     except:
-        return redirect(url_for('home_station'))
+        return "error"
     if(user!=None):
         config=cd.getConfig(user)
         tsd.convert_old(config.url)
     return "success"
     
 @app.route('/temperature')
+@login_required
 def temperature():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     data=tsd.extract_last()
     if data==None:
         return {}
@@ -225,51 +234,35 @@ def temperature():
         
 
 @app.route('/voltage')
+@login_required
 def voltage():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     data=vd.extract_last()
     if data==None:
         return {}
     return json.dumps({"date":data[1],"volt1":data[2]})
 
 def reset_config_weather():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     file_json={"api_key":"random","city":"random"}
     file=open("config_weather.json","w")
     json.dump(file_json,file)
     file.close()
 
 @app.route('/weather')
+@login_required
 def weather():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     return json.dumps(od.poll_value())
 
 @app.route('/ac')
+@login_required
 def ac():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     data=acd.extract_last()
     if data==None:
         return {}
     return json.dumps({"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]})
 
 @app.route('/home_station/voltage_data')
+@login_required
 def home_station_voltage_data():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     volt=[]
     interval=False
     try:
@@ -293,11 +286,8 @@ def home_station_voltage_data():
     return json.dumps(t)
 
 @app.route('/home_station/ac_data')
+@login_required
 def home_station_ac_data():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     data=[]
     interval=False
     try:
@@ -320,11 +310,8 @@ def home_station_ac_data():
     return json.dumps(t)
        
 @app.route('/home_station/temperature_data')
+@login_required
 def  home_station_temperature_data():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     temp=[]
     interval=False
     try:
@@ -371,6 +358,7 @@ def home_station():
         return render_template('login.html')
 
 @app.route('/home_station/get_config')
+@login_required
 def home_station_get_config():    
     user = None
     try:
@@ -381,6 +369,7 @@ def home_station_get_config():
     return json.dumps(config.toJSON())
 
 @app.route('/home_station/update_config',methods = ['POST'])
+@login_required
 def home_station_update_config():    
     user = None
     try:
@@ -395,6 +384,7 @@ def home_station_update_config():
     return render_template('config.html')
     
 @app.route('/home_station/config')
+@login_required
 def home_station_config():
     user_name = None
     try:
@@ -409,6 +399,7 @@ def home_station_config():
         return render_template('login.html') 
     
 @app.route('/home_station/control')
+@login_required
 def home_station_control():
     user_name = None
     try:
@@ -423,11 +414,8 @@ def home_station_control():
         return render_template('login.html') 
 
 @app.route('/home_station/restart')
+@login_required
 def home_station_restart():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     try:
         requests.get(home_station_url+"/restart")
     except:
@@ -435,11 +423,8 @@ def home_station_restart():
     return "restarted"
 
 @app.route('/home_station/remove_wrong_value')
+@login_required
 def remove_wrong_value():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     tsd.remove_wrong_value()
     acd.remove_wrong_value()
     vd.remove_wrong_value()
@@ -447,10 +432,6 @@ def remove_wrong_value():
 
 @app.route('/covid')
 def index():
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
     if 'username' in session:
         username = session['username']
     else:   username="anonymous"

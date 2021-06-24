@@ -6,8 +6,8 @@ Created on Jul 28, 2020
 import sqlite3
 import logging 
 import traceback
-
-class User:
+from flask_login import UserMixin
+class User(UserMixin):
     def __init__(self,user_name,password,mail):
         self.user_name=user_name
         self.password=password
@@ -15,7 +15,42 @@ class User:
         
     def __str__(self):
         return str(self.user_name)+" "+str(self.password)+" "+str(self.mail)
+    
+    @property
+    def is_active(self):
+        return True
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return self.user_name
+        except AttributeError:
+            raise NotImplementedError('No `id` attribute - override `get_id`')
+
+    def __eq__(self, other):
+        '''
+        Checks the equality of two `UserMixin` objects using `get_id`.
+        '''
+        if isinstance(other, UserMixin):
+            return self.get_id() == other.get_id()
+        return NotImplemented
+
+    def __ne__(self, other):
+        '''
+        Checks the inequality of two `UserMixin` objects using `get_id`.
+        '''
+        equal = self.__eq__(other)
+        if equal is NotImplemented:
+            return NotImplemented
+        return not equal
+    
 class User_Data:
     
     def __init__(self,database,logger_name):
