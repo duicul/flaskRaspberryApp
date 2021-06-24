@@ -62,6 +62,9 @@ def change_password():
         user_name = user
         password = request.form['password_change']
         mail = request.form['mail_change']
+        confirm_password = request.form['confirm_password_change']
+        if(password != confirm_password):
+            return redirect(url_for('home_station_config'))
         aut.removeUser(user_name)
         aut.registerUser(user_name, password, mail)
     except:
@@ -76,6 +79,9 @@ def register():
     try:
         user_name = request.form['user_name_register']
         password = request.form['password_register']
+        confirm_password = request.form['confirm_password_register']
+        if(password != confirm_password):
+            return redirect(url_for('home_station_config'))
         mail = request.form['mail_register']
         aut.removeUser(user_name)
         aut.registerUser(user_name, password, mail)

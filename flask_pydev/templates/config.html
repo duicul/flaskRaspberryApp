@@ -69,35 +69,34 @@ function load_config(){
 <div class="row">
     <div class="col-md-1">
     </div>
-    <div class="col-md-10" >
+    <div class="col-md-5" >
         <form action="/change_password" method="post">
-        <label>UserName:{{session["user_name"]}} </label>
+        <label>UserName:{{session["user_name"]}} </label><br/>
         <label for="password_change">Password: </label>
-        <input type="password" name="password_change" id="password_change" required>
+        <input type="password" name="password_change" id="password_change" required><br/>
+        <label for="confirm_password_change">Confirm Password: </label>
+        <input type="password" name="confirm_password_change" id="confirm_password_change" required><br/>
         <label for="mail">Mail: </label>
-        <input type="mail" name="mail_change" id="mail_change" value="{{session["mail"]}}" required >
-        <input type="submit" value="Update">
+        <input type="mail" name="mail_change" id="mail_change" value="{{session["mail"]}}" required ><br/>
+        <input type="submit" value="Update"><br/>
+        </form> 
+    </div>
+    <div class="col-md-5" >
+        <form action="/register" method="post">
+        <label for="user_name_register">UserName: </label>
+        <input type="text" name="user_name_register" id="user_name_register" required><br/>
+        <label for="password_register">Password: </label>
+        <input type="password" name="password_register" id="password_register" required><br/>
+        <label for="confirm_password_register">Confirm Password: </label>
+        <input type="password" name="confirm_password_register" id="confirm_password_register" required><br/>
+        <label for="mail_register">Mail: </label>
+        <input type="mail" name="mail_register" id="mail_register" required><br/>
+        <input type="submit" value="Register"><br/>
         </form> 
     
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-1">
-    </div>
-    <div class="col-md-10" >
-        <form action="/register" method="post">
-        <label for="user_name_register">UserName: </label>
-        <input type="text" name="user_name_register" id="user_name_register" required>
-        <label for="password_register">Password: </label>
-        <input type="password" name="password_register" id="password_register" required>
-        <label for="mail_register">Mail: </label>
-        <input type="mail" name="mail_register" id="mail_register" required>
-        <input type="submit" value="Register">
-        </form> 
-    
-    </div>
-</div>
 <script src="/static/js/home_measure.js"></script>
 </body>
 </html>
