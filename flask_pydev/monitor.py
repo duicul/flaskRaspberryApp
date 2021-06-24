@@ -32,7 +32,7 @@ class Monitor():
                 td.poll_value(self.url)
                 vd.poll_value(self.url)
                 acd.poll_value(self.url)
-                od.poll_value(self.url)
+                od.poll_value()
                 
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
