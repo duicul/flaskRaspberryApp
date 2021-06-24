@@ -326,7 +326,35 @@ def home_station():
             return render_template('home_measure.html')
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
-        return render_template('login.html')    
+        return render_template('login.html')
+    
+@app.route('/home_station/config')
+def home_station_config():
+    user_name = None
+    try:
+        user_name = session["user_name"]
+        print(user_name)
+        if(user_name == None):
+            return render_template("login.html")
+        else:
+            return render_template('config.html')
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return render_template('login.html') 
+    
+@app.route('/home_station/control')
+def home_station_control():
+    user_name = None
+    try:
+        user_name = session["user_name"]
+        print(user_name)
+        if(user_name == None):
+            return render_template("login.html")
+        else:
+            return render_template('control.html')
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return render_template('login.html') 
 
 @app.route('/home_station/restart')
 def home_station_restart():
