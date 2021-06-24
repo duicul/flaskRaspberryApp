@@ -287,6 +287,13 @@ def remove_wrong():
         
 @app.route('/home_station')
 def home_station():
+    attempt=0
+    try:
+        attempt = session["attempt"]
+    except:
+        pass
+    session["attempt"] = attempt
+        
     user_name = None
     try:
         user_name = session["user_name"]
