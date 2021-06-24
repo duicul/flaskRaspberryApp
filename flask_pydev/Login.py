@@ -9,7 +9,7 @@ import traceback
 from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
 from authorization import Authorization
 from datetime import timedelta
-from config_class import Config_Data,Config_Handler
+from config_class import Config_Data,Config_Handler,Config
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
@@ -49,6 +49,41 @@ def logout():
     session.clear()
     return redirect(url_for('home_station'))
 
+@app.route('/change_password',methods = ['POST'])
+def change_password():
+    user = None
+    try:
+        user = session["user_name"]
+    except:
+        return redirect(url_for('home_station'))
+    if user == None:
+        return redirect(url_for('home_station'))
+    try:
+        user_name = user
+        password = request.form['password_change']
+        mail = request.form['mail_change']
+        aut.removeUser(user_name)
+        aut.registerUser(user_name, password, mail)
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return redirect(url_for('home_station'))
+    session.clear()
+    return redirect(url_for('home_station'))
+
+@app.route('/register',methods = ['POST'])
+def register():
+    session.clear()
+    try:
+        user_name = request.form['user_name_register']
+        password = request.form['password_register']
+        mail = request.form['mail_register']
+        aut.removeUser(user_name)
+        aut.registerUser(user_name, password, mail)
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+    return redirect(url_for('home_station'))
+
+
 @app.route('/login',methods = ['POST'])
 def login():
     att = 0
@@ -66,7 +101,8 @@ def login():
         user = aut.loginUser(user_name, password)
         if(user != None):
             session["attempt"]=0
-            session["user_name"]=user_name
+            session["user_name"]=user.user_name
+            session["mail"]=user.mail
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
     return redirect(url_for('home_station'))
@@ -327,6 +363,30 @@ def home_station():
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         return render_template('login.html')
+
+@app.route('/home_station/get_config')
+def home_station_get_config():    
+    user = None
+    try:
+        user = session["user_name"]
+    except:
+        return json.dumps({})
+    config=cd.getConfig(user)
+    return json.dumps(config.toJSON())
+
+@app.route('/home_station/update_config',methods = ['POST'])
+def home_station_update_config():    
+    user = None
+    try:
+        user = session["user_name"]
+    except:
+        pass
+    url = request.form['url']
+    period = request.form['period']
+    c = Config(user,url,period)
+    cd.updateConfig(c)
+    print(c)
+    return render_template('config.html')
     
 @app.route('/home_station/config')
 def home_station_config():

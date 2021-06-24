@@ -18,9 +18,18 @@ background-color:rgb(100,120,180);
 }
 
 </style>
+<script>
+function load_config(){
+    $.ajax({url: "/home_station/get_config", success: function(result){
+        result=JSON.parse(result);
+        $("#url").val(result.url);
+        $("#period").val(result.period);
+        }});  
+    }
+</script>
 <title>Home Station Config</title>
 </head>
-<body onload="init();">
+<body onload="load_config();">
 
 <div class="row">
     <div class="col-md-1">
@@ -39,6 +48,54 @@ background-color:rgb(100,120,180);
         <a class="btn btn-primary" href="/home_station/control">Control</a>
     </div>
     <div class="col-md-7" >
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10" >
+        <form action="/home_station/update_config" method="post">
+        <label for="url">URL for polling: </label>
+        <input type="text" name="url" id="url" required>
+        <label for="period">Polling period: </label>
+        <input type="text" name="period" id="period" required>
+        <input type="submit" value="Update">
+        </form> 
+    
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10" >
+        <form action="/change_password" method="post">
+        <label>UserName:{{session["user_name"]}} </label>
+        <label for="password_change">Password: </label>
+        <input type="password" name="password_change" id="password_change" required>
+        <label for="mail">Mail: </label>
+        <input type="mail" name="mail_change" id="mail_change" value="{{session["mail"]}}" required >
+        <input type="submit" value="Update">
+        </form> 
+    
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10" >
+        <form action="/register" method="post">
+        <label for="user_name_register">UserName: </label>
+        <input type="text" name="user_name_register" id="user_name_register" required>
+        <label for="password_register">Password: </label>
+        <input type="password" name="password_register" id="password_register" required>
+        <label for="mail_register">Mail: </label>
+        <input type="mail" name="mail_register" id="mail_register" required>
+        <input type="submit" value="Register">
+        </form> 
+    
     </div>
 </div>
 <script src="/static/js/home_measure.js"></script>
