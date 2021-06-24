@@ -3,21 +3,19 @@ from flask import Flask,session,request,render_template,redirect, url_for,Respon
 #from time import sleep
 import json
 import os
-import numpy as np
 from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
 from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
-from weather import Weather
 from authorization import Authorization
 from datetime import timedelta
+from config_class import Config_Data,Config_Handler
 
 app = Flask(__name__)
 app.secret_key = '571ba9$#/~90'
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
-import logging
 import logging.handlers
 handler = logging.handlers.RotatingFileHandler(
         'logs/error_flask.log',
@@ -29,26 +27,13 @@ logging.getLogger('werkzeug').addHandler(handler)
 app.logger.setLevel(logging.WARNING) 
 app.logger.addHandler(handler)
 
-try:
-    file=open("data.json","r")
-    file_json=json.load(file)
-    home_station_url=file_json["url"]
-    polling_period=file_json["period"]
-    file.close()
-except:
-    file_json={"url":home_station_url,"period":polling_period}
-    file=open("data.json","w")
-    json.dump(file_json,file)
-    file.close()
-
-
-#td=Temperature_Data("measure.db",home_station_url,'werkzeug')
-tsd=Temperature_Split_Data("measure.db",home_station_url,'werkzeug')
-vd=Voltage_Data("measure.db",home_station_url,'werkzeug')
-acd=AC_Data("measure.db",home_station_url,'werkzeug')
-od=Outside_Data("measure.db",home_station_url,'werkzeug')
+tsd=Temperature_Split_Data("measure.db",'werkzeug')
+vd=Voltage_Data("measure.db",'werkzeug')
+acd=AC_Data("measure.db",'werkzeug')
+od=Outside_Data("measure.db",'werkzeug')
 aut=Authorization()
 
+cd=Config_Data("config.db",'werkzeug')
 
 @app.errorhandler(401)
 def custom_401(error):
@@ -160,23 +145,29 @@ def extract_regions(api,case_type,data_type):
 
 @app.route('/force_poll')
 def force_poll():
+    user = None
     try:
         user = session["user_name"]
     except:
         return redirect(url_for('home_station'))
-    tsd.poll_value()
-    vd.poll_value()
-    acd.poll_value()
-    od.poll_value()
+    if(user!=None):
+        config=cd.getConfig(user)
+        tsd.poll_value(config.url)
+        vd.poll_value(config.url)
+        acd.poll_value(config.url)
+        od.poll_value(config.url)
     return ""
 
 @app.route('/convert_old')
 def convert_old():
+    user=None
     try:
         user = session["user_name"]
     except:
         return redirect(url_for('home_station'))
-    tsd.convert_old()
+    if(user!=None):
+        config=cd.getConfig(user)
+        tsd.convert_old(config.url)
     return "success"
     
 @app.route('/temperature')
@@ -312,11 +303,6 @@ def  home_station_temperature_data():
     for id in range(1,11):
         t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
     print(t)
-    pol_grade=2
-    predict_len=8
-    dataset_size=20 if len(t)>10 else len(t)
-    pol_regr_y_t1=[]
-    pol_regr_y_t2=[]
     result={"recorded":t,"predict":[]}
         
     return json.dumps(result)

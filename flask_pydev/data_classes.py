@@ -13,9 +13,8 @@ import json
 
 class Table_Data:
     
-    def __init___(self,database,home_station_url,logger_name):
+    def __init___(self,database,logger_name):
         self.database=database
-        self.home_station_url=home_station_url
         self.logger_name=logger_name
     
     def current_timestamp(self):
@@ -30,10 +29,7 @@ class Table_Data:
             conn.close()
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-        return result
-       
-    def change_url(self,new_url):
-        self.home_station_url=new_url    
+        return result   
     
     def create_table(self):
         ''' Create corresponding table '''
@@ -134,15 +130,14 @@ class Table_Data:
         """ Poll sensor values from the sensor """
         pass
     
-    def restart_device(self):
+    def restart_device(self,home_station_url):
         logging.getLogger(self.logger_name).info("Restart")
-        requests.get(self.home_station_url+"/restart")
+        requests.get(home_station_url+"/restart")
     
 class Temperature_Data(Table_Data):
     
-    def __init__(self,database,home_station_url,logger_name):
+    def __init__(self,database,logger_name):
         self.database=database
-        self.home_station_url=home_station_url
         self.logger_name=logger_name
         self.table_name="Temperature_Data"
         self.notified_temp=[False,False]
@@ -189,21 +184,21 @@ class Temperature_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self):
+    def poll_value(self,home_station_url):
         i=0
         temp1=-127
         temp2=-127
         while (temp1==-127 or temp2==-127) and i<30:
             i=i+1
             try:
-                temp = requests.get(self.home_station_url+"/temperature").json()
+                temp = requests.get(home_station_url+"/temperature").json()
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return 
             temp1=float(temp["temp1"]) if float(temp["temp1"])!=-127 else temp1
             temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
             
-        logging.getLogger(self.logger_name).info(" polled temperature"+str(self.home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
+        logging.getLogger(self.logger_name).info(" polled temperature"+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
         try:
                 mail_config=read_mail_config()
         except:
@@ -242,9 +237,8 @@ class Temperature_Data(Table_Data):
 
 class Voltage_Data(Table_Data):
     
-    def __init__(self,database,home_station_url,logger_name):
+    def __init__(self,database,logger_name):
         self.database=database
-        self.home_station_url=home_station_url
         self.logger_name=logger_name
         self.table_name="Voltage_Data"
         self.create_table()
@@ -281,21 +275,20 @@ class Voltage_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self):
+    def poll_value(self,home_station_url):
         try:
-            volt = [requests.get(self.home_station_url+"/voltage").json()["volt1"] for i in range(4)]
+            volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(4)]
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
         volt = round(sum(volt)/len(volt),2)
-        logging.getLogger(self.logger_name).info(" polled voltage "+str(self.home_station_url)+" result: "+str(volt))
+        logging.getLogger(self.logger_name).info(" polled voltage "+str(home_station_url)+" result: "+str(volt))
         self.insert(float(volt))
 
 class AC_Data(Table_Data):
     
-    def __init__(self,database,home_station_url,logger_name):
+    def __init__(self,database,logger_name):
         self.database=database
-        self.home_station_url=home_station_url
         self.logger_name=logger_name
         self.table_name="AC_Data"
         self.create_table()
@@ -343,9 +336,9 @@ class AC_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self):
+    def poll_value(self,home_station_url):
         try:
-            ac = [requests.get(self.home_station_url+"/ac").json() for i in range(4)]
+            ac = [requests.get(home_station_url+"/ac").json() for i in range(4)]
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
@@ -353,7 +346,7 @@ class AC_Data(Table_Data):
         current = round(sum([ac[i]["current"] for i in range(len(ac))])/len(ac),2)
         power = round(sum([ac[i]["power"] for i in range(len(ac))])/len(ac),2)
         energy = ac[len(ac)-1]["energy"]
-        logging.getLogger(self.logger_name).info(" polled AC "+str(self.home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
+        logging.getLogger(self.logger_name).info(" polled AC "+str(home_station_url)+" result: "+str(volt)+" "+str(current)+" "+str(power)+" "+str(energy))
         self.remove_wrong_value()
         if(float(energy)==0):
             self.restart_device()
@@ -362,9 +355,8 @@ class AC_Data(Table_Data):
 
 class Temperature_Split_Data(Table_Data):
     
-    def __init__(self,database,home_station_url,logger_name):
+    def __init__(self,database,logger_name):
         self.database=database
-        self.home_station_url=home_station_url
         self.logger_name=logger_name
         self.table_name="Temperature_Split_Data"
         self.notified_temp=[False,False]
@@ -415,12 +407,12 @@ class Temperature_Split_Data(Table_Data):
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
     def convert_old(self):
-        td=Temperature_Data(self.database,self.home_station_url,self.logger_name)
+        td=Temperature_Data(self.database,self.logger_name)
         for temp_rec in td.extract_all_interval(""):
             self.insert(1,temp_rec[2], temp_rec[1])
             self.insert(2,temp_rec[3], temp_rec[1])
     
-    def poll_value(self):
+    def poll_value(self,home_station_url):
         i=0
         temp1=-127
         temp2=-127
@@ -428,14 +420,14 @@ class Temperature_Split_Data(Table_Data):
         while (temp1==-127 or temp2==-127) and i<30:
             i=i+1
             try:
-                temp = requests.get(self.home_station_url+"/temperature").json()
+                temp = requests.get(home_station_url+"/temperature").json()
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return 
             temp1=float(temp["temp1"]) if float(temp["temp1"])!=-127 else temp1
             temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
             
-        logging.getLogger(self.logger_name).info("Temperature_Split_Data polled temperature"+str(self.home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
+        logging.getLogger(self.logger_name).info("Temperature_Split_Data polled temperature"+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
         try:
                 mail_config=read_mail_config()
         except:

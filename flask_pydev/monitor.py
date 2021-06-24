@@ -5,12 +5,17 @@ from  threading import Thread
 import logging
 from data_classes import Temperature_Data,Voltage_Data,AC_Data,\
     Temperature_Split_Data,Outside_Data
+from config_class import Config_Data
 
+from config_class import Config_Handler
 
 class Monitor():
-    def __init__(self,home_station_url,period):
-        self.home_station_url=home_station_url
-        self.period=period
+    def __init__(self,user_name,logger_name):
+        self.user_name=user_name
+        self.config_data=Config_Data("config.db",logger_name)
+        self.config=self.config_data.getConfig(user_name)
+        self.url=self.config.url
+        self.period=self.config.period
         # Call the Thread class's init function
         Thread.__init__(self)
        
@@ -68,11 +73,12 @@ def start():
     
     #mail_config=read_mail_config()
     #logging.getLogger('monitor_logger').info(str(mail_config))
-    
+    ch = Config_Handler("monitor_config.json",'monitor_logger')
+    config = ch.loadUsingFile()
     try:
         logging.getLogger('monitor_logger').info("start")
         time.sleep(30)
-        mon=Monitor("http://192.168.0.6",900)
+        mon=Monitor(config.user_name,"monitor_logger")
         mon.run()
     except:
         logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
@@ -89,13 +95,14 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     
+    ch = Config_Handler("monitor_config.json",'monitor_logger')
+    config = ch.loadUsingFile()
     #mail_config=read_mail_config()
     #logging.getLogger('monitor_logger').info(str(mail_config))
-    
     try:
         logging.getLogger('monitor_logger').info("start")
         time.sleep(30)
-        mon=Monitor("http://192.168.0.6",900)
+        mon=Monitor(config.user_name,"monitor_logger")
         mon.run()
     except:
         logging.getLogger('monitor_logger').error(str(traceback.format_exc()))
