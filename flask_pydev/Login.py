@@ -144,6 +144,7 @@ def login():
 @login_required
 def get_login_attempts():
     la = list(map(lambda l : l.toJSON(),lad.getAllAttemptsUser(current_user.user_name, None)))
+    la.reverse()
     return json.dumps(la)
 
 @app.route('/current_timestamp')
