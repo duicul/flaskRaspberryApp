@@ -63,8 +63,8 @@ class User(UserMixin):
         return False
 
 class UserAnonym(AnonymousUserMixin):
-    def __init__(self):
-        self.attempts=0
+    def __init__(self,attempts=0):
+        self.attempts=attempts
         self.max_attemps=5
         
     def __str__(self):
@@ -108,7 +108,7 @@ class User_Data:
             user = UserAnonym(len(logins))
         return user
     
-    def loginUser(self,user_name,password):
+    def loginUser(self,user_name,password,ip,epochtime):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
         querry="SELECT * FROM "+self.table_name+" WHERE USER_NAME='"+user_name+"' AND PASSWORD='"+password+"'"
@@ -126,8 +126,12 @@ class User_Data:
         if(user==None):
             fromtime=datetime.now()-timedelta(minutes=30)
             epochtime=time.mktime(fromtime.timetuple())
-            logins = len(filter(lambda logatt:not logatt.success,self.login_data.getAllAttemptsUser(user_name, epochtime)))
-            user = UserAnonym(len(logins))
+            logins = len(list(filter(lambda logatt:not logatt.success,self.login_data.getAllAttemptsIp(ip, epochtime))))
+            return UserAnonym(logins)
+        else:
+            logins = len(list(filter(lambda logatt:not logatt.success,self.login_data.getAllAttemptsIp(ip, epochtime))))
+            if(logins>5):
+                return UserAnonym(logins)
         return user
     
     def getAllUsers(self):
@@ -235,8 +239,28 @@ class LoginAttempt_Data:
         mycursor=conn.cursor()
         timequerry=""
         if(epochtime!=None):
-            timequerry=" AND datetime(TIMESTAMP) BETWEEN "+epochtime+" AND datetime('now','localtime') "
+            timequerry=" AND datetime(TIMESTAMP) BETWEEN "+str(epochtime)+" AND datetime('now','localtime') "
         querry="SELECT * FROM "+self.table_name+" WHERE USER_NAME='"+user_name+"' "+timequerry 
+        mycursor.execute(querry)
+        result=[]
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        la = []
+        for rec in result:
+            la.append(LoginAttempt(rec[1],rec[2],rec[3],rec[4]))
+        return la
+    
+    def getAllAttemptsIp(self,ip,epochtime=None):
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        timequerry=""
+        if(epochtime!=None):
+            timequerry=" AND datetime(TIMESTAMP) BETWEEN "+str(epochtime)+" AND datetime('now','localtime') "
+        querry="SELECT * FROM "+self.table_name+" WHERE IP='"+ip+"' "+timequerry 
         mycursor.execute(querry)
         result=[]
         try:

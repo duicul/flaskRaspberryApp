@@ -3,6 +3,8 @@ from flask import Flask,session,request,render_template,redirect, url_for,Respon
 #from time import sleep
 import json
 import os
+import time
+from datetime import datetime, timedelta
 from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
@@ -43,7 +45,9 @@ od=Outside_Data("measure.db",'werkzeug')
 aut=Authorization()
 cd=Config_Data("config.db",'werkzeug')
 lad=LoginAttempt_Data("loginattempt.db",'werkzeug')
+attempt_period=timedelta(hours=4)
 
+max_attempts=5
 @app.errorhandler(401)
 def custom_401(error):
     return Response('<Why access is denied string goes here...>', 401, {'WWW-Authenticate':'Basic realm="Login Required"'})
@@ -109,13 +113,6 @@ def register():
 
 @app.route('/login',methods = ['POST'])
 def login():
-    print(current_user)
-    att = current_user.attempts
-    current_user.increaseAttempts()
-    
-    if(current_user.countReached()):
-        return redirect(url_for('home_station'))
-    
     try:
         user_name = request.form['user_name']
         password = request.form['password']
@@ -124,9 +121,11 @@ def login():
             remember = request.form['remember']
         except:
             logging.getLogger('werkzeug').info("remeber is False")
-            
-        user = aut.loginUser(user_name, password)
+        epochtime=time.mktime((datetime.now()-attempt_period).timetuple())
+        user = aut.loginUser(user_name, password,request.remote_addr,epochtime)
         if(user != None):
+            if(user.countReached()):
+                return redirect(url_for('home_station'))
             remember_duration = timedelta(days=20) if remember else timedelta(hours=1) 
             if(user.is_authenticated):
                 lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,True))
@@ -340,6 +339,9 @@ def  home_station_temperature_data():
 @app.route('/home_station')
 def home_station():    
     try:
+        epochtime=time.mktime((datetime.now()-attempt_period).timetuple())
+        logins=logins = len(list(filter(lambda logatt:not logatt.success,lad.getAllAttemptsIp(request.remote_addr, epochtime))))
+        current_user.attempts=logins
         if(not current_user.is_authenticated):
             return render_template("login.html")
         else:

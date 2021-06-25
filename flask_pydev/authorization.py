@@ -11,9 +11,9 @@ class Authorization:
         if(len(self.user_data.getAllUsers())==0):
             self.createDefaultUser()
     
-    def loginUser(self,user_name,password):
+    def loginUser(self,user_name,password,ip,epochtime):
         hash_sha3_512 = hashlib.new("sha3_512", password.encode())
-        user= self.user_data.loginUser(user_name,hash_sha3_512.hexdigest())
+        user= self.user_data.loginUser(user_name,hash_sha3_512.hexdigest(),ip,epochtime)
         return user
     
     def registerUser(self,user_name,password,mail):
