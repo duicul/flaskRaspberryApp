@@ -12,13 +12,9 @@ class Authorization:
             self.createDefaultUser()
     
     def loginUser(self,user_name,password):
-        user= self.user_data.getUser(user_name)  
         hash_sha3_512 = hashlib.new("sha3_512", password.encode())
-        if(user == None):
-            return None
-        if(user.password == hash_sha3_512.hexdigest()):
-            return user
-        return None
+        user= self.user_data.loginUser(user_name,hash_sha3_512.hexdigest())
+        return user
     
     def registerUser(self,user_name,password,mail):
         hash_sha3_512 = hashlib.new("sha3_512", password.encode())

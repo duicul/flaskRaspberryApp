@@ -48,7 +48,10 @@ function load_config(){
     <div class="col-md-1">
         <a class="btn btn-primary" href="/home_station/control">Control</a>
     </div>
-    <div class="col-md-6" >
+    <div class="col-md-1">
+        <a class="btn btn-primary" href="/home_station/login_attempt">Login Attempts</a>
+    </div>
+    <div class="col-md-5" >
     </div>
 </div>
 
@@ -72,7 +75,7 @@ function load_config(){
     </div>
     <div class="col-md-5" >
         <form action="/change_password" method="post">
-        <label>UserName:{{session["user_name"]}} </label><br/>
+        <label>UserName: {{ current_user.user_name }} </label><br/>
         <label for="password_change">Password: </label>
         <input type="password" name="password_change" id="password_change" required><br/>
         <label for="confirm_password_change">Confirm Password: </label>

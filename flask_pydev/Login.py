@@ -10,8 +10,8 @@ from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Dat
 from authorization import Authorization
 from datetime import timedelta
 from config_class import Config_Data,Config
-
-from flask_login import LoginManager,login_user,login_required,logout_user
+from user_class import UserAnonym,LoginAttempt_Data,LoginAttempt
+from flask_login import LoginManager,login_user,login_required,logout_user,current_user,login_url
 login_manager = LoginManager()
 
 
@@ -33,8 +33,7 @@ logging.getLogger('werkzeug').addHandler(handlerconsole)
 app.logger.setLevel(logging.WARNING) 
 app.logger.addHandler(handler)
 login_manager.init_app(app)
-
-
+login_manager.anonymous_user = UserAnonym
 login_manager.login_view = 'login'
 
 tsd=Temperature_Split_Data("measure.db",'werkzeug')
@@ -43,6 +42,7 @@ acd=AC_Data("measure.db",'werkzeug')
 od=Outside_Data("measure.db",'werkzeug')
 aut=Authorization()
 cd=Config_Data("config.db",'werkzeug')
+lad=LoginAttempt_Data("loginattempt.db",'werkzeug')
 
 @app.errorhandler(401)
 def custom_401(error):
@@ -53,6 +53,13 @@ def custom_401(error):
 #    session.permanent = True
 #    app.permanent_session_lifetime = timedelta(minutes=30)
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    if request.method == 'GET':
+        return redirect(login_url('/home_station', request.url))
+    else:
+        return dict(error=True, message="Please log in for access."), 403
+
 @login_manager.user_loader
 def load_user(user_id):
     user = aut.user_data.getUser(user_id)
@@ -60,20 +67,13 @@ def load_user(user_id):
 
 @app.route('/logout')
 def logout():
-    session.clear()
     logout_user()
     return redirect(url_for('home_station'))
 
 @app.route('/change_password',methods = ['POST'])
 @login_required
 def change_password():
-    user = None
-    try:
-        user = session["user_name"]
-    except:
-        return redirect(url_for('home_station'))
-    if user == None:
-        return redirect(url_for('home_station'))
+    user = current_user.user_name
     try:
         user_name = user
         password = request.form['password_change']
@@ -109,15 +109,13 @@ def register():
 
 @app.route('/login',methods = ['POST'])
 def login():
-    att = 0
-    try:
-        att=session["attempt"]
-    except:
-        session["attempt"]=0
-        pass
-    session["attempt"]=att+1
-    if(att>5):
+    print(current_user)
+    att = current_user.attempts
+    current_user.increaseAttempts()
+    
+    if(current_user.countReached()):
         return redirect(url_for('home_station'))
+    
     try:
         user_name = request.form['user_name']
         password = request.form['password']
@@ -131,13 +129,19 @@ def login():
         if(user != None):
             remember_duration = timedelta(days=20) if remember else timedelta(hours=1)                
             login_user(user,True,remember_duration)
-            session["attempt"]=0
-            session["user_name"]=user.user_name
-            session["mail"]=user.mail
+            lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,True))
+        else:
+            lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,False)) 
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
     return redirect(url_for('home_station'))
-    
+
+@app.route('/get_login_attempts')
+@login_required
+def get_login_attempts():
+    la = list(map(lambda l : l.toJSON(),lad.getAllAttemptsUser(current_user.user_name, None)))
+    return json.dumps(la)
+
 @app.route('/current_timestamp')
 @login_required
 def current_timestamp():
@@ -198,11 +202,7 @@ def extract_regions(api,case_type,data_type):
 @app.route('/force_poll')
 @login_required
 def force_poll():
-    user = None
-    try:
-        user = session["user_name"]
-    except:
-        return ""
+    user = current_user.user_name
     if(user!=None):
         config=cd.getConfig(user)
         tsd.poll_value(config.url)
@@ -214,11 +214,7 @@ def force_poll():
 @app.route('/convert_old')
 @login_required
 def convert_old():
-    user=None
-    try:
-        user = session["user_name"]
-    except:
-        return "error"
+    user=current_user.user_name
     if(user!=None):
         config=cd.getConfig(user)
         tsd.convert_old(config.url)
@@ -337,19 +333,9 @@ def  home_station_temperature_data():
     return json.dumps(result)
         
 @app.route('/home_station')
-def home_station():
-    attempt=0
+def home_station():    
     try:
-        attempt = session["attempt"]
-    except:
-        pass
-    session["attempt"] = attempt
-        
-    user_name = None
-    try:
-        user_name = session["user_name"]
-        print(user_name)
-        if(user_name == None):
+        if(not current_user.is_authenticated):
             return render_template("login.html")
         else:
             return render_template('home_measure.html')
@@ -360,22 +346,14 @@ def home_station():
 @app.route('/home_station/get_config')
 @login_required
 def home_station_get_config():    
-    user = None
-    try:
-        user = session["user_name"]
-    except:
-        return json.dumps({})
+    user = current_user.user_name
     config=cd.getConfig(user)
     return json.dumps(config.toJSON())
 
 @app.route('/home_station/update_config',methods = ['POST'])
 @login_required
 def home_station_update_config():    
-    user = None
-    try:
-        user = session["user_name"]
-    except:
-        pass
+    user = current_user.user_name
     url = request.form['url']
     period = request.form['period']
     c = Config(user,url,period)
@@ -386,9 +364,8 @@ def home_station_update_config():
 @app.route('/home_station/config')
 @login_required
 def home_station_config():
-    user_name = None
+    user_name = current_user.user_name
     try:
-        user_name = session["user_name"]
         print(user_name)
         if(user_name == None):
             return render_template("login.html")
@@ -401,9 +378,8 @@ def home_station_config():
 @app.route('/home_station/control')
 @login_required
 def home_station_control():
-    user_name = None
     try:
-        user_name = session["user_name"]
+        user_name = current_user.user_name
         print(user_name)
         if(user_name == None):
             return render_template("login.html")
@@ -412,6 +388,20 @@ def home_station_control():
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         return render_template('login.html') 
+    
+@app.route('/home_station/login_attempt')
+@login_required
+def home_station_login_attempt():
+    try:
+        user_name = current_user.user_name
+        print(user_name)
+        if(user_name == None):
+            return render_template("login.html")
+        else:
+            return render_template('loginattempt.html')
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return render_template('login.html')
 
 @app.route('/home_station/restart')
 @login_required

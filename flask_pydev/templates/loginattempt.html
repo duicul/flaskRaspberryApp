@@ -19,9 +19,22 @@ background-color:rgb(100,120,180);
 }
 
 </style>
-<title>Home Station Control</title>
+<script>
+function load_logins(){
+    $.ajax({url: "/get_login_attempts", success: function(result){
+        result=JSON.parse(result);
+        data="";
+        for(let la of result){
+            data+=la.user_name+" "+la.ip+" "+la.time_stamp+" "+la.success+"<br/>";
+        }
+        console.log(data);
+        $("#logatts").html(data);
+        }});  
+    }
+</script>
+<title>Home Station Login Attempts</title>
 </head>
-<body onload="init();">
+<body onload="load_logins();">
 
 <div class="row banner">
     <div class="col-md-2">
@@ -45,6 +58,7 @@ background-color:rgb(100,120,180);
     <div class="col-md-5" >
     </div>
 </div>
+<div id="logatts"></div>
 <script src="/static/js/home_measure.js"></script>
 </body>
 </html>

@@ -30,7 +30,7 @@ background-color:rgb(100,120,180);
 <label for="remember">Remember me</label>
  <input type="submit" value="Login">
 </form>	
-{% if session["attempt"]>5 %}
+{% if current_user.countReached() %}
 <div style="color:red"> Maximum attempt number reached</div>
 {%endif%}
 <script src="/static/js/hello.js?v=1.14"></script>
