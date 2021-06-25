@@ -127,12 +127,17 @@ def login():
             
         user = aut.loginUser(user_name, password)
         if(user != None):
-            remember_duration = timedelta(days=20) if remember else timedelta(hours=1)                
+            remember_duration = timedelta(days=20) if remember else timedelta(hours=1) 
+            if(user.is_authenticated):
+                lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,True))
+            else:
+                lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,False))               
             login_user(user,True,remember_duration)
-            lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,True))
         else:
-            lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,False)) 
+            lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,False))
+         
     except:
+        lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,False))
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
     return redirect(url_for('home_station'))
 
