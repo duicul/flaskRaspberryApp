@@ -10,7 +10,6 @@ import requests
 import traceback
 from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
 from authorization import Authorization
-from datetime import timedelta
 from config_class import Config_Data,Config
 from user_class import UserAnonym,LoginAttempt_Data,LoginAttempt
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user,login_url
@@ -266,33 +265,57 @@ def ac():
 def home_station_voltage_data():
     volt=[]
     interval=False
+    compare=False
     try:
         interval=True if request.args["interval"] == "true" else False
     except:
         pass
+    try:
+        compare=True if request.args["compare"] == "true" else False
+    except:
+        pass
     if(interval):
         try:
-            volt = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
+            volt = vd.extract_all_between(request.args["fdate"], request.args["ldate"])
         except:
             logging.error(str(traceback.format_exc()))
+        t=[]
+        for i in volt:
+            t.append({"date":i[1],"volt1":i[2]})    
+        return json.dumps(t)
+    elif(compare):
+        try:
+            data = vd.extractCompare(request.args["date1"], request.args["date2"])
+        except:
+            logging.error(str(traceback.format_exc()))
+        t=[]
+        for i in data:
+            t.append({"date":i[1],"volt1":i[2]})
+        return json.dumps(t)
     else:
         try:
             volt = vd.extract_all_interval(request.args["items"])
         except:
             logging.error(str(traceback.format_exc()))
         #print(data)
-    t=[]
-    for i in volt:
-        t.append({"date":i[1],"volt1":i[2]})    
-    return json.dumps(t)
+        t=[]
+        for i in volt:
+            t.append({"date":i[1],"volt1":i[2]})    
+        return json.dumps(t)
+    
 
 @app.route('/home_station/ac_data')
 @login_required
 def home_station_ac_data():
     data=[]
     interval=False
+    compare=False
     try:
         interval=True if request.args["interval"] == "true" else False
+    except:
+        pass
+    try:
+        compare=True if request.args["compare"] == "true" else False
     except:
         pass
     if(interval):
@@ -300,23 +323,41 @@ def home_station_ac_data():
             data = acd.extract_all_between(request.args["fdate"], request.args["ldate"])
         except:
             logging.error(str(traceback.format_exc()))
+        t=[]
+        for i in data:
+            t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
+        return json.dumps(t)
+    elif(compare):
+        try:
+            data = acd.extractCompare(request.args["date1"], request.args["date2"])
+        except:
+            logging.error(str(traceback.format_exc()))
+        t=[]
+        for i in data:
+            t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
+        return json.dumps(t)
     else:
         try:
             data = acd.extract_all_interval(request.args["items"])
         except:
             logging.error(str(traceback.format_exc()))
-    t=[]
-    for i in data:
-        t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
-    return json.dumps(t)
+        t=[]
+        for i in data:
+            t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
+        return json.dumps(t)
        
 @app.route('/home_station/temperature_data')
 @login_required
 def  home_station_temperature_data():
     temp=[]
     interval=False
+    compare=False
     try:
         interval=True if request.args["interval"] == "true" else False
+    except:
+        pass
+    try:
+        compare=True if request.args["compare"] == "true" else False
     except:
         pass
     if(interval):
@@ -324,19 +365,36 @@ def  home_station_temperature_data():
             temp = tsd.extract_all_between(request.args["fdate"], request.args["ldate"])
         except:
             logging.error(str(traceback.format_exc()))
+        t={}
+        for id in range(1,11):
+            t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
+            print(t)
+        result={"recorded":t,"predict":[]}
+        return json.dumps(result)
+    elif(compare):
+        try:
+            temp = tsd.extractCompare(request.args["date1"], request.args["date2"])
+        except:
+            logging.error(str(traceback.format_exc()))
+        t={}
+        for id in range(1,11):
+            t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
+            print(t)
+        result={"recorded":t,"predict":[]}
+        return json.dumps(result)
     else:
         try:
             temp = tsd.extract_all_interval(request.args["items"])
         except:
             logging.getLogger('werkzeug').error(str(traceback.format_exc()))
-    t={}
-    for id in range(1,11):
-        t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
-    print(t)
-    result={"recorded":t,"predict":[]}
-        
-    return json.dumps(result)
-        
+    
+        t={}
+        for id in range(1,11):
+            t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
+        print(t)
+        result={"recorded":t,"predict":[]}
+        return json.dumps(result)
+    
 @app.route('/home_station')
 def home_station():    
     try:

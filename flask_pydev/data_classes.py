@@ -55,6 +55,22 @@ class Table_Data:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         return result
     
+    def extractCompare(self,date1,date2):
+        condition=" WHERE date(TIMESTAMP) ='"+str(date1)+"' OR  date(TIMESTAMP)='"+str(date2)+"' ;"
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        querry="SELECT * FROM "+self.table_name+" "+condition
+        logging.info(querry)
+        logging.getLogger(self.logger_name).info(querry)
+        mycursor.execute(querry)
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        return result
+    
     def extract_all_interval(self,items):
         ''' Returns last items rows from the table '''
         condition=""

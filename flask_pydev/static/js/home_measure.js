@@ -462,7 +462,7 @@ function draw_gauge_ac(){
 
 
 
-function draw_graph_all(interval){
+function draw_graph_all(interval,compare){
     
     data_array=[]
 
@@ -629,22 +629,29 @@ function draw_graph_all(interval){
                     axisY:{includeZero: true},
                     data:eval(data_array)
                 });
-    draw_graph(chart,data_array,interval);
-    draw_graph_ac(chart,data_array,interval);
+    draw_graph(chart,data_array,interval,compare);
+    draw_graph_ac(chart,data_array,interval,compare);
 }
-function draw_graph(chart,data_array,interval){
+function draw_graph(chart,data_array,interval,compare){
 
     if(interval == true){
-    fdate=$("#fdate").val()
-    ldate=$("#ldate").val()
-    url_temp="/home_station/temperature_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";
-    url_volt="/home_station/voltage_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";}
-    else{
-    items=$("#items_interval").val()
-    //console.log(items)    
-    url_temp="/home_station/temperature_data?items="+items+"&interval=false";
-    url_volt="/home_station/voltage_data?items="+items+"&interval=false";}
-    
+        fdate=$("#fdate").val()
+        ldate=$("#ldate").val()
+        url_temp="/home_station/temperature_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";
+        url_volt="/home_station/voltage_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";}
+    else {
+        if(compare == true){
+            date1=$("#date1").val()
+            date2=$("#date2").val()
+            url_temp="/home_station/temperature_data?date1="+date1+"&date2="+date1+"&interval=false&compare=true";
+            url_volt="/home_station/voltage_data?date1="+date1+"&date2="+date2+"&interval=false&compare=true";
+        }
+        else{
+            items=$("#items_interval").val()
+            //console.log(items)    
+            url_temp="/home_station/temperature_data?items="+items+"&interval=false&compare=false";
+            url_volt="/home_station/voltage_data?items="+items+"&interval=false&compare=false";}
+    }
     
     
     //chart["data"]=eval(data_array)
@@ -744,17 +751,22 @@ function draw_graph(chart,data_array,interval){
     }
     
     
-function draw_graph_ac(chart,data_array,interval){
+function draw_graph_ac(chart,data_array,interval,compare){
     
     if(interval == true){
-    fdate=$("#fdate").val()
-    ldate=$("#ldate").val()
-    url_ac="/home_station/ac_data?fdate="+fdate+"&ldate="+ldate+"&interval=true";}
+        fdate=$("#fdate").val()
+        ldate=$("#ldate").val()
+        url_ac="/home_station/ac_data?fdate="+fdate+"&ldate="+ldate+"&interval=true&compare=false";}
     else{
-    items=$("#items_interval").val()
-    //console.log(items)
-    url_ac="/home_station/ac_data?items="+items+"&interval=false";}
-    
+        if(compare == true){
+            date1=$("#date1").val()
+            date2=$("#date2").val()
+            url_ac="/home_station/ac_data?date1="+date1+"&date2="+date2+"&interval=false&compare=true";}
+        else{
+            items=$("#items_interval").val()
+            //console.log(items)
+            url_ac="/home_station/ac_data?items="+items+"&interval=false&compare=false";}
+    }
     //console.log(chart["data"])
     //console.log(ac_opt)
     if(ac_opt["voltage"]["checked"] || ac_opt["current"]["checked"]||ac_opt["power"]["checked"] || ac_opt["energy"]["checked"] || ac_opt["energyday"]["checked"] || ac_opt["energyhour"]["checked"] || ac_opt["energysample"]["checked"] || ac_opt["energymonth"]["checked"])        

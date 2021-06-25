@@ -85,8 +85,10 @@ background-color:rgb(100,120,180);
             <div class="col" >
                 <input type="date" id="fdate">
                 <input type="date" id="ldate"><br/>
-                <button type="button" class="btn btn-primary" onclick="draw_graph_all(true);">Display Graph Between</button><br/>
-            
+                <button type="button" class="btn btn-primary" onclick="draw_graph_all(true,false);">Display Graph Between</button><br/>
+                <input type="date" id="date1">
+                <input type="date" id="date2"><br/>
+                <button type="button" class="btn btn-primary" onclick="draw_graph_all(false,true);">Display Graph Compare</button><br/>
                 <select id="items_interval">
                     <option value="0">Current Day</option>
                     <option value="1">1 Day</option>
@@ -104,7 +106,7 @@ background-color:rgb(100,120,180);
                     <option value="3m">Last 3 Months</option>
                     <option value="-1">All</option>
                 </select>
-                <button type="button" class="btn btn-primary" onclick="draw_graph_all(false);">Display Graph</button> <br/>
+                <button type="button" class="btn btn-primary" onclick="draw_graph_all(false,false);">Display Graph</button> <br/>
                 <div id="temp_volt_opt"></div>
                 <div id="ac_opt"></div>
             </div>
