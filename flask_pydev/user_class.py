@@ -259,7 +259,7 @@ class LoginAttempt_Data:
         mycursor=conn.cursor()
         timequerry=""
         if(epochtime!=None):
-            timequerry=" AND datetime(TIMESTAMP) BETWEEN "+str(epochtime)+" AND datetime('now','localtime') "
+            timequerry=" AND datetime(TIMESTAMP) BETWEEN datetime("+str(epochtime)+", 'unixepoch', 'localtime') AND datetime('now','localtime') "
         querry="SELECT * FROM "+self.table_name+" WHERE IP='"+ip+"' "+timequerry 
         mycursor.execute(querry)
         result=[]
