@@ -18,6 +18,7 @@ login_manager = LoginManager()
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+app.permanent_session_lifetime = timedelta(hours=1)
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
@@ -125,7 +126,7 @@ def login():
         if(user != None):
             if(user.countReached()):
                 return redirect(url_for('home_station'))
-            remember_duration = timedelta(days=20) if remember else timedelta(hours=1) 
+            remember_duration = timedelta(days=20) if remember else None 
             if(user.is_authenticated):
                 lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,True))
             else:
