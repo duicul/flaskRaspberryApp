@@ -28,7 +28,7 @@ os.system(myCmd)
 myCmd = 'chmod a+w ../*'
 os.system(myCmd)
 print("Weather settings: ")
-skip1=input("Skip? yes/no")
+skip1=input("Skip? yes/no: ")
 if(not(len(skip1)>0 and (skip1[0]=='y' or skip1[0]=='Y'))):
     api_key = input("api_key: ")
     city = input("city: ")
@@ -38,12 +38,12 @@ if(not(len(skip1)>0 and (skip1[0]=='y' or skip1[0]=='Y'))):
     file.close()
     
 print("Mail settings: ")
-skip2=input("Skip? yes/no")
+skip2=input("Skip? yes/no: ")
 if(not(len(skip2)>0 and (skip2[0]=='y' or skip2[0]=='Y'))):
-    temp1min = int(input("Temperature 1 Min"))
-    temp1max = int(input("Temperature 1 Max"))
-    temp2min = int(input("Temperature 2 Min"))
-    temp2max = int(input("Temperature 2 Max"))    
+    temp1min = int(input("Temperature 1 Min: "))
+    temp1max = int(input("Temperature 1 Max: "))
+    temp2min = int(input("Temperature 2 Min: "))
+    temp2max = int(input("Temperature 2 Max: "))    
     print("Mail Account: ")
     username = input("Username: ")
     mail = input("Mail: ")
@@ -51,9 +51,9 @@ if(not(len(skip2)>0 and (skip2[0]=='y' or skip2[0]=='Y'))):
     norec = int(input("Number of receivers: "))
     recs = []
     for i in range(norec):
-        rec = input("Receiver mail: ")
+        rec = input("Receiver "+str(i)+" mail: ")
         recs.append(rec)    
-    {"temp1":{"min":temp1min,"max":temp1max},"temp2":{"min":temp2min,"max":temp2max},"mail_account":{"user":username,"mail":mail,"pass":password},"receivers":recs}
+    file_json = {"temp1":{"min":temp1min,"max":temp1max},"temp2":{"min":temp2min,"max":temp2max},"mail_account":{"user":username,"mail":mail,"pass":password},"receivers":recs}
     file=open("mailconfig.json","w")
     json.dump(file_json,file)
     file.close()
