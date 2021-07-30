@@ -1,9 +1,12 @@
 from flask import Flask,session,request,render_template,redirect, url_for,Response
+from flask_json import FlaskJSON, JsonError, json_response, as_json
 #from inputpin import InputPin
 #from time import sleep
 import json
 import os
 import time
+import speedmeasure
+
 from datetime import datetime, timedelta
 from regressionaprox import aggregate_data,display_regions
 import requests
@@ -19,6 +22,7 @@ login_manager = LoginManager()
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(hours=1)
+FlaskJSON(app)
 
 home_station_url="http://192.168.1.6"
 polling_period=1800
@@ -486,6 +490,24 @@ def remove_wrong_value():
     acd.remove_wrong_value()
     vd.remove_wrong_value()
     return ""
+
+@app.route('/speed_test/<tries>',methods = ['GET'] )
+@as_json
+def speed_test_one(tries):
+    try:
+        tries=int(tries)
+    except:
+        tries = 1
+    if(tries>5):
+        tries = 5
+    data = speedmeasure.run_test(tries)
+    return data
+
+@app.route('/speed_test',methods = ['GET'] )
+@as_json
+def speed_test():
+    data = speedmeasure.run_test(1)
+    return data
 
 @app.route('/covid')
 def index():
