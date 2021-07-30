@@ -17,6 +17,8 @@ myCmd = 'sudo pip3 install flask-login'
 os.system(myCmd)
 myCmd = 'sudo pip3 install Flask-JSON'
 os.system(myCmd)
+myCmd = 'sudo pip3 install speedtest-cli'
+os.system(myCmd)
 myCmd = 'chmod a+w .'
 os.system(myCmd)
 myCmd = 'chmod a+w ..'
