@@ -6,12 +6,12 @@ import traceback
 from smtplib import SMTPAuthenticationError
 def read_mail_config():
     try:
-        file=open("mailconfig.json","r")
+        file=open("json/mailconfig.json","r")
         file_json=json.load(file)
         file.close()
     except:
         file_json={"temp1":{"min":10,"max":90},"temp2":{"min":10,"max":90},"mail_account":{"user":"random","mail":"random@gmail.com","pass":"random"},"receivers":["random@random.com"]}
-        file=open("mailconfig.json","w")
+        file=open("json/mailconfig.json","w")
         #print(file_json)
         json.dump(file_json,file)
         file.close()

@@ -133,11 +133,11 @@ class Config_Handler:
             file=open(self.file_name,"w")
             json.dump(file_json,file)
             file.close()
-        cd=Config_Data("config.db",self.logger_name)
+        cd=Config_Data("db/config.db",self.logger_name)
         return cd.getConfig(user_name)
 
 if __name__ == '__main__':
-    cd=Config_Data("config.db","random")
+    cd=Config_Data("db/config.db","random")
     cd.create_table()
     cd.removeConfig("admin")
     cd.addConfig(Config("admin","http://192.168.0.6",900))

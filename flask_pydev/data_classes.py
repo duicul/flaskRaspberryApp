@@ -562,14 +562,14 @@ class Outside_Data(Temperature_Split_Data):
         city=""
         api_key=""
         try:
-            file=open("config_weather.json","r")
+            file=open("json/config_weather.json","r")
             file_json=json.load(file)
             file.close()
             city=file_json["city"]
             api_key=file_json["api_key"]
         except:
             file_json={"api_key":"random","city":"random"}
-            file=open("config_weather.json","w")
+            file=open("json/config_weather.json","w")
             json.dump(file_json,file)
             file.close()
         
@@ -593,7 +593,7 @@ class Outside_Data(Temperature_Split_Data):
 if __name__ == '__main__':
     #ac=AC_Data("measure.db","random","random")
     #ac.insert(221,6.3,170,5478)
-    tsd=Temperature_Split_Data("measure.db","random","random")
+    tsd=Temperature_Split_Data("db/measure.db","random","random")
     tsd.create_table()
     #tsd.insert(1,42.3)
     print(tsd.extract_all_interval(""))

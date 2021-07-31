@@ -14,7 +14,7 @@ class Monitor():
     def __init__(self,user_name,logger_name):
         self.logger_name=logger_name
         self.user_name=user_name
-        self.config_handler=Config_Handler("monitor_config.json",self.logger_name)
+        self.config_handler=Config_Handler("json/monitor_config.json",self.logger_name)
         self.config=self.config_handler.loadUsingFile()
         self.url=self.config.url
         self.period=self.config.period
@@ -22,10 +22,10 @@ class Monitor():
         Thread.__init__(self)
   
     def run(self):
-        td=Temperature_Split_Data("measure.db",self.logger_name)
-        vd=Voltage_Data("measure.db",self.logger_name)
-        acd=AC_Data("measure.db",self.logger_name)
-        od=Outside_Data("measure.db",self.logger_name)
+        td=Temperature_Split_Data("db/measure.db",self.logger_name)
+        vd=Voltage_Data("db/measure.db",self.logger_name)
+        acd=AC_Data("db/measure.db",self.logger_name)
+        od=Outside_Data("db/measure.db",self.logger_name)
         while True:                
             try:
                 
@@ -48,7 +48,7 @@ def start():
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     
-    ch = Config_Handler("monitor_config.json",'monitor_logger')
+    ch = Config_Handler("json/monitor_config.json",'monitor_logger')
     config = ch.loadUsingFile()
     try:
         logging.getLogger('monitor_logger').info("start")
@@ -60,6 +60,7 @@ def start():
      
 if __name__ == "__main__":
     #import logging
+    print("Monitor start")
     import logging.handlers
     handler = logging.handlers.RotatingFileHandler(
         'logs/error_monitor.log',
@@ -70,13 +71,12 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
     
-    ch = Config_Handler("monitor_config.json",'monitor_logger')
+    ch = Config_Handler("json/monitor_config.json",'monitor_logger')
     config = ch.loadUsingFile()
     #mail_config=read_mail_config()
     #logging.getLogger('monitor_logger').info(str(mail_config))
     try:
         logging.getLogger('monitor_logger').info("start")
-        time.sleep(30)
         mon=Monitor(config.user_name,"monitor_logger")
         mon.run()
     except:

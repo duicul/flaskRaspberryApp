@@ -6,7 +6,7 @@ from user_class import User_Data,User
 class Authorization:
     
     def __init__(self):
-        self.user_data = User_Data("user.db",'werkzeug')
+        self.user_data = User_Data("db/user.db",'werkzeug')
         self.user_data.create_table()
         if(len(self.user_data.getAllUsers())==0):
             self.createDefaultUser()

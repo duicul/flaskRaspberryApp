@@ -83,7 +83,7 @@ class User_Data:
         self.logger_name=logger_name
         self.table_name="User"
         self.create_table()
-        self.login_data=LoginAttempt_Data("loginattempt.db",logger_name)
+        self.login_data=LoginAttempt_Data("db/loginattempt.db",logger_name)
         self.attempt_period=timedelta(hours=4)
         
     def getUser(self,user_name):
@@ -346,9 +346,9 @@ class LoginAttempt_Data:
         
            
 if __name__ == '__main__':
-    ud=User_Data("user.db","random")
+    ud=User_Data("db/user.db","random")
     ud.create_table()
-    lad=LoginAttempt_Data("loginattempt.db","random")
+    lad=LoginAttempt_Data("db/loginattempt.db","random")
     lad.create_table()
     lad.addAttempt(LoginAttempt("admin","196.168.0.6",None,True))
     lad.getAllAttempts()

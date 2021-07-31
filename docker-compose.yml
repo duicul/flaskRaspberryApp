@@ -6,12 +6,14 @@ services:
     image: duicul/web_server_flask:latest
     build:
       context: .
-      dockerfile: nginx/Dockerfile
+      dockerfile: ./nginx/Dockerfile
     ports:
       - 5000:5000
     depends_on:
       - flask
-
+    volumes:
+      - ./nginx_logs:/var/log/nginx
+    
   flask:
     container_name: flask-image
     image: duicul/flask_nginx:latest
@@ -20,3 +22,8 @@ services:
       dockerfile: ./Dockerfile
     expose:
       - 5000
+    volumes:
+      - ./flask_logs:/home/logs
+      - ./flask_logs/uwsgi_logs:/var/log
+      - ./flask_logs/db:/home/db
+      - ./flask_logs/json:/home/json

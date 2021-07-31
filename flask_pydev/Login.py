@@ -42,13 +42,13 @@ login_manager.init_app(app)
 login_manager.anonymous_user = UserAnonym
 login_manager.login_view = 'login'
 
-tsd=Temperature_Split_Data("measure.db",'werkzeug')
-vd=Voltage_Data("measure.db",'werkzeug')
-acd=AC_Data("measure.db",'werkzeug')
-od=Outside_Data("measure.db",'werkzeug')
+tsd=Temperature_Split_Data("db/measure.db",'werkzeug')
+vd=Voltage_Data("db/measure.db",'werkzeug')
+acd=AC_Data("db/measure.db",'werkzeug')
+od=Outside_Data("db/measure.db",'werkzeug')
 aut=Authorization()
-cd=Config_Data("config.db",'werkzeug')
-lad=LoginAttempt_Data("loginattempt.db",'werkzeug')
+cd=Config_Data("db/config.db",'werkzeug')
+lad=LoginAttempt_Data("db/loginattempt.db",'werkzeug')
 attempt_period=timedelta(hours=4)
 
 max_attempts=5
@@ -248,7 +248,7 @@ def voltage():
 
 def reset_config_weather():
     file_json={"api_key":"random","city":"random"}
-    file=open("config_weather.json","w")
+    file=open("json/config_weather.json","w")
     json.dump(file_json,file)
     file.close()
 

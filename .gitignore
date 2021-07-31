@@ -1,4 +1,10 @@
 __pycache__*
 *.log*
-*.db
-.metadata/
+database
+measure.db
+loginattempt.db
+.metadata
+flask_logs
+json
+logs
+nginx_logs
