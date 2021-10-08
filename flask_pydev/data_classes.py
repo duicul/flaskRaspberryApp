@@ -527,7 +527,9 @@ class Temperature_Split_Data(Table_Data):
             condition=" WHERE date(TIMESTAMP) BETWEEN DATE('now','start of month','-2 month','localtime') AND  date('now','localtime') "                
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        querry="SELECT * FROM "+self.table_name+" "+condition+"" if len(condition)==0 else" AND TEMP!=-127"
+        condition = condition if len(condition)==0 else condition+" AND TEMP!=-127"
+        logging.getLogger(self.logger_name).info("condition= "+str(condition))
+        querry="SELECT * FROM "+self.table_name+" "+condition
         logging.getLogger(self.logger_name).info(querry)
         mycursor.execute(querry)
         try:
