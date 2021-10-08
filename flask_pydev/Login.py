@@ -234,7 +234,7 @@ def convert_old():
 def temperature():
     data=tsd.extract_last()
     if data==None:
-        return {}
+        return json.dumps({})
     return str(data)#{"date":data[1],"temp1":data[2],"temp2":data[3]}
         
 
@@ -243,7 +243,7 @@ def temperature():
 def voltage():
     data=vd.extract_last()
     if data==None:
-        return {}
+        return json.dumps({})
     return json.dumps({"date":data[1],"volt1":data[2]})
 
 def reset_config_weather():
@@ -262,7 +262,7 @@ def weather():
 def ac():
     data=acd.extract_last()
     if data==None:
-        return {}
+        return json.dumps({})
     return json.dumps({"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]})
 
 @app.route('/home_station/voltage_data')
