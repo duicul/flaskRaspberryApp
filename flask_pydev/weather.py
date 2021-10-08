@@ -16,7 +16,7 @@ class Weather:
         
     def request_data(self):
         try:
-            req_url="http://api.openweathermap.org/data/2.5/weather?q="+str(self.city)+"&appid="+str(self.api_key)+"&units=metric"
+            req_url="http://api.weatherapi.com/v1/current.json?key="+str(self.api_key)+"&q="+str(self.city)+"&aqi=no"
             r = requests.get(req_url)
             #print(req_url)
         except:
@@ -26,7 +26,7 @@ class Weather:
         json_data=r.json()
         #print(json_data)
         logging.getLogger(self.logger_name).info(str(json_data))
-        return r.json()
+        return json_data
         
 if __name__ == '__main__':
     w=Weather("random","random","random")

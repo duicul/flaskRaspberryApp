@@ -244,23 +244,17 @@ function draw_weather(){
         //console.log(weather_data)
         html_val="<div class=\"row\">"
         html_val+="<div class=\"col-md-2\">"
-        html_val+="<img src=\"https://openweathermap.org/img/wn/"+weather_data["weather"][0]["icon"]+"@2x.png\" /><br/>"
+        html_val+="<img src=\""+weather_data["current"]["condition"]["icon"]+"\" /><br/>"
         html_val+="</div>"
         html_val+="<div class=\"col-md-3\">"
-        html_val+="Temp : "+weather_data["main"]["temp"]+" &#8451; <br/>"
-        html_val+="Feels like : "+weather_data["main"]["feels_like"]+" &#8451; <br/>"
-        html_val+="Humidity : "+weather_data["main"]["humidity"]+" % <br/>"
-        html_val+="Wind : "+(weather_data["wind"]["speed"]*3.6).toFixed(2)+" km/h "+weather_data["wind"]["deg"]+"&#176; <br/>"
-        html_val+="Clouds : "+weather_data["clouds"]["all"]+" % <br/>";
+        html_val+="Temp : "+weather_data["current"]["temp_c"]+" &#8451; <br/>"
+        html_val+="Feels like : "+weather_data["current"]["feelslike_c"]+" &#8451; <br/>"
+        html_val+="Humidity : "+weather_data["current"]["humidity"]+" % <br/>"
+        html_val+="Wind : "+weather_data["current"]["wind_kph"]+" km/h "+weather_data["current"]["wind_dir"]+" <br/>"
+        html_val+="Clouds : "+weather_data["current"]["cloud"]+" % <br/>";
         html_val+="</div>"
         html_val+="<div class=\"col-md-7\">"
-        html_val+="City : "+weather_data["name"]+"<br/>" 
-        let sr=new Date(0);
-        sr.setUTCSeconds(weather_data["sys"]["sunrise"])
-        html_val+="Sunrise : "+sr+"<br/>"
-        let ss=new Date(0);
-        ss.setUTCSeconds(weather_data["sys"]["sunset"])
-        html_val+="Sunset : "+ss+"<br/>"
+        html_val+="City : "+weather_data["location"]["name"]+"<br/>" 
         html_val+="</div></div>"
         $("#weather_status").html(html_val);
         }    
