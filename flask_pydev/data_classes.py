@@ -578,7 +578,7 @@ class Outside_Data(Temperature_Split_Data):
         try:
             temp=data["current"]["temp_c"]
             humid=data["current"]["humidity"]
-            wind_speed=(data["current"]["wind_kph"]/3.6).toFixed(2)
+            wind_speed=(data["current"]["wind_kph"]/3.6)
             logging.getLogger(self.logger_name).info("Outside_Data polled "+" result: "+str(temp)+" "+str(humid))
             if temp!=None:
                 self.insert(temp, 3)
