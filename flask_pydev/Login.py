@@ -1,4 +1,4 @@
-from flask import Flask,session,request,render_template,redirect, url_for,Response
+from flask import Flask,session,request,render_template,redirect, url_for,Response,jsonify
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 #from inputpin import InputPin
 #from time import sleep
@@ -150,7 +150,7 @@ def login():
 def get_login_attempts():
     la = list(map(lambda l : l.toJSON(),lad.getAllAttemptsUser(current_user.user_name, None)))
     la.reverse()
-    return json.dumps(la)
+    return jsonify(la)
 
 @app.route('/current_timestamp')
 @login_required
@@ -235,7 +235,7 @@ def convert_old():
 def temperature():
     data=tsd.extract_last()
     if data==None:
-        return json.dumps({})
+        return jsonify({})
     return str(data)#{"date":data[1],"temp1":data[2],"temp2":data[3]}
         
 
@@ -244,8 +244,8 @@ def temperature():
 def voltage():
     data=vd.extract_last()
     if data==None:
-        return json.dumps({})
-    return json.dumps({"date":data[1],"volt1":data[2]})
+        return jsonify({})
+    return jsonify({"date":data[1],"volt1":data[2]})
 
 def reset_config_weather():
     file_json={"api_key":"random","city":"random"}
@@ -256,15 +256,15 @@ def reset_config_weather():
 @app.route('/weather')
 @login_required
 def weather():
-    return json.dumps(od.poll_value())
+    return jsonify(od.poll_value())
 
 @app.route('/ac')
 @login_required
 def ac():
     data=acd.extract_last()
     if data==None:
-        return json.dumps({})
-    return json.dumps({"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]})
+        return jsonify({})
+    return jsonify({"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]})
 
 @app.route('/home_station/voltage_data')
 @login_required
@@ -288,7 +288,7 @@ def home_station_voltage_data():
         t=[]
         for i in volt:
             t.append({"date":i[1],"volt1":i[2]})    
-        return json.dumps(t)
+        return jsonify(t)
     elif(compare):
         try:
             data = vd.extractCompare(request.args["date1"], request.args["date2"])
@@ -297,7 +297,7 @@ def home_station_voltage_data():
         t=[]
         for i in data:
             t.append({"date":i[1],"volt1":i[2]})
-        return json.dumps(t)
+        return jsonify(t)
     else:
         try:
             volt = vd.extract_all_interval(request.args["items"])
@@ -307,7 +307,7 @@ def home_station_voltage_data():
         t=[]
         for i in volt:
             t.append({"date":i[1],"volt1":i[2]})    
-        return json.dumps(t)
+        return jsonify(t)
     
 
 @app.route('/home_station/ac_data')
@@ -332,7 +332,7 @@ def home_station_ac_data():
         t=[]
         for i in data:
             t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
-        return json.dumps(t)
+        return jsonify(t)
     elif(compare):
         try:
             data = acd.extractCompare(request.args["date1"], request.args["date2"])
@@ -341,7 +341,7 @@ def home_station_ac_data():
         t=[]
         for i in data:
             t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
-        return json.dumps(t)
+        return jsonify(t)
     else:
         try:
             data = acd.extract_all_interval(request.args["items"])
@@ -350,7 +350,7 @@ def home_station_ac_data():
         t=[]
         for i in data:
             t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
-        return json.dumps(t)
+        return jsonify(t)
        
 @app.route('/home_station/temperature_data')
 @login_required
@@ -376,7 +376,7 @@ def  home_station_temperature_data():
             t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
             print(t)
         result={"recorded":t,"predict":[]}
-        return json.dumps(result)
+        return jsonify(result)
     elif(compare):
         try:
             temp = tsd.extractCompare(request.args["date1"], request.args["date2"])
@@ -387,7 +387,7 @@ def  home_station_temperature_data():
             t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
             print(t)
         result={"recorded":t,"predict":[]}
-        return json.dumps(result)
+        return jsonify(result)
     else:
         try:
             temp = tsd.extract_all_interval(request.args["items"])
@@ -399,7 +399,7 @@ def  home_station_temperature_data():
             t[str(id)]=[{"date":i[1],"value":i[3]} for i in list(filter(lambda i :i[2]==id,temp))]
         print(t)
         result={"recorded":t,"predict":[]}
-        return json.dumps(result)
+        return jsonify(result)
     
 @app.route('/home_station')
 def home_station():    
@@ -420,7 +420,7 @@ def home_station():
 def home_station_get_config():    
     user = current_user.user_name
     config=cd.getConfig(user)
-    return json.dumps(config.toJSON())
+    return jsonify(config.toJSON())
 
 @app.route('/home_station/update_config',methods = ['POST'])
 @login_required
