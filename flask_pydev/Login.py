@@ -16,6 +16,7 @@ from authorization import Authorization
 from config_class import Config_Data,Config
 from user_class import UserAnonym,LoginAttempt_Data,LoginAttempt
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user,login_url
+import html
 login_manager = LoginManager()
 
 
@@ -84,9 +85,9 @@ def change_password():
     user = current_user.user_name
     try:
         user_name = user
-        password = request.form['password_change']
-        mail = request.form['mail_change']
-        confirm_password = request.form['confirm_password_change']
+        password = html.escape(request.form['password_change'])
+        mail = html.escape(request.form['mail_change'])
+        confirm_password = html.escape(request.form['confirm_password_change'])
         if(password != confirm_password):
             return redirect(url_for('home_station_config'))
         aut.removeUser(user_name)
@@ -102,12 +103,12 @@ def change_password():
 def register():
     session.clear()
     try:
-        user_name = request.form['user_name_register']
-        password = request.form['password_register']
-        confirm_password = request.form['confirm_password_register']
+        user_name = html.escape(request.form['user_name_register'])
+        password = html.escape(request.form['password_register'])
+        confirm_password = html.escape(request.form['confirm_password_register'])
         if(password != confirm_password):
             return redirect(url_for('home_station_config'))
-        mail = request.form['mail_register']
+        mail = html.escape(request.form['mail_register'])
         aut.removeUser(user_name)
         aut.registerUser(user_name, password, mail)
     except:
@@ -118,11 +119,11 @@ def register():
 @app.route('/login',methods = ['POST'])
 def login():
     try:
-        user_name = request.form['user_name']
-        password = request.form['password']
+        user_name = html.escape(request.form['user_name'])
+        password = html.escape(request.form['password'])
         remember=False
         try:
-            remember = request.form['remember']
+            remember = html.escape(request.form['remember'])
         except:
             logging.getLogger('werkzeug').info("remeber is False")
         epochtime=time.mktime((datetime.now()-attempt_period).timetuple())
@@ -193,18 +194,18 @@ def extract_data_pol(api,predict_len,pol_grade,case_type,data_type):
         #print(pol_grade)
         #print(request.form) 
         #print(request.form['countries'])
-        countries=json.loads(request.form['countries'])
+        countries=json.loads(html.escape(request.form['countries']))
         #print(countries)
         return aggregate_data(pol_grade,countries,data_type,case_type,predict_len,api)
 
 @app.route('/covid_data/<case_type>/<api>/<data_type>',methods = ['POST'])
 def extract_data(api,case_type,data_type):
-        countries=json.loads(request.form['countries'])
+        countries=json.loads(html.escape(request.form['countries']))
         return aggregate_data(0,countries,data_type,case_type,0,api)
 
 @app.route('/regions/<case_type>/<api>/<data_type>',methods = ['POST'])
 def extract_regions(api,case_type,data_type):
-        countries=json.loads(request.form['countries'])
+        countries=json.loads(html.escape(request.form['countries']))
         ret = display_regions(countries,data_type,case_type,api)
         return ret
 
@@ -425,8 +426,8 @@ def home_station_get_config():
 @login_required
 def home_station_update_config():    
     user = current_user.user_name
-    url = request.form['url']
-    period = request.form['period']
+    url = html.escape(request.form['url'])
+    period = html.escape(request.form['period'])
     c = Config(user,url,period)
     cd.updateConfig(c)
     print(c)
