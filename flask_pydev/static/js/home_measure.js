@@ -240,7 +240,7 @@ $.ajax({url: "/temperature", success: function(result){
 function draw_weather(){
     $.ajax({url: "/weather", success: function(result){
         //console.log(result)
-        const weather_data = JSON.parse(result);
+        const weather_data = result;
         //console.log(weather_data)
         html_val="<div class=\"row\">"
         html_val+="<div class=\"col-md-2\">"
@@ -265,7 +265,6 @@ function draw_gauge_voltage(){
     $.ajax({url: "/voltage", success: function(result){
     
     //console.log(result);
-    result=JSON.parse(result);
     
     //console.log(result["date"]);
 	div_html=""
@@ -309,7 +308,6 @@ function draw_gauge_voltage(){
 function draw_gauge_ac(){
     $.ajax({url: "/ac", success: function(result){
     //console.log(result);
-    result=JSON.parse(result);
     //console.log(result["date"]);
     div_html=""
     div_html+=new Date(result["date"]).toString()+"</br>"
@@ -652,13 +650,13 @@ function draw_graph(chart,data_array,interval,compare){
     
     if(temp_opt["temp1"]["checked"] || temp_opt["temp2"]["checked"]||temp_opt["temp1_grad"]["checked"] || temp_opt["temp2_grad"]["checked"]|| temp_opt["humid_out"]["checked"]|| temp_opt["wind_speed"]["checked"]|| temp_opt["wind_power"]["checked"]|| temp_opt["temp_out"]["checked"])        
     $.ajax({url: url_temp, success: function(result){
-	    result_rec=JSON.parse(result)["recorded"]
+	    result_rec=result["recorded"]
 	    temp1_data=result_rec[1]
         temp2_data=result_rec[2]
         temp3_temp_out=result_rec[3]
         temp4_humid_out=result_rec[4]
         temp5_wind_speed=result_rec[5]
-	    result_pred=JSON.parse(result)["predict"]
+	    result_pred=result["predict"]
 	    temp1_init=0
 	    temp1_date=null
 	    temp2_init=0
@@ -733,7 +731,6 @@ function draw_graph(chart,data_array,interval,compare){
 	
 	if(volt_opt["volt1"]["checked"])
     $.ajax({url: url_volt, success: function(result){
-        result=JSON.parse(result)
         result.forEach(function(item){
                 if(volt_opt["volt1"]["checked"])
                     data_array[6]["dataPoints"].push({x:new Date(item["date"]),y:item["volt1"]})
@@ -765,7 +762,6 @@ function draw_graph_ac(chart,data_array,interval,compare){
     //console.log(ac_opt)
     if(ac_opt["voltage"]["checked"] || ac_opt["current"]["checked"]||ac_opt["power"]["checked"] || ac_opt["energy"]["checked"] || ac_opt["energyday"]["checked"] || ac_opt["energyhour"]["checked"] || ac_opt["energysample"]["checked"] || ac_opt["energymonth"]["checked"])        
     $.ajax({url: url_ac, success: function(result){
-        result=JSON.parse(result)
         
         var sample_energy=[];
         var daily_energy=[];

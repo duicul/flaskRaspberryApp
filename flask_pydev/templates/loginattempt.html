@@ -22,7 +22,6 @@ background-color:rgb(100,120,180);
 <script>
 function load_logins(){
     $.ajax({url: "/get_login_attempts", success: function(result){
-        result=JSON.parse(result);
         data="";
         t=$("<div></div>")
         for(let la of result){
