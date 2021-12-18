@@ -24,11 +24,13 @@ function load_logins(){
     $.ajax({url: "/get_login_attempts", success: function(result){
         result=JSON.parse(result);
         data="";
+        t=$("<div></div>")
         for(let la of result){
-            data+=la.user_name+" "+la.ip+" "+la.time_stamp+" "+la.success+"\n";
+            data+=la.user_name+" "+la.ip+" "+la.time_stamp+" "+la.success;
+            t.append($("<p></p>").text(data))
         }
         console.log(data);
-        $("#logatts").text(data);
+        $("#logatts").html(t);
         }});  
     }
 </script>
