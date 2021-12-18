@@ -25,7 +25,7 @@ function load_logins(){
         data="";
         t=$("<div></div>")
         for(let la of result){
-            data+=la.user_name+" "+la.ip+" "+la.time_stamp+" "+la.success;
+            data=la.user_name+" "+la.ip+" "+la.time_stamp+" "+la.success;
             t.append($("<p></p>").text(data))
         }
         console.log(data);
