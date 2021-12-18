@@ -25,10 +25,10 @@ function load_logins(){
         result=JSON.parse(result);
         data="";
         for(let la of result){
-            data+=la.user_name+" "+la.ip+" "+la.time_stamp+" "+la.success+"<br/>";
+            data+=la.user_name+" "+la.ip+" "+la.time_stamp+" "+la.success+"\n";
         }
         console.log(data);
-        $("#logatts").html(data);
+        $("#logatts").text(data);
         }});  
     }
 </script>
