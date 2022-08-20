@@ -236,7 +236,7 @@ def temperature():
     data=tsd.extract_last()
     if data==None:
         return jsonify({})
-    return str(data)#{"date":data[1],"temp1":data[2],"temp2":data[3]}
+    return jsonify(data)#{"date":data[1],"temp1":data[2],"temp2":data[3]}
         
 
 @app.route('/voltage')

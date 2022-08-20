@@ -153,7 +153,6 @@ $.ajax({url: "/temperature", success: function(result){
     //result=JSON.parse(result)
     
     //console.log(result)
-    result=eval(result)
     
     //console.log(result[0]["date"])
     //console.log(result[1]["date"])
