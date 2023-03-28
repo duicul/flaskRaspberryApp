@@ -770,7 +770,7 @@ function draw_graph_ac(chart,data_array,interval,compare){
     }
     //console.log(chart["data"])
     //console.log(ac_opt)
-    if(ac_opt["voltage"]["checked"] || ac_opt["current"]["checked"]||ac_opt["power"]["checked"] || ac_opt["energy"]["checked"] || ac_opt["energyday"]["checked"] || ac_opt["energyhour"]["checked"] || ac_opt["energysample"]["checked"] || ac_opt["energymonth"]["checked"])        
+    if(ac_opt["voltage"]["checked"] || ac_opt["current"]["checked"]||ac_opt["power"]["checked"] || ac_opt["energy"]["checked"] || ac_opt["energyday"]["checked"] || ac_opt["energyhour"]["checked"] || ac_opt["energysample"]["checked"] || ac_opt["power_average"]["checked"] || ac_opt["energymonth"]["checked"])        
     $.ajax({url: url_ac, success: function(result){
         
         var sample_energy=[];
