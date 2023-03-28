@@ -906,7 +906,7 @@ function draw_graph_ac(chart,data_array,interval,compare){
             chart["data"][11]=eval(data_array)[11]
             chart["data"][12]=eval(data_array)[12]
             chart["data"][13]=eval(data_array)[13]
-            chart["data"][14]=eval(data_array)[14]}
+            chart["data"][14]=eval(data_array)[14]
             chart["data"][19]=eval(data_array)[19]}
         //console.log(data_array)
         chart.render();
