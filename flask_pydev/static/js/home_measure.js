@@ -793,7 +793,7 @@ function draw_graph_ac(chart,data_array,interval,compare){
                 if(average_power.length==0)
                     average_power.push({x:new Date(item["date"]),y:item["energy"]})
                 else{
-                    average_power[average_power.length-1].y=(item["energy"]-sample_energy[sample_energy.length-1].y)*1000/( (new Date(item["date"]).getTime()/1000) - sample_energy[sample_energy.length-1].x.getTime()/1000);
+                    average_power[average_power.length-1].y=(item["energy"]-average_power[average_power.length-1].y)*1000/( (new Date(item["date"]).getTime()/1000) - average_power[average_power.length-1].x.getTime()/1000);
                     average_power[average_power.length-1].x=new Date(item["date"])
                     average_power.push({x:new Date(item["date"]),y:item["energy"]})}
             
@@ -850,8 +850,8 @@ function draw_graph_ac(chart,data_array,interval,compare){
             lt=average_power.pop()
             last_sample=average_power.length>0?average_power[average_power.length-1]:0
             average_power.push({x:new Date(lt["x"]),y:(last_sample["y"])})
-            console.log("last_sample ")
-            console.log(average_power)
+            //console.log("last_sample ")
+            //console.log(average_power)
             }
         
          if(ac_opt["energyday"]["checked"]&&daily_energy.length!=0){
