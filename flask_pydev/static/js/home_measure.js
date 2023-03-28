@@ -850,8 +850,8 @@ function draw_graph_ac(chart,data_array,interval,compare){
             lt=average_power.pop()
             last_sample=average_power.length>0?average_power[average_power.length-1]:0
             average_power.push({x:new Date(lt["x"]),y:(last_sample["y"])})
-            //console.log("last_sample ")
-            //console.log(sample_energy)
+            console.log("last_sample ")
+            console.log(average_power)
             }
         
          if(ac_opt["energyday"]["checked"]&&daily_energy.length!=0){
