@@ -793,7 +793,7 @@ function draw_graph_ac(chart,data_array,interval,compare){
                 if(average_power.length==0)
                     average_power.push({x:new Date(item["date"]),y:item["energy"]})
                 else{
-                    average_power[average_power.length-1].y=(item["energy"]-average_power[average_power.length-1].y)*1000/( (new Date(item["date"]).getTime()/1000) - average_power[average_power.length-1].x.getTime()/1000);
+                    average_power[average_power.length-1].y=(item["energy"]-average_power[average_power.length-1].y)*3600/( (new Date(item["date"]).getTime()/1000) - average_power[average_power.length-1].x.getTime()/1000);
                     average_power[average_power.length-1].x=new Date(item["date"])
                     average_power.push({x:new Date(item["date"]),y:item["energy"]})}
             
