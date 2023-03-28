@@ -1,7 +1,7 @@
 var blade_length = 1;
 var temp_opt={"temp1":{"name":"Temperature1","checked":true},"temp1_grad":{"name":"Temperature1 change","checked":false},"temp2":{"name":"Temperature2","checked":true},"temp2_grad":{"name":"Temperature2 change","checked":false},"temp_out":{"name":"Temperature outside","checked":true},"humid_out":{"name":"Humidity outside","checked":false},"wind_speed":{"name":"Wind speed m/s","checked":false},"wind_power":{"name":("Wind power [w] "+blade_length+" m"),"checked":false}};
 var volt_opt={"volt1":{"name":"Voltage","checked":false}};
-var ac_opt={"voltage":{"name":"Voltage AC","checked":false},"current":{"name":"Current AC","checked":false},"power":{"name":"Power","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
+var ac_opt={"voltage":{"name":"Voltage AC","checked":false},"current":{"name":"Current AC","checked":false},"power":{"name":"Power","checked":false},"power_average":{"name":"Power Average","checked":false},"energy":{"name":"Energy - KWh ","checked":false},"energyday":{"name":"Energy Daily - Wh","checked":false},"energyhour":{"name":"Energy Hourly - Wh","checked":false},"energysample":{"name":"Energy between Samples - Wh","checked":false},"energymonth":{"name":"Energy Monthly - KWh","checked":false}};
 
 function show_opt(){
     data="";
@@ -62,6 +62,10 @@ function show_opt_ac(){
     checked=ac_opt["power"]["checked"]==true? "checked=\"checked\"" : "";
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state_ac('power',this)\">";
     data+="<label>"+ac_opt["power"]["name"]+"</label></br>";
+    
+    checked=ac_opt["power_average"]["checked"]==true? "checked=\"checked\"" : "";
+    data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state_ac('power_average',this)\">";
+    data+="<label>"+ac_opt["power_average"]["name"]+"</label></br>";
     
     checked=ac_opt["energy"]["checked"]==true? "checked=\"checked\"" : "";
     data+="<input type=\"checkbox\" "+checked+" onchange=\"check_state_ac('energy',this)\">";
@@ -591,6 +595,13 @@ function draw_graph_all(interval,compare){
             showInLegend: true,
             markerSize: 0,
             dataPoints: []}
+    
+    data_array[19]={type:"line",
+            axisYType: "secondary",
+            name: "Power Average [W]",
+            showInLegend: true,
+            markerSize: 0,
+            dataPoints: []}
             
     chart = new CanvasJS.Chart("graph", {
                     animationEnabled: true,
@@ -766,7 +777,7 @@ function draw_graph_ac(chart,data_array,interval,compare){
         var daily_energy=[];
         var hourly_energy=[];
         var monthly_energy=[];
-        
+        var average_power = [];
         result.forEach(function(item){
             d=new Date(item["date"])
             if(ac_opt["voltage"]["checked"])
@@ -778,14 +789,23 @@ function draw_graph_ac(chart,data_array,interval,compare){
             if(ac_opt["energy"]["checked"])
                 data_array[10]["dataPoints"].push({x:d,y:item["energy"]/1000})
             
-            if(ac_opt["energysample"]["checked"])
+            if(ac_opt["power_average"]["checked"])
+                if(average_power.length==0)
+                    average_power.push({x:new Date(item["date"]),y:item["energy"]})
+                else{
+                    average_power[average_power.length-1].y=(item["energy"]-sample_energy[sample_energy.length-1].y)*1000/( (new Date(item["date"]).getTime()/1000) - sample_energy[sample_energy.length-1].x.getTime()/1000);
+                    average_power[average_power.length-1].x=new Date(item["date"])
+                    average_power.push({x:new Date(item["date"]),y:item["energy"]})}
+            
+            if(ac_opt["energysample"]["checked"]){
                 if(sample_energy.length==0)
                     sample_energy.push({x:new Date(item["date"]),y:item["energy"]})
                 else{
                     sample_energy[sample_energy.length-1].y=item["energy"]-sample_energy[sample_energy.length-1].y
                     sample_energy[sample_energy.length-1].x=new Date(item["date"])
                     sample_energy.push({x:new Date(item["date"]),y:item["energy"]})}
-                
+            }
+            
             if(ac_opt["energyday"]["checked"])
                 if(daily_energy.length==0)
                     daily_energy.push({x:new Date(item["date"]),y:item["energy"]})
@@ -822,6 +842,14 @@ function draw_graph_ac(chart,data_array,interval,compare){
             lt=sample_energy.pop()
             last_sample=sample_energy.length>0?sample_energy[sample_energy.length-1]:0
             sample_energy.push({x:new Date(lt["x"]),y:(last_sample["y"])})
+            //console.log("last_sample ")
+            //console.log(sample_energy)
+            }
+        
+        if(ac_opt["power_average"]["checked"]&&average_power.length!=0){
+            lt=average_power.pop()
+            last_sample=average_power.length>0?average_power[average_power.length-1]:0
+            average_power.push({x:new Date(lt["x"]),y:(last_sample["y"])})
             //console.log("last_sample ")
             //console.log(sample_energy)
             }
@@ -867,7 +895,7 @@ function draw_graph_ac(chart,data_array,interval,compare){
         data_array[12]["dataPoints"]=hourly_energy
         data_array[13]["dataPoints"]=sample_energy
         data_array[14]["dataPoints"]=monthly_energy
-        
+        data_array[19]["dataPoints"]=average_power
         if(chart["data"]==null)
             chart["data"]=eval(data_array)
         else {
@@ -879,7 +907,7 @@ function draw_graph_ac(chart,data_array,interval,compare){
             chart["data"][12]=eval(data_array)[12]
             chart["data"][13]=eval(data_array)[13]
             chart["data"][14]=eval(data_array)[14]}
-        
+            chart["data"][19]=eval(data_array)[19]}
         //console.log(data_array)
         chart.render();
     }});  
