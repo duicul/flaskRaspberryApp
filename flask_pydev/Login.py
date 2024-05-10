@@ -242,9 +242,10 @@ def temperature():
 @login_required
 def powmr_poll():
     try:
-        return jsonify(requests.get("https://192.168.0.11/powmr"))      
-    except:
-        return "error"
+        q = requests.get("https://192.168.0.11/powmr")
+        return jsonify(q.json())      
+    except Exception as e:
+        return str(e)
     
 @app.route('/voltage')
 @login_required
