@@ -242,7 +242,7 @@ def temperature():
 @login_required
 def powmr_poll():
     try:
-        q = requests.get("https://192.168.0.11/powmr")
+        q = requests.get("http://192.168.0.11/powmr")
         return jsonify(q.json())      
     except Exception as e:
         return str(e)
