@@ -237,8 +237,15 @@ def temperature():
     if data==None:
         return jsonify({})
     return jsonify(data)#{"date":data[1],"temp1":data[2],"temp2":data[3]}
-        
 
+@app.route('/home_station/powmr')
+@login_required
+def temperature():
+    try:
+        return jsonify(requests.get("https://192.168.0.11/powmr"))      
+    except:
+        return "error"
+    
 @app.route('/voltage')
 @login_required
 def voltage():
