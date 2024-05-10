@@ -240,7 +240,7 @@ def temperature():
 
 @app.route('/home_station/powmr')
 @login_required
-def temperature():
+def powmr_poll():
     try:
         return jsonify(requests.get("https://192.168.0.11/powmr"))      
     except:
