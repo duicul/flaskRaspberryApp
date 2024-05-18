@@ -246,6 +246,24 @@ def powmr_poll():
         return jsonify(q.json())      
     except Exception as e:
         return str(e)
+
+@app.route('/home_station/powmr_energy')
+@login_required
+def powmr_energy_poll():
+    try:
+        q = requests.get("http://192.168.0.11/powmr_energy")
+        return jsonify(q.json())      
+    except Exception as e:
+        return str(e)
+
+@app.route('/home_station/powmr_energy_clean')
+@login_required
+def powmr_energy_clean_poll():
+    try:
+        q = requests.get("http://192.168.0.11/powmr")
+        return jsonify(q.json())      
+    except Exception as e:
+        return str(e)
     
 @app.route('/voltage')
 @login_required
