@@ -31,15 +31,16 @@ class Monitor():
         od=Outside_Data("db/measure.db",self.logger_name)
         pmd=PowMr_Data("db/measure_powmr.db",self.logger_name)
         while True:                
-            #try:
-                
-                #td.poll_value(self.url)
-                #vd.poll_value(self.url)
-                #acd.poll_value(self.url)
-                #od.poll_value()
-            #except:
-            #    logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
             try:
+                logging.getLogger(self.logger_name).info("Polling homestation")
+                td.poll_value(self.url)
+                vd.poll_value(self.url)
+                acd.poll_value(self.url)
+                od.poll_value()
+            except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+            try:
+                logging.getLogger(self.logger_name).info("Polling powmr")
                 pmd.poll_value(self.url_powmr,mock=False)
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
