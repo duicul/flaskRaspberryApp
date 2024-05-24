@@ -18,6 +18,7 @@ class Monitor():
         self.config_handler=Config_Handler("json/monitor_config.json",self.logger_name)
         self.config=self.config_handler.loadUsingFile()
         print("config "+str(config))
+        logging.getLogger(self.logger_name).info("Monitor config "+json.dumps(config.toJSON())
         self.url=self.config.url
         self.url_powmr=self.config.url_powmr
         self.period=self.config.period
