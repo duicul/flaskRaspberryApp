@@ -160,7 +160,7 @@ class PowMr_Data(Table_Data):
     def convertData(self, powmr_data):
         if self.config.converData:
             for key in PowMr_Data.convDataFactors.keys():
-                if key in powmr_data.keys():
+                if key in powmr_data.keys() and powmr_data[key] is not None :
                     powmr_data[key]/=PowMr_Data.convDataFactors[key]
     
     def current_timestamp(self):
