@@ -226,6 +226,7 @@ def force_poll():
         tsd.poll_value(config.url)
         vd.poll_value(config.url)
         acd.poll_value(config.url)
+        powd.poll_value(config.url)
         od.poll_value()
     return ""
 
