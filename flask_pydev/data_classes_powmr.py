@@ -323,8 +323,10 @@ class PowMr_Data(Table_Data):
             conn.close()
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-        if len(result) > 0:
-            return self.convertData(self.dbResptoDict(result, self.getColumnNames())[0])
+        if result is not None and len(result) > 0:
+            data = self.convertData(self.dbResptoDict(result, self.getColumnNames())[0])
+            logging.getLogger(self.logger_name).info("PowMr_Data extract_last "+" result: "+json.dumps(data))
+            return data
         return None
     
     def insert(self, values:dict):
@@ -338,6 +340,7 @@ class PowMr_Data(Table_Data):
         sql += ") VALUES ("
         sql += ",".join(['?'] * len(values.keys()))
         sql += ")"
+        logging.getLogger(self.logger_name).info("PowMr_Data polled "+" result: "+str(sql) + " " + str(vals))
         print(sql + " " + str(vals))
         # print(vals)
         mycursor.executemany(sql, [tuple(vals)])
