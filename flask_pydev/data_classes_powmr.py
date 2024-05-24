@@ -162,7 +162,8 @@ class PowMr_Data(Table_Data):
             for key in PowMr_Data.convDataFactors.keys():
                 if key in powmr_data.keys() and powmr_data[key] is not None :
                     powmr_data[key]/=PowMr_Data.convDataFactors[key]
-    
+        return powmr_data
+        
     def current_timestamp(self):
         conn = sqlite3.connect(self.database)
         mycursor = conn.cursor()
@@ -324,7 +325,7 @@ class PowMr_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         if result is not None and len(result) > 0:
-            data = self.convertData(self.dbResptoDict(result, self.getColumnNames())[0])
+            data = self.dbResptoDict(result, self.getColumnNames())[0]
             logging.getLogger(self.logger_name).info("PowMr_Data extract_last "+" result: "+json.dumps(data))
             return data
         return None
@@ -393,7 +394,7 @@ class PowMr_Data(Table_Data):
             ins_data['pv_energy_total'] = lastValue['pv_energy_total'] + ins_data['pv_energy']
             ins_data['t0026_total_energy_total'] = lastValue['t0026_total_energy_total'] + ins_data['t0026_total_energy']
         logging.getLogger(self.logger_name).info("PowMr_Data polled "+" result: "+json.dumps(ins_data))
-        self.convertData(ins_data)
+        ins_data = self.convertData(ins_data)
         print(ins_data)        
         
         return self.insert(ins_data)
