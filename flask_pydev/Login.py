@@ -496,7 +496,7 @@ def home_station_powmr_data():
             data = powd.extract_all_interval(request.args["items"])
         except:
             logging.error(str(traceback.format_exc()))   
-    data = powd.dbResptoDict(powd.extract_all_interval(""), powd.getColumnNames())
+    data = powd.dbResptoDict(data, powd.getColumnNames())
     return jsonify(data)
 
 @app.route('/home_station')
