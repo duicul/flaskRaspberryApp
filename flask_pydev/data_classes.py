@@ -13,7 +13,7 @@ import json
 
 class Table_Data:
     
-    def __init___(self,database,logger_name):
+    def __init__(self,database,logger_name):
         self.database=database
         self.logger_name=logger_name
     
@@ -149,6 +149,54 @@ class Table_Data:
     def restart_device(self,home_station_url):
         logging.getLogger(self.logger_name).info("Restart")
         requests.get(home_station_url+"/restart")
+    
+    def getColumnNames(self):
+        conn = sqlite3.connect(self.database)
+        mycursor=conn.cursor()
+        querry="PRAGMA table_info( "+self.table_name+" );"
+        mycursor.execute(querry)
+        try:
+            result=mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        colnames = []
+        for col in result:
+            colnames.append({"name":col[1],"type":col[2]})
+        return colnames
+    
+    def dbResptoDict(self,dbresp,colnames):
+        if dbresp is None:
+            return []
+        resp = []
+        colnameslist = list(map(lambda x:x["name"],colnames))
+        #print("colnames "+str(len(colnames)))
+        for dbrow in dbresp:
+            dictResp = {}
+            dbrow = list(dbrow)
+            #print("dbrow "+str(len(dbrow)))
+            for i in range(len(colnameslist)):
+                cn = colnameslist[i]
+                if colnames[i]["type"] == "BOOLEAN" and not isinstance(dbrow[i], bool):
+                    cnval =( dbrow[i] == 1)
+                else:
+                    cnval = dbrow[i]
+                #print(str(cn)+ " "+str(cnval))
+                dictResp[cn]=cnval
+            resp.append(dictResp)
+        return resp
+    
+    def typeToSQL(self,type_name):
+        if type_name == int:
+            return "INTEGER"
+        elif type_name == float:
+            return "REAL"
+        elif type_name == bool:
+            return "BOOLEAN"
+        elif type_name == str:
+            return "TEXT"
+    
     
 class Temperature_Data(Table_Data):
     
@@ -595,7 +643,7 @@ class Outside_Data(Temperature_Split_Data):
 if __name__ == '__main__':
     #ac=AC_Data("measure.db","random","random")
     #ac.insert(221,6.3,170,5478)
-    tsd=Temperature_Split_Data("db/measure.db","random","random")
+    tsd=Temperature_Split_Data("db/measure.db","random")
     tsd.create_table()
     #tsd.insert(1,42.3)
     print(tsd.extract_all_interval(""))

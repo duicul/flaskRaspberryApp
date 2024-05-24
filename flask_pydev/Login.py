@@ -12,6 +12,7 @@ from regressionaprox import aggregate_data,display_regions
 import requests
 import traceback
 from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
+from data_classes_powmr import PowMr_Data
 from authorization import Authorization
 from config_class import Config_Data,Config
 from user_class import UserAnonym,LoginAttempt_Data,LoginAttempt
@@ -47,6 +48,9 @@ tsd=Temperature_Split_Data("db/measure.db",'werkzeug')
 vd=Voltage_Data("db/measure.db",'werkzeug')
 acd=AC_Data("db/measure.db",'werkzeug')
 od=Outside_Data("db/measure.db",'werkzeug')
+
+powd = PowMr_Data("db/measure_powmr.db",'werkzeug')
+
 aut=Authorization()
 cd=Config_Data("db/config.db",'werkzeug')
 lad=LoginAttempt_Data("db/loginattempt.db",'werkzeug')
@@ -121,6 +125,7 @@ def login():
     try:
         user_name = html.escape(request.form['user_name'])
         password = html.escape(request.form['password'])
+        next_url = request.form.get("next")
         remember=False
         try:
             remember = html.escape(request.form['remember'])
@@ -128,6 +133,7 @@ def login():
             logging.getLogger('werkzeug').info("remeber is False")
         epochtime=time.mktime((datetime.now()-attempt_period).timetuple())
         user = aut.loginUser(user_name, password,request.remote_addr,epochtime)
+        print("user "+str(user))
         if(user != None):
             if(user.countReached()):
                 return redirect(url_for('home_station'))
@@ -143,6 +149,8 @@ def login():
     except:
         lad.addAttempt(LoginAttempt(user_name,request.remote_addr,None,False))
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+    if next_url:
+        return redirect(next_url)
     return redirect(url_for('home_station'))
 
 @app.route('/get_login_attempts')
@@ -238,6 +246,14 @@ def temperature():
         return jsonify({})
     return jsonify(data)#{"date":data[1],"temp1":data[2],"temp2":data[3]}
 
+@app.route('/powmr')
+@login_required
+def powmr():
+    data=powd.extract_last()
+    if data==None:
+        return jsonify({})
+    return jsonify(data)
+
 @app.route('/home_station/powmr')
 @login_required
 def powmr_poll():
@@ -260,7 +276,7 @@ def powmr_energy_poll():
 @login_required
 def powmr_energy_clean_poll():
     try:
-        q = requests.get("http://192.168.0.11/powmr")
+        q = requests.get("http://192.168.0.11/powmrpowmr_energy_clean")
         return jsonify(q.json())      
     except Exception as e:
         return str(e)
@@ -291,6 +307,12 @@ def ac():
     if data==None:
         return jsonify({})
     return jsonify({"date":data[1],"voltage":data[2],"current":data[3],"power":data[4],"energy":data[5]})
+
+@app.route('/home_station/voltage_cols')
+@login_required
+def home_station_voltage_cols():
+    data = vd.getColumnNames()
+    return jsonify(data)
 
 @app.route('/home_station/voltage_data')
 @login_required
@@ -335,6 +357,11 @@ def home_station_voltage_data():
             t.append({"date":i[1],"volt1":i[2]})    
         return jsonify(t)
     
+@app.route('/home_station/ac_cols')
+@login_required
+def home_station_ac_cols():
+    data = acd.getColumnNames()
+    return jsonify(data)
 
 @app.route('/home_station/ac_data')
 @login_required
@@ -377,6 +404,12 @@ def home_station_ac_data():
         for i in data:
             t.append({"date":i[1],"voltage":i[2],"current":i[3],"power":i[4],"energy":i[5]})    
         return jsonify(t)
+
+@app.route('/home_station/temperature_cols')
+@login_required
+def home_station_temperature_cols():
+    data = tsd.getColumnNames()
+    return jsonify(data)
        
 @app.route('/home_station/temperature_data')
 @login_required
@@ -426,7 +459,45 @@ def  home_station_temperature_data():
         print(t)
         result={"recorded":t,"predict":[]}
         return jsonify(result)
-    
+
+@app.route('/home_station/powmr_cols')
+@login_required
+def home_station_powmr_cols():
+    data = powd.getColumnNames()
+    return jsonify(data)
+
+@app.route('/home_station/powmr_data')
+@login_required
+def home_station_powmr_data():
+    data=[]
+    interval=False
+    compare=False
+    try:
+        interval=True if request.args["interval"] == "true" else False
+    except:
+        pass
+    try:
+        compare=True if request.args["compare"] == "true" else False
+    except:
+        pass
+    if(interval):
+        try:
+            data = powd.extract_all_between(request.args["fdate"], request.args["ldate"])
+        except:
+            logging.error(str(traceback.format_exc())) 
+    elif(compare):
+        try:
+            data = powd.extractCompare(request.args["date1"], request.args["date2"])
+        except:
+            logging.error(str(traceback.format_exc()))   
+    else:
+        try:
+            data = powd.extract_all_interval(request.args["items"])
+        except:
+            logging.error(str(traceback.format_exc()))   
+    data = powd.dbResptoDict(powd.extract_all_interval(""), powd.getColumnNames())
+    return jsonify(data)
+
 @app.route('/home_station')
 def home_station():    
     try:
@@ -437,6 +508,20 @@ def home_station():
             return render_template("login.html")
         else:
             return render_template('home_measure.html')
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return render_template('login.html')
+    
+@app.route('/home_station_powmr')
+def home_station_powmr():    
+    try:
+        epochtime=time.mktime((datetime.now()-attempt_period).timetuple())
+        logins=logins = len(list(filter(lambda logatt:not logatt.success,lad.getAllAttemptsIp(request.remote_addr, epochtime))))
+        current_user.attempts=logins
+        if(not current_user.is_authenticated):
+            return render_template("login.html")
+        else:
+            return render_template('home_measure_powmr.html')
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         return render_template('login.html')

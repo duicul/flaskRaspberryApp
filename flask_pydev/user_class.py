@@ -110,7 +110,8 @@ class User_Data:
     def loginUser(self,user_name,password,ip,epochtime):
         conn = sqlite3.connect(self.database)
         mycursor=conn.cursor()
-        querry="SELECT * FROM "+self.table_name+" WHERE USER_NAME='"+user_name+"' AND PASSWORD='"+password+"'"
+        querry="SELECT * FROM "+str(self.table_name)+" WHERE USER_NAME='"+str(user_name)+"' AND PASSWORD='"+str(password)+"'"
+        print(querry)
         mycursor.execute(querry)
         result=[]
         try:
@@ -171,7 +172,8 @@ class User_Data:
         vals=[(user.user_name,user.password,user.mail)]
         mycursor=conn.cursor()
         sql = """INSERT INTO """+self.table_name+""" (USER_NAME,PASSWORD,MAIL) VALUES (?,?,?)"""
-        
+        print(sql)
+        print(vals)
         try:
             mycursor.executemany(sql,vals)
             conn.commit()
