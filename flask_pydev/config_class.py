@@ -126,6 +126,18 @@ class Config_Data:
         except:
             logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
     
+    def delete_table(self):
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+        sql = "DROP TABLE IF EXISTS " + self.table_name
+        try:
+            cursor.execute(sql)
+            logging.getLogger(self.logger_name).debug(self.table_name + " created ")
+            cursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
+    
     def updateConfig(self, config):
         self.removeConfig(config.user_name)
         self.addConfig(config)
@@ -166,6 +178,7 @@ class Config_Handler:
 
 if __name__ == '__main__':
     cd = Config_Data("db/config.db", "random")
+    cd.delete_table()
     cd.create_table()
     cd.removeConfig("admin")
     c = Config("admin", "http://192.168.0.6", 900)
