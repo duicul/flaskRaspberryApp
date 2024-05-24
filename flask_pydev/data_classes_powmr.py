@@ -389,7 +389,7 @@ class PowMr_Data(Table_Data):
             ins_data['load_energy_total'] = lastValue['load_energy_total'] + ins_data['load_energy']
             ins_data['pv_energy_total'] = lastValue['pv_energy_total'] + ins_data['pv_energy']
             ins_data['t0026_total_energy_total'] = lastValue['t0026_total_energy_total'] + ins_data['t0026_total_energy']
-        
+        logging.getLogger(self.logger_name).info("PowMr_Data polled "+" result: "+json.dumps(ins_data))
         self.convertData(ins_data)
         print(ins_data)        
         
