@@ -41,7 +41,7 @@ class Config_Data:
         self.table_name = "Config"
         self.create_table()
         if(len(self.getAllConfigs()) == 0):
-           self.addConfig(Config("admin", "http://192.168.0.6", "http://192.168.0.11", 900))
+           self.addConfig(Config("admin", "http://192.168.0.6", "http://192.168.0.11",False, 900))
     
     def getConfig(self, user_name):
         conn = sqlite3.connect(self.database)
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     cd.delete_table()
     cd.create_table()
     cd.removeConfig("admin")
-    c = Config("admin", "http://192.168.0.6", 900)
-    cd.addConfig()
+    #c = Config("admin", "http://192.168.0.6", 900)
+    #cd.addConfig()
     for c in cd.getAllConfigs():
         print(c)
