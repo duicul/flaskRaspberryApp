@@ -309,7 +309,7 @@ class PowMr_Data(Table_Data):
         if energy_opt is None:
             querry+="*"
         else:
-            querry+="ID,TIMESTAMP"
+            querry+="LAG(ID,1) OVER (ORDER BY TIMESTAMP ASC)"
             for ene_col in self.energy_cols:
                 querry+=","+ene_col['name']+" - LAG("+ene_col['name']+",1) OVER (ORDER BY TIMESTAMP ASC)"
         querry+=" FROM " 

@@ -513,7 +513,7 @@ def home_station_powmr_data():
         for opt in energy_opt:
             if opt is not None and len(opt)>0 and opt in powd.energy_opt_vals:
                 data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
-                col_names = [{'name':'ID','type':'INTEGER'},{'name':'TIMESTAMP','type':'timestamp'}]
+                col_names = [{'name':'ID','type':'INTEGER'}]
                 for cn in powd.energy_cols:
                     cn_energy = cn["name"]+"_"+opt
                     col_names.append({'name':cn_energy,'type':'REAL'})
