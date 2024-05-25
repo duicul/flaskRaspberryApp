@@ -470,62 +470,65 @@ def home_station_powmr_cols():
 @app.route('/home_station/powmr_data')
 @login_required
 def home_station_powmr_data():
-    data=[]
-    interval=False
-    compare=False
-    logging.getLogger('werkzeug').info(str(request.args))
-    energy_opt=[]
     try:
-        energy_opt_str = request.args["energy_opt"]
-        logging.getLogger('werkzeug').info(str(energy_opt_str))
-        energy_opt = energy_opt_str.split(',')
-    except:
-        pass        
-    try:
-        interval=True if request.args["interval"] == "true" else False
-    except:
-        pass
-    try:
-        compare=True if request.args["compare"] == "true" else False
-    except:
-        pass
-    if(interval):
+        data=[]
+        interval=False
+        compare=False
+        logging.getLogger('werkzeug').info(str(request.args))
+        energy_opt=[]
         try:
-            data = powd.extract_all_between(request.args["fdate"], request.args["ldate"])
+            energy_opt_str = request.args["energy_opt"]
+            logging.getLogger('werkzeug').info(str(energy_opt_str))
+            energy_opt = energy_opt_str.split(',')
         except:
-            logging.getLogger('werkzeug').error(str(traceback.format_exc())) 
-    elif(compare):
+            pass        
         try:
-            data = powd.extractCompare(request.args["date1"], request.args["date2"])
+            interval=True if request.args["interval"] == "true" else False
         except:
-            logging.getLogger('werkzeug').error(str(traceback.format_exc()))   
-    else:
+            pass
         try:
-            data = powd.extract_all_interval(request.args["items"])
+            compare=True if request.args["compare"] == "true" else False
         except:
-            logging.getLogger('werkzeug').error(str(traceback.format_exc()))
-            
-    logging.getLogger('werkzeug').info(str(energy_opt))
-    
-    for opt in energy_opt:
-        if opt is not None and len(opt)>0 and opt in powd.energy_opt_vals:
-            data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
-            col_names = ['ID','TIMESTAMP']
-            for cn in powd.energy_cols:
-                cn_energy = cn["name"]+"_"+opt
-                col_names.append(cn_energy)
-            logging.getLogger('werkzeug').info("col_names_energy "+str(col_names))
-            data_opt = powd.dbResptoDict(data_opt, col_names)
-            
-            for oe in data_opt:
-                for rec in data:
-                    if oe['ID'] == rec["ID"]:
-                        for oe_key in oe.keys():
-                            rec[oe_key]=oe[oe_key]
-                        break
-            
-    data = powd.dbResptoDict(data, powd.getColumnNames())
-    return jsonify(data)
+            pass
+        if(interval):
+            try:
+                data = powd.extract_all_between(request.args["fdate"], request.args["ldate"])
+            except:
+                logging.getLogger('werkzeug').error(str(traceback.format_exc())) 
+        elif(compare):
+            try:
+                data = powd.extractCompare(request.args["date1"], request.args["date2"])
+            except:
+                logging.getLogger('werkzeug').error(str(traceback.format_exc()))   
+        else:
+            try:
+                data = powd.extract_all_interval(request.args["items"])
+            except:
+                logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+                
+        logging.getLogger('werkzeug').info(str(energy_opt))
+        
+        for opt in energy_opt:
+            if opt is not None and len(opt)>0 and opt in powd.energy_opt_vals:
+                data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
+                col_names = [{'name':'ID','type':'INTEGER'},{'name':'TIMESTAMP','type':'timestamp'}]
+                for cn in powd.energy_cols:
+                    cn_energy = cn["name"]+"_"+opt
+                    col_names.append({'name':cn_energy,'type':'REAL'})
+                logging.getLogger('werkzeug').info("col_names_energy "+str(col_names))
+                data_opt = powd.dbResptoDict(data_opt, col_names)
+                
+                for oe in data_opt:
+                    for rec in data:
+                        if oe['ID'] == rec["ID"]:
+                            for oe_key in oe.keys():
+                                rec[oe_key]=oe[oe_key]
+                            break
+                
+        data = powd.dbResptoDict(data, powd.getColumnNames())
+        return jsonify(data)
+    except:
+        return logging.getLogger('werkzeug').error(str(traceback.format_exc()))
 
 @app.route('/home_station')
 def home_station():    
