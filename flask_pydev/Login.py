@@ -508,6 +508,8 @@ def home_station_powmr_data():
                 
         logging.getLogger('werkzeug').info(str(energy_opt))
         
+        data = powd.dbResptoDict(data, powd.getColumnNames())
+        
         for opt in energy_opt:
             if opt is not None and len(opt)>0 and opt in powd.energy_opt_vals:
                 data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
@@ -525,10 +527,9 @@ def home_station_powmr_data():
                                 rec[oe_key]=oe[oe_key]
                             break
                 
-        data = powd.dbResptoDict(data, powd.getColumnNames())
         return jsonify(data)
     except:
-        return logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return str(traceback.format_exc())
 
 @app.route('/home_station')
 def home_station():    
