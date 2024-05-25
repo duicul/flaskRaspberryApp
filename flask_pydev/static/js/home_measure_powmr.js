@@ -1275,11 +1275,13 @@
                         itemrow = Object.keys(item)[j];
                         var disp = false;
                         for(showKeys_energy_val of showKeys_energy){
-                            if ((showKeys_energy != undefined && itemrow.includes(showKeys_energy))||showKeys.includes(itemrow)) {
+                            if (showKeys_energy != undefined && itemrow.includes(showKeys_energy)) {
                                 disp=true;
                                 break;
                             }
                         }
+                        if(showKeys.includes(itemrow)){disp=true;}
+                        
                         if(disp){
                             console.log(itemrow);
                             console.log(showkeys_graph_position[itemrow]);
