@@ -1251,17 +1251,17 @@
                     showkeys_graph_position[showKeys[i]] = i;
                 }
                 
-                for (i = showKeys.length,j=i; i < showKeys.length+showKeys_energy.length; i++) {
+                for (i = showKeys.length,j=i,t=i; i < showKeys.length+showKeys_energy.length; t++) {
                     for(var q=0;q<energy_cols.length;q++){
                         data_array_powmr[j] = {
                             type: "stepArea",
                             axisYType: "secondary",
-                            name: energy_cols[q]+"_"+showKeys_energy[j-i],
+                            name: energy_cols[q]+"_"+showKeys_energy[t-i],
                             showInLegend: true,
                             markerSize: 2,
                             dataPoints: []
                         }
-                        showkeys_graph_position[energy_cols[q]+"_"+showKeys_energy[j-i]] = j++;
+                        showkeys_graph_position[energy_cols[q]+"_"+showKeys_energy[t-i]] = j++;
                     }
                 }
                 
