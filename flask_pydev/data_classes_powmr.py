@@ -151,6 +151,7 @@ class PowMr_Data(Table_Data):
     "SELECT *,LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_prev,pv_energy_total-LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_diff  FROM PowMr_Data Group by strftime('%Y-%m-%d %H',timestamp);"
     
     energy_cols = ['load_energy_total','pv_energy_total','t0026_total_energy_total']
+    energy_opt_vals = ["energyhour","energyday","energyweek","energymonth","energyyear"]
     
     def __init__(self, database, logger_name):
         self.database = database
