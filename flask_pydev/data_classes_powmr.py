@@ -304,7 +304,7 @@ class PowMr_Data(Table_Data):
         conn = sqlite3.connect(self.database)
         mycursor = conn.cursor()
         querry = "SELECT "
-        if energy_opt is None:
+        if energy_opt is not None:
             querry+="*"
         else:
             querry+="ID,TIMESTAMP"
