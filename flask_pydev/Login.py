@@ -473,6 +473,7 @@ def home_station_powmr_data():
     data=[]
     interval=False
     compare=False
+    logging.info(str(request.args)) 
     energy_opt=[]
     if "energy_opt" in request.args.keys():
         energy_opt = request.args["energy_opt"].split(',')
