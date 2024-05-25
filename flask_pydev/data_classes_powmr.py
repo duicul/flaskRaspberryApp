@@ -352,14 +352,14 @@ class PowMr_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self, powmr_url, mock=True):
+    def poll_value(self, powmr_url,timeout= 10, mock=True):
         headers = {}
         if mock:
             powmr_data = mock_value
             powmr_data_energy = mock_energy_value
         else:
             try:
-                powmr_data = requests.get(powmr_url + "/powmr", headers=headers).json()
+                powmr_data = requests.get(powmr_url + "/powmr", headers=headers,timeout=timeout).json()
                 powmr_data_energy = requests.get(powmr_url + "/powmr_energy_clean", headers=headers).json()
             except Exception as e:
                 print(e)

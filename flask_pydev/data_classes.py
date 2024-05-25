@@ -148,7 +148,7 @@ class Table_Data:
     
     def restart_device(self,home_station_url):
         logging.getLogger(self.logger_name).info("Restart")
-        requests.get(home_station_url+"/restart")
+        requests.get(home_station_url+"/restart",timeout=10)
     
     def getColumnNames(self):
         conn = sqlite3.connect(self.database)
@@ -248,14 +248,14 @@ class Temperature_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self,home_station_url):
+    def poll_value(self,home_station_url,timeout=10):
         i=0
         temp1=-127
         temp2=-127
         while (temp1==-127 or temp2==-127) and i<30:
             i=i+1
             try:
-                temp = requests.get(home_station_url+"/temperature").json()
+                temp = requests.get(home_station_url+"/temperature",timeout=timeout).json()
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return 
@@ -339,9 +339,9 @@ class Voltage_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self,home_station_url):
+    def poll_value(self,home_station_url,timeout=10):
         try:
-            volt = [requests.get(home_station_url+"/voltage").json()["volt1"] for i in range(4)]
+            volt = [requests.get(home_station_url+"/voltage",timeout=timeout).json()["volt1"] for i in range(4)]
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
@@ -400,9 +400,9 @@ class AC_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self,home_station_url):
+    def poll_value(self,home_station_url,timeout=10):
         try:
-            ac = [requests.get(home_station_url+"/ac").json() for i in range(4)]
+            ac = [requests.get(home_station_url+"/ac",timeout=timeout).json() for i in range(4)]
         except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return
@@ -476,7 +476,7 @@ class Temperature_Split_Data(Table_Data):
             self.insert(1,temp_rec[2], temp_rec[1])
             self.insert(2,temp_rec[3], temp_rec[1])
     
-    def poll_value(self,home_station_url):
+    def poll_value(self,home_station_url,timeout=10):
         i=0
         temp1=-127
         temp2=-127
@@ -484,7 +484,7 @@ class Temperature_Split_Data(Table_Data):
         while (temp1==-127 or temp2==-127) and i<30:
             i=i+1
             try:
-                temp = requests.get(home_station_url+"/temperature").json()
+                temp = requests.get(home_station_url+"/temperature",timeout=timeout).json()
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return 
