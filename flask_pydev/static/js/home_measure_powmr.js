@@ -201,7 +201,7 @@
                     col=ac_powmr_opt[key];
                     //console.log(col);
                     checked = false;
-                        data += "<input type=\"checkbox\" " + checked + " onchange=\"check_state_ac('" + key + "',this)\">";
+                        data += "<input type=\"checkbox\" " + checked + " onchange=\"check_state_ac_energy('" + key + "',this)\">";
                         data += "<label>" + col.name + "</label></br>";
                     
 
@@ -246,6 +246,13 @@
             ac_opt_powmr[type] = {};
         ac_opt_powmr[type]["checked"] = elem.checked;
         console.log(ac_opt_powmr)
+    }
+    
+    function check_state_ac_energy(type, elem) {
+        if (ac_powmr_opt[type] == undefined)
+            ac_powmr_opt[type] = {};
+        ac_powmr_opt[type]["checked"] = elem.checked;
+        console.log(ac_powmr_opt)
     }
 
     function init() {
@@ -1181,20 +1188,32 @@
 
 
     function draw_graph_ac(data_array, interval, compare) {
-
+        ac_powmr_opt_keys = Object.keys(ac_powmr_opt);
+        ac_opt = []
+        for (var i1 = 0; i1 < ac_powmr_opt_keys.length; i1++) {
+            key = ac_powmr_opt_keys[i1];
+            col=ac_powmr_opt[key];
+            if(col.checked)
+                ac_opt.push(key);
+        }
+        ac_opt_str = "";
+        if(ac_opt.length>0){
+            ac_opt_str="&energy_opt="+ac_opt.join(',')
+        }
+        
         if (interval == true) {
             fdate = $("#fdate").val()
             ldate = $("#ldate").val()
-            url_ac = "/home_station/powmr_data?fdate=" + fdate + "&ldate=" + ldate + "&interval=true&compare=false";
+            url_ac = "/home_station/powmr_data?fdate=" + fdate + "&ldate=" + ldate + "&interval=true&compare=false"+ac_opt_str;
         } else {
             if (compare == true) {
                 date1 = $("#date1").val()
                 date2 = $("#date2").val()
-                url_ac = "/home_station/powmr_data?date1=" + date1 + "&date2=" + date2 + "&interval=false&compare=true";
+                url_ac = "/home_station/powmr_data?date1=" + date1 + "&date2=" + date2 + "&interval=false&compare=true"+ac_opt_str;
             } else {
                 items = $("#items_interval").val()
                     //console.log(items)
-                url_ac = "/home_station/powmr_data?items=" + items + "&interval=false&compare=false";
+                url_ac = "/home_station/powmr_data?items=" + items + "&interval=false&compare=false"+ac_opt_str;
             }
         }
         //console.log(chart["data"])
