@@ -178,7 +178,7 @@ class Table_Data:
             #print("dbrow "+str(len(dbrow)))
             for i in range(len(colnameslist)):
                 cn = colnameslist[i]
-                if colnames[i]["type"] == "BOOLEAN" and not isinstance(dbrow[i], bool):
+                if "type" in colnames[i].keys() and colnames[i]["type"] == "BOOLEAN" and not isinstance(dbrow[i], bool):
                     cnval =( dbrow[i] == 1)
                 else:
                     cnval = dbrow[i]
