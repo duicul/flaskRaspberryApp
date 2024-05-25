@@ -473,6 +473,9 @@ def home_station_powmr_data():
     data=[]
     interval=False
     compare=False
+    energy_opt=[]
+    if "energy_opt" in request.args.keys():
+        energy_opt = request.args["energy_opt"].split(',')
     try:
         interval=True if request.args["interval"] == "true" else False
     except:
@@ -495,7 +498,23 @@ def home_station_powmr_data():
         try:
             data = powd.extract_all_interval(request.args["items"])
         except:
-            logging.error(str(traceback.format_exc()))   
+            logging.error(str(traceback.format_exc()))
+    
+    for opt in energy_opt:
+        if opt is not None and len(opt)>0 and opt in powd.energy_cols:
+            data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
+            col_names = ['ID','TIMESTAMP']
+            for cn in powd.energy_cols:
+                col_names.append(cn+"_"+opt)
+            data_opt = powd.dbResptoDict(data_opt, col_names)
+            
+            for oe in data_opt:
+                for rec in data:
+                    if oe['ID'] == rec["ID"]:
+                        for oe_key in oe.keys():
+                            rec[oe_key]=oe[oe_key]
+                        break
+            
     data = powd.dbResptoDict(data, powd.getColumnNames())
     return jsonify(data)
 

@@ -146,9 +146,9 @@ class Table_Data:
         """ Poll sensor values from the sensor """
         pass
     
-    def restart_device(self,home_station_url):
+    def restart_device(self,home_station_url,timeout=10):
         logging.getLogger(self.logger_name).info("Restart")
-        requests.get(home_station_url+"/restart",timeout=10)
+        requests.get(home_station_url+"/restart",timeout=timeout)
     
     def getColumnNames(self):
         conn = sqlite3.connect(self.database)

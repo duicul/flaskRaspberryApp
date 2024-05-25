@@ -148,6 +148,9 @@ class PowMr_Data(Table_Data):
                        "bms_05cell_voltage":100, "bms_06cell_voltage":100, "bms_07cell_voltage":100, "bms_08cell_voltage":100,"bms_09cell_voltage":100, "bms_10cell_voltage":100, "bms_11cell_voltage":100, "bms_12cell_voltage":100,
                        "bms_13cell_voltage":100, "bms_14cell_voltage":100, "bms_15cell_voltage":100, "bms_16cell_voltage":100,"bms_battery_current":100, "bms_battery_soc":100, "bms_battery_voltage":100, "bus_voltage":10,
                        "grid_current":100, "grid_freq":100, "grid_voltage":10,"inv_current":100, "inv_freq":100, "inv_voltage":10,"load_current":100, "pv_current":100, "pv_voltage":10}
+    "SELECT *,LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_prev,pv_energy_total-LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_diff  FROM PowMr_Data Group by strftime('%Y-%m-%d %H',timestamp);"
+    
+    energy_cols = ['load_energy_total','pv_energy_total','t0026_total_energy_total']
     
     def __init__(self, database, logger_name):
         self.database = database
@@ -254,7 +257,7 @@ class PowMr_Data(Table_Data):
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         return result
     
-    def extract_all_interval(self, items):
+    def extract_all_interval(self, items,energy_opt = None):
         ''' Returns last items rows from the table '''
         condition = ""
         # print(items)
@@ -300,7 +303,30 @@ class PowMr_Data(Table_Data):
         #    condition=""
         conn = sqlite3.connect(self.database)
         mycursor = conn.cursor()
-        querry = "SELECT * FROM " + self.table_name + " " + condition
+        querry = "SELECT "
+        if energy_opt is None:
+            querry+="*"
+        else:
+            querry+="ID,TIMESTAMP"
+            for ene_col in self.energy_cols:
+                querry+=","+ene_col+" - LAG("+ene_col+",1) OVER (ORDER BY TIMESTAMP ASC)"
+        querry+=" FROM " 
+        if energy_opt is not None:
+            querry+=self.table_name
+        else:
+            querry+=" (SELECT * FROM "+self.table_name+"  ORDER BY TIMESTAMP DESC ) "
+        querry+= " " + condition
+        if energy_opt is not None:
+            if energy_opt == "energyhour":
+                querry+=" Group by strftime('%Y-%m-%d %H',timestamp)"
+            elif energy_opt == "energyday":
+                querry+=" Group by strftime('%Y-%m-%d',timestamp)"
+            elif energy_opt == "energyweek":
+                querry+=" Group by strftime('%Y-%W',timestamp)"
+            elif energy_opt == "energymonth":
+                querry+=" Group by strftime('%Y-%m',timestamp)"
+            elif energy_opt == "energyyear":
+                querry+=" Group by strftime('%Y',timestamp)"
         logging.getLogger(self.logger_name).info(querry)
         mycursor.execute(querry)
         try:

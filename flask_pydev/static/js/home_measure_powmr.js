@@ -99,28 +99,28 @@
     };
     
     var ac_powmr_opt={
-        "power_average": {
-            "name": "Power Average [W]",
+        "energyhour": {
+            "name": "Energy Hourly [Wh]",
             "checked": false,
-            "type":"line"
+            "type":"column"
         },
         "energyday": {
             "name": "Energy Daily [Wh]",
             "checked": false,
             "type":"column"
         },
-        "energyhour": {
-            "name": "Energy Hourly [Wh]",
+        "energyweek": {
+            "name": "Energy Weekly [Wh]",
             "checked": false,
             "type":"column"
         },
-        "energysample": {
-            "name": "Energy between Samples [Wh]",
-            "checked": false,
-            "type":"line"
-        },
         "energymonth": {
             "name": "Energy Monthly [KWh]",
+            "checked": false,
+            "type":"column"
+        },
+        "energyyear": {
+            "name": "Energy Yearly [KWh]",
             "checked": false,
             "type":"column"
         }
