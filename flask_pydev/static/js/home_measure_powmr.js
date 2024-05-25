@@ -128,7 +128,7 @@
     
     var ac_opt_powmr ={};
     var ac_skip = ['bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage', 'bms_08cell_voltage', 'bms_09cell_voltage', 'bms_10cell_voltage', 'bms_10cell_voltage', 'bms_11cell_voltage', 'bms_12cell_voltage', 'bms_13cell_voltage', 'bms_14cell_voltage', 'bms_15cell_voltage', 'bms_16cell_voltage'];
-
+    var energy_cols = ['load_energy_total','pv_energy_total','t0026_total_energy_total'];
     function show_opt() {
         data = "";
         return;
@@ -1223,8 +1223,9 @@
             url: url_ac,
             success: function(result) {
                 console.log(result);
-                var showKeys = [];
+                var showKeys = [],showKeys_energy=[];
                 ac_opt_powmr_keys = Object.keys(ac_opt_powmr);
+                ac_powmr_opt_keys = Object.keys(ac_powmr_opt);
                 var graph_ind = 0;
                 data_array_powmr = [];
                 showkeys_graph_position = {}
@@ -1232,6 +1233,11 @@
                     if (ac_opt_powmr[ac_opt_powmr_keys[i]].checked == true)
                         showKeys.push(ac_opt_powmr_keys[i])
                 }
+                
+                for (var i = 0; i < ac_powmr_opt_keys.length; i++) {
+                    if (ac_powmr_opt[ac_powmr_opt_keys[i]].checked == true)
+                        showKeys_energy.push(ac_powmr_opt_keys[i])
+                } 
                 console.log(showKeys);
                 for (var i = 0; i < showKeys.length; i++) {
                     data_array_powmr[i] = {
@@ -1244,6 +1250,21 @@
                     }
                     showkeys_graph_position[showKeys[i]] = i;
                 }
+                
+                for (i = showKeys.length,j=i; i < showKeys.length+showKeys_energy.length; i++) {
+                    for(var q=0;q<energy_cols.length;q++){
+                        data_array_powmr[j] = {
+                            type: "stepArea",
+                            axisYType: "secondary",
+                            name: energy_cols[q]+"_"+showKeys_energy[j-i],
+                            showInLegend: true,
+                            markerSize: 2,
+                            dataPoints: []
+                        }
+                        showkeys_graph_position[energy_cols[q]+"_"+showKeys_energy[j-i]] = j++;
+                    }
+                }
+                
                 console.log(showkeys_graph_position);
                 console.log(data_array_powmr);
                 for (var i = 0; i < result.length; i++) {
