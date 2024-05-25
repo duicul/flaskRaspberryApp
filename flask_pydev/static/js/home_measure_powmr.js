@@ -126,7 +126,6 @@
         }
     }
     
-    var ac_opt_powmr = {};
     var ac_skip = ['bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage', 'bms_08cell_voltage', 'bms_09cell_voltage', 'bms_10cell_voltage', 'bms_10cell_voltage', 'bms_11cell_voltage', 'bms_12cell_voltage', 'bms_13cell_voltage', 'bms_14cell_voltage', 'bms_15cell_voltage', 'bms_16cell_voltage'];
 
     function show_opt() {
@@ -200,11 +199,10 @@
                     key = ac_powmr_opt_keys[i1];
                     col=ac_powmr_opt[key];
                     //console.log(col);
-                    if (col.type == "REAL" && !ac_skip.includes(col.name)) {
-                        checked = false;
-                        data += "<input type=\"checkbox\" " + checked + " onchange=\"check_state_ac('" + key + "',this)\">";
-                        data += "<label>" + col.name + "</label></br>";
-                    }
+                    checked = false;
+                    data += "<input type=\"checkbox\" " + checked + " onchange=\"check_state_ac('" + key + "',this)\">";
+                    data += "<label>" + col.name + "</label></br>";
+                    
 
                 }
                 //console.log(result);
