@@ -512,7 +512,7 @@ def home_station_powmr_data():
             data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
             col_names = ['ID','TIMESTAMP']
             for cn in powd.energy_cols:
-                cn_energy = cn+"_"+opt
+                cn_energy = cn["name"]+"_"+opt
                 col_names.append(cn_energy)
             logging.getLogger('werkzeug').info("col_names_energy "+str(col_names))
             data_opt = powd.dbResptoDict(data_opt, col_names)
