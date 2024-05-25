@@ -475,8 +475,10 @@ def home_station_powmr_data():
     compare=False
     logging.getLogger('werkzeug').info(str(request.args))
     energy_opt=[]
-    if "energy_opt" in request.args.keys():
+    try:
         energy_opt = request.args["energy_opt"].split(',')
+    except:
+        pass        
     try:
         interval=True if request.args["interval"] == "true" else False
     except:
