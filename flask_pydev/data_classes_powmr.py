@@ -304,14 +304,14 @@ class PowMr_Data(Table_Data):
         conn = sqlite3.connect(self.database)
         mycursor = conn.cursor()
         querry = "SELECT "
-        if energy_opt is not None:
+        if energy_opt is None:
             querry+="*"
         else:
             querry+="ID,TIMESTAMP"
             for ene_col in self.energy_cols:
                 querry+=","+ene_col+" - LAG("+ene_col+",1) OVER (ORDER BY TIMESTAMP ASC)"
         querry+=" FROM " 
-        if energy_opt is not None:
+        if energy_opt is None:
             querry+=self.table_name
         else:
             querry+=" (SELECT * FROM "+self.table_name+"  ORDER BY TIMESTAMP DESC ) "
