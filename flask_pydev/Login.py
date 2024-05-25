@@ -508,7 +508,7 @@ def home_station_powmr_data():
     logging.getLogger('werkzeug').info(str(energy_opt))
     
     for opt in energy_opt:
-        if opt is not None and len(opt)>0 and opt in powd.energy_cols:
+        if opt is not None and len(opt)>0 and opt in powd.energy_opt_vals:
             data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
             col_names = ['ID','TIMESTAMP']
             for cn in powd.energy_cols:
