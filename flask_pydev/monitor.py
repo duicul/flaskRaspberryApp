@@ -61,7 +61,7 @@ def start():
     config = ch.loadUsingFile()
     try:
         logging.getLogger('monitor_logger').info("start")
-        time.sleep(30)
+        time.sleep(60)
         mon=Monitor(config.user_name,"monitor_logger")
         mon.run()
     except:
