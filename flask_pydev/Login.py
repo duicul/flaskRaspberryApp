@@ -476,7 +476,9 @@ def home_station_powmr_data():
     logging.getLogger('werkzeug').info(str(request.args))
     energy_opt=[]
     try:
-        energy_opt = request.args["energy_opt"].split(',')
+        energy_opt_str = request.args["energy_opt"]
+        logging.getLogger('werkzeug').info(str(energy_opt_str))
+        energy_opt_str = energy_opt.split(',')
     except:
         pass        
     try:
@@ -502,13 +504,17 @@ def home_station_powmr_data():
             data = powd.extract_all_interval(request.args["items"])
         except:
             logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+            
+    logging.getLogger('werkzeug').info(str(energy_opt))
     
     for opt in energy_opt:
         if opt is not None and len(opt)>0 and opt in powd.energy_cols:
             data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
             col_names = ['ID','TIMESTAMP']
             for cn in powd.energy_cols:
-                col_names.append(cn+"_"+opt)
+                cn_energy = cn+"_"+opt
+                col_names.append(cn_energy)
+            logging.getLogger('werkzeug').info("col_names_energy "+str(col_names))
             data_opt = powd.dbResptoDict(data_opt, col_names)
             
             for oe in data_opt:
