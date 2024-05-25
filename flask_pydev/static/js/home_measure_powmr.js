@@ -1271,7 +1271,7 @@
                     var item = result[i];
                     for (var j = 0; j < Object.keys(item).length; j++) {
                         itemrow = Object.keys(item)[j];
-                        if (showKeys.includes(itemrow)) {
+                        if (showKeys.includes(itemrow)||showKeys_energy.includes(itemrow)) {
                             console.log(itemrow);
                             console.log(showkeys_graph_position[itemrow]);
                             data_array_powmr[showkeys_graph_position[itemrow]].dataPoints.push({
