@@ -1273,15 +1273,20 @@
                     var item = result[i];
                     for (var j = 0; j < Object.keys(item).length; j++) {
                         itemrow = Object.keys(item)[j];
+                        var disp = false;
                         for(showKeys_energy_val of showKeys_energy){
-                            if (showKeys_energy != undefined && itemrow.includes(showKeys_energy)) {
-                                console.log(itemrow);
-                                console.log(showkeys_graph_position[itemrow]);
-                                data_array_powmr[showkeys_graph_position[itemrow]].dataPoints.push({
-                                    x: new Date(item["TIMESTAMP"]),
-                                    y: item[itemrow]
-                                });
+                            if (showKeys_energy != undefined && itemrow.includes(showKeys_energy)||showKeys.includes(itemrow)) {
+                                disp=true;
+                                break;
                             }
+                        }
+                        if(disp){
+                            console.log(itemrow);
+                            console.log(showkeys_graph_position[itemrow]);
+                            data_array_powmr[showkeys_graph_position[itemrow]].dataPoints.push({
+                                x: new Date(item["TIMESTAMP"]),
+                                y: item[itemrow]
+                            });
                         }
                     }
                 }
