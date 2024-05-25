@@ -478,7 +478,7 @@ def home_station_powmr_data():
     try:
         energy_opt_str = request.args["energy_opt"]
         logging.getLogger('werkzeug').info(str(energy_opt_str))
-        energy_opt_str = energy_opt.split(',')
+        energy_opt = energy_opt_str.split(',')
     except:
         pass        
     try:
