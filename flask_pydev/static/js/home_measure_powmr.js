@@ -1267,6 +1267,8 @@
                 
                 console.log(showkeys_graph_position);
                 console.log(data_array_powmr);
+                console.log(showKeys);
+                console.log(showKeys_energy);
                 for (var i = 0; i < result.length; i++) {
                     var item = result[i];
                     for (var j = 0; j < Object.keys(item).length; j++) {
@@ -1281,7 +1283,7 @@
                         }
                     }
                 }
-
+                console.log(data_array_powmr);
                 chart = new CanvasJS.Chart("graph", {
                     animationEnabled: true,
                     title: {
