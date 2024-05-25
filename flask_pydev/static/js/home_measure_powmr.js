@@ -97,6 +97,35 @@
             "type":"column"
         }
     };
+    
+    var ac_powmr_opt={
+        "power_average": {
+            "name": "Power Average [W]",
+            "checked": false,
+            "type":"line"
+        },
+        "energyday": {
+            "name": "Energy Daily [Wh]",
+            "checked": false,
+            "type":"column"
+        },
+        "energyhour": {
+            "name": "Energy Hourly [Wh]",
+            "checked": false,
+            "type":"column"
+        },
+        "energysample": {
+            "name": "Energy between Samples [Wh]",
+            "checked": false,
+            "type":"line"
+        },
+        "energymonth": {
+            "name": "Energy Monthly [KWh]",
+            "checked": false,
+            "type":"column"
+        }
+    }
+    
     var ac_opt_powmr = {};
     var ac_skip = ['bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage', 'bms_08cell_voltage', 'bms_09cell_voltage', 'bms_10cell_voltage', 'bms_10cell_voltage', 'bms_11cell_voltage', 'bms_12cell_voltage', 'bms_13cell_voltage', 'bms_14cell_voltage', 'bms_15cell_voltage', 'bms_16cell_voltage'];
 
@@ -155,12 +184,25 @@
             url: "/home_station/powmr_cols",
             success: function(result) {
                 data = "";
+                
                 for (var i = 0; i < result.length; i++) {
                     col = result[i];
                     //console.log(col);
                     if (col.type == "REAL" && !ac_skip.includes(col.name)) {
                         checked = false;
                         data += "<input type=\"checkbox\" " + checked + " onchange=\"check_state_ac('" + col.name + "',this)\">";
+                        data += "<label>" + col.name + "</label></br>";
+                    }
+
+                }
+                ac_powmr_opt_keys = Object.keys(ac_powmr_opt);
+                for (var i1 = 0; i1 < ac_powmr_opt_keys.length; i1++) {
+                    key = ac_powmr_opt_keys[i1];
+                    col=ac_powmr_opt[key];
+                    //console.log(col);
+                    if (col.type == "REAL" && !ac_skip.includes(col.name)) {
+                        checked = false;
+                        data += "<input type=\"checkbox\" " + checked + " onchange=\"check_state_ac('" + key + "',this)\">";
                         data += "<label>" + col.name + "</label></br>";
                     }
 
