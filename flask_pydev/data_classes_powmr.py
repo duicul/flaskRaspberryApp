@@ -227,11 +227,37 @@ class PowMr_Data(Table_Data):
         ''' Remove incorrect values from the database '''
         pass
     
-    def extract_all_between(self, fdate, ldate):
-        condition = " WHERE date(TIMESTAMP) BETWEEN '" + str(fdate) + "' AND  '" + str(ldate) + "' ;"
+    def extract_all_between(self, fdate, ldate,energy_opt = None):
+        condition = " WHERE date(TIMESTAMP) BETWEEN '" + str(fdate) + "' AND  '" + str(ldate) + "' "
         conn = sqlite3.connect(self.database)
         mycursor = conn.cursor()
-        querry = "SELECT * FROM " + self.table_name + " " + condition
+        #querry = "SELECT * FROM " + self.table_name + " " + condition
+        querry = "SELECT "
+        if energy_opt is None:
+            querry+="*"
+        else:
+            querry+="ID"
+            for ene_col in self.energy_cols:
+                querry+=","+ene_col['name']+" - LAG("+ene_col['name']+",1) OVER (ORDER BY TIMESTAMP ASC)"
+        querry+=" FROM " 
+        if energy_opt is None:
+            querry+=self.table_name
+        else:
+            querry+=" (SELECT * FROM "+self.table_name+"  ORDER BY TIMESTAMP DESC ) "
+        querry+= " " + condition
+        if energy_opt is not None:
+            if energy_opt == "energyhour":
+                querry+=" Group by strftime('%Y-%m-%d %H',timestamp)"
+            elif energy_opt == "energyday":
+                querry+=" Group by strftime('%Y-%m-%d',timestamp)"
+            elif energy_opt == "energyweek":
+                querry+=" Group by strftime('%Y-%W',timestamp)"
+            elif energy_opt == "energymonth":
+                querry+=" Group by strftime('%Y-%m',timestamp)"
+            elif energy_opt == "energyyear":
+                querry+=" Group by strftime('%Y',timestamp)"
+        
+        
         logging.info(querry)
         logging.getLogger(self.logger_name).info(querry)
         mycursor.execute(querry)
@@ -309,7 +335,7 @@ class PowMr_Data(Table_Data):
         if energy_opt is None:
             querry+="*"
         else:
-            querry+="LAG(ID,1) OVER (ORDER BY TIMESTAMP ASC)"
+            querry+="ID"
             for ene_col in self.energy_cols:
                 querry+=","+ene_col['name']+" - LAG("+ene_col['name']+",1) OVER (ORDER BY TIMESTAMP ASC)"
         querry+=" FROM " 

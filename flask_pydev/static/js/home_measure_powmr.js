@@ -1254,7 +1254,7 @@
                 for (i = showKeys.length,j=i,t=i; t < showKeys.length+showKeys_energy.length; t++) {
                     for(var q=0;q<energy_cols.length;q++){
                         data_array_powmr[j] = {
-                            type: "stepArea",
+                            type: "column",
                             axisYType: "secondary",
                             name: energy_cols[q]+"_"+showKeys_energy[t-i],
                             showInLegend: true,

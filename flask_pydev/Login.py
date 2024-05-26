@@ -512,7 +512,24 @@ def home_station_powmr_data():
         
         for opt in energy_opt:
             if opt is not None and len(opt)>0 and opt in powd.energy_opt_vals:
-                data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
+                data_opt = []
+                if(interval):
+                    try:
+                        data_opt = powd.extract_all_between(request.args["fdate"], request.args["ldate"],energy_opt=opt)
+                    except:
+                        logging.getLogger('werkzeug').error(str(traceback.format_exc())) 
+                elif(compare):
+                    try:
+                        data_opt = powd.extractCompare(request.args["date1"], request.args["date2"],energy_opt=opt)
+                    except:
+                        logging.getLogger('werkzeug').error(str(traceback.format_exc()))   
+                else:
+                    try:
+                        data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
+                    except:
+                        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+                
+                #data_opt = powd.extract_all_interval(request.args["items"],energy_opt=opt)
                 col_names = [{'name':'ID','type':'INTEGER'}]
                 for cn in powd.energy_cols:
                     cn_energy = cn["name"]+"_"+opt
