@@ -238,13 +238,14 @@ class PowMr_Data(Table_Data):
         else:
             querry += "ID"
             for ene_col in self.energy_cols:
-                querry += "," + ene_col['name'] + " - LAG(" + ene_col['name'] + ",1) OVER (ORDER BY TIMESTAMP ASC)"
+                querry += "," + ene_col['name'] + " - coalesce(LAG(" + ene_col['name'] + ",1) OVER (ORDER BY TIMESTAMP ASC) ,0) "
+            querry += ",TIMESTAMP"
         querry += " FROM " 
         if energy_opt is None:
             querry += self.table_name
         else:
             querry += " (SELECT * FROM " + self.table_name + "  ORDER BY TIMESTAMP DESC ) "
-        querry += " " + condition
+        # querry += " " + condition
         if energy_opt is not None:
             if energy_opt == "energyhour":
                 querry += " Group by strftime('%Y-%m-%d %H',timestamp)"
@@ -256,7 +257,7 @@ class PowMr_Data(Table_Data):
                 querry += " Group by strftime('%Y-%m',timestamp)"
             elif energy_opt == "energyyear":
                 querry += " Group by strftime('%Y',timestamp)"
-        
+        querry = "SELECT * FROM (" + querry + ")" + condition      
         logging.info(querry)
         logging.getLogger(self.logger_name).info(querry)
         mycursor.execute(querry)
@@ -336,13 +337,14 @@ class PowMr_Data(Table_Data):
         else:
             querry += "ID"
             for ene_col in self.energy_cols:
-                querry += "," + ene_col['name'] + " - LAG(" + ene_col['name'] + ",1) OVER (ORDER BY TIMESTAMP ASC)"
+                querry += "," + ene_col['name'] + " - coalesce(LAG(" + ene_col['name'] + ",1) OVER (ORDER BY TIMESTAMP ASC) ,0) "
+            querry += ",TIMESTAMP"
         querry += " FROM " 
         if energy_opt is None:
             querry += self.table_name
         else:
             querry += " (SELECT * FROM " + self.table_name + "  ORDER BY TIMESTAMP DESC ) "
-        querry += " " + condition
+        # querry += " " + condition
         if energy_opt is not None:
             if energy_opt == "energyhour":
                 querry += " Group by strftime('%Y-%m-%d %H',timestamp)"
@@ -354,6 +356,9 @@ class PowMr_Data(Table_Data):
                 querry += " Group by strftime('%Y-%m',timestamp)"
             elif energy_opt == "energyyear":
                 querry += " Group by strftime('%Y',timestamp)"
+                
+        querry = "SELECT * FROM (" + querry + ")" + condition        
+        
         logging.getLogger(self.logger_name).info(querry)
         mycursor.execute(querry)
         try:
