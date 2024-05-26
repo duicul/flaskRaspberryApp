@@ -464,7 +464,8 @@ def  home_station_temperature_data():
 @app.route('/home_station/powmr_cols')
 @login_required
 def home_station_powmr_cols():
-    data = powd.getColumnNames()
+    data = (powd.getColumnNames()+powd.average_columns)
+    data.sort(key=lambda x:x.get("name",""))
     return jsonify(data)
 
 @app.route('/home_station/powmr_data')
@@ -546,6 +547,7 @@ def home_station_powmr_data():
                 
         return jsonify(data)
     except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         return str(traceback.format_exc())
 
 @app.route('/home_station')

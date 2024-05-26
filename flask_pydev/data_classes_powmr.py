@@ -154,6 +154,9 @@ class PowMr_Data(Table_Data):
                    , {'name':'t0026_total_energy_total', 'type':'REAL'}]
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
     
+    average_columns = [{'name':'load_power_average', 'type':'REAL','average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL','average_col':'pv_energy'}
+                   , {'name':'t0026_total_power_average', 'type':'REAL','average_col':'t0026_total_energy'}]
+    
     def __init__(self, database, logger_name):
         self.database = database
         self.logger_name = logger_name
@@ -460,8 +463,36 @@ class PowMr_Data(Table_Data):
     def restart_device(self, home_station_url):
         logging.getLogger(self.logger_name).info("Restart")
         requests.get(home_station_url + "/restart")
-
-        
+    
+    def getColumnNames(self):
+        colnames =super().getColumnNames() #self.average_columns + 
+        #colnames.sort(key=lambda x:x.get("name",""))
+        return colnames
+    
+    def dbResptoDict(self,dbresp,colnames):
+        if dbresp is None:
+            return []
+        resp = []
+        colnameslist = list(map(lambda x:x["name"],colnames))
+        #print("colnames "+str(len(colnames)))
+        for dbrow in dbresp:
+            dictResp = {}
+            dbrow = list(dbrow)
+            #print("dbrow "+str(len(dbrow)))
+            for i in range(len(colnameslist)):
+                cn = colnameslist[i]
+                if "type" in colnames[i].keys() and colnames[i]["type"] == "BOOLEAN" and not isinstance(dbrow[i], bool):
+                    cnval =( dbrow[i] == 1)
+                else:
+                    cnval = dbrow[i]
+                #print(str(cn)+ " "+str(cnval))
+                dictResp[cn]=cnval
+            for average_col in self.average_columns:
+                if 'average_col' in average_col.keys() and  dictResp.get('duration',0) >0:
+                    dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
+            resp.append(dictResp)
+        return resp
+      
 if __name__ == '__main__':
     # ac=AC_Data("measure.db","random","random")
     # ac.insert(221,6.3,170,5478)

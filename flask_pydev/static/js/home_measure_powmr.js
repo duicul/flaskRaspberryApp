@@ -1258,7 +1258,7 @@
                             axisYType: "secondary",
                             name: energy_cols[q]+"_"+showKeys_energy[t-i],
                             showInLegend: true,
-                            markerSize: 2,
+                            markerSize: 0,
                             dataPoints: []
                         }
                         showkeys_graph_position[energy_cols[q]+"_"+showKeys_energy[t-i]] = j++;
