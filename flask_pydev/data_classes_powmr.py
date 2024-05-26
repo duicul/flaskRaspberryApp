@@ -145,14 +145,14 @@ class PowMr_Data(Table_Data):
             'software_version', 'system_initial_finished', 'system_power', 't0010', 't0011', 't0002', 't0003', 't0005', 't0006', 't0007', 't0008', 't0009', 't0016', 't0017', 't0018', 't0019', 't0020', 't0026', 't0026_total_energy', 't0026_total_energy_dur', 't0032', 't0041', 't0042', 't0047', 't0048', 'w6']    
     
     convDataFactors = {"batt_charge_current":10, "battery_voltage":100, "bms_01cell_voltage":100, "bms_02cell_voltage":100, "bms_03cell_voltage":100, "bms_04cell_voltage":100,
-                       "bms_05cell_voltage":100, "bms_06cell_voltage":100, "bms_07cell_voltage":100, "bms_08cell_voltage":100,"bms_09cell_voltage":100, "bms_10cell_voltage":100, "bms_11cell_voltage":100, "bms_12cell_voltage":100,
-                       "bms_13cell_voltage":100, "bms_14cell_voltage":100, "bms_15cell_voltage":100, "bms_16cell_voltage":100,"bms_battery_current":100, "bms_battery_soc":100, "bms_battery_voltage":100, "bus_voltage":10,
-                       "grid_current":100, "grid_freq":100, "grid_voltage":10,"inv_current":100, "inv_freq":100, "inv_voltage":10,"load_current":100, "pv_current":100, "pv_voltage":10}
+                       "bms_05cell_voltage":100, "bms_06cell_voltage":100, "bms_07cell_voltage":100, "bms_08cell_voltage":100, "bms_09cell_voltage":100, "bms_10cell_voltage":100, "bms_11cell_voltage":100, "bms_12cell_voltage":100,
+                       "bms_13cell_voltage":100, "bms_14cell_voltage":100, "bms_15cell_voltage":100, "bms_16cell_voltage":100, "bms_battery_current":100, "bms_battery_soc":100, "bms_battery_voltage":100, "bus_voltage":10,
+                       "grid_current":100, "grid_freq":100, "grid_voltage":10, "inv_current":100, "inv_freq":100, "inv_voltage":10, "load_current":100, "pv_current":100, "pv_voltage":10}
     "SELECT *,LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_prev,pv_energy_total-LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_diff  FROM PowMr_Data Group by strftime('%Y-%m-%d %H',timestamp);"
     
-    energy_cols = [{'name':'load_energy_total','type':'REAL'},{'name':'pv_energy_total','type':'REAL'}
-                   ,{'name':'t0026_total_energy_total','type':'REAL'}]
-    energy_opt_vals = ["energyhour","energyday","energyweek","energymonth","energyyear"]
+    energy_cols = [{'name':'load_energy_total', 'type':'REAL'}, {'name':'pv_energy_total', 'type':'REAL'}
+                   , {'name':'t0026_total_energy_total', 'type':'REAL'}]
+    energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
     
     def __init__(self, database, logger_name):
         self.database = database
@@ -166,7 +166,7 @@ class PowMr_Data(Table_Data):
         if self.config.converData:
             for key in PowMr_Data.convDataFactors.keys():
                 if key in powmr_data.keys() and powmr_data[key] is not None :
-                    powmr_data[key]/=PowMr_Data.convDataFactors[key]
+                    powmr_data[key] /= PowMr_Data.convDataFactors[key]
         return powmr_data
         
     def current_timestamp(self):
@@ -227,36 +227,35 @@ class PowMr_Data(Table_Data):
         ''' Remove incorrect values from the database '''
         pass
     
-    def extract_all_between(self, fdate, ldate,energy_opt = None):
+    def extract_all_between(self, fdate, ldate, energy_opt=None):
         condition = " WHERE date(TIMESTAMP) BETWEEN '" + str(fdate) + "' AND  '" + str(ldate) + "' "
         conn = sqlite3.connect(self.database)
         mycursor = conn.cursor()
-        #querry = "SELECT * FROM " + self.table_name + " " + condition
+        # querry = "SELECT * FROM " + self.table_name + " " + condition
         querry = "SELECT "
         if energy_opt is None:
-            querry+="*"
+            querry += "*"
         else:
-            querry+="ID"
+            querry += "ID"
             for ene_col in self.energy_cols:
-                querry+=","+ene_col['name']+" - LAG("+ene_col['name']+",1) OVER (ORDER BY TIMESTAMP ASC)"
-        querry+=" FROM " 
+                querry += "," + ene_col['name'] + " - LAG(" + ene_col['name'] + ",1) OVER (ORDER BY TIMESTAMP ASC)"
+        querry += " FROM " 
         if energy_opt is None:
-            querry+=self.table_name
+            querry += self.table_name
         else:
-            querry+=" (SELECT * FROM "+self.table_name+"  ORDER BY TIMESTAMP DESC ) "
-        querry+= " " + condition
+            querry += " (SELECT * FROM " + self.table_name + "  ORDER BY TIMESTAMP DESC ) "
+        querry += " " + condition
         if energy_opt is not None:
             if energy_opt == "energyhour":
-                querry+=" Group by strftime('%Y-%m-%d %H',timestamp)"
+                querry += " Group by strftime('%Y-%m-%d %H',timestamp)"
             elif energy_opt == "energyday":
-                querry+=" Group by strftime('%Y-%m-%d',timestamp)"
+                querry += " Group by strftime('%Y-%m-%d',timestamp)"
             elif energy_opt == "energyweek":
-                querry+=" Group by strftime('%Y-%W',timestamp)"
+                querry += " Group by strftime('%Y-%W',timestamp)"
             elif energy_opt == "energymonth":
-                querry+=" Group by strftime('%Y-%m',timestamp)"
+                querry += " Group by strftime('%Y-%m',timestamp)"
             elif energy_opt == "energyyear":
-                querry+=" Group by strftime('%Y',timestamp)"
-        
+                querry += " Group by strftime('%Y',timestamp)"
         
         logging.info(querry)
         logging.getLogger(self.logger_name).info(querry)
@@ -285,7 +284,7 @@ class PowMr_Data(Table_Data):
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         return result
     
-    def extract_all_interval(self, items,energy_opt = None):
+    def extract_all_interval(self, items, energy_opt=None):
         ''' Returns last items rows from the table '''
         condition = ""
         # print(items)
@@ -333,28 +332,28 @@ class PowMr_Data(Table_Data):
         mycursor = conn.cursor()
         querry = "SELECT "
         if energy_opt is None:
-            querry+="*"
+            querry += "*"
         else:
-            querry+="ID"
+            querry += "ID"
             for ene_col in self.energy_cols:
-                querry+=","+ene_col['name']+" - LAG("+ene_col['name']+",1) OVER (ORDER BY TIMESTAMP ASC)"
-        querry+=" FROM " 
+                querry += "," + ene_col['name'] + " - LAG(" + ene_col['name'] + ",1) OVER (ORDER BY TIMESTAMP ASC)"
+        querry += " FROM " 
         if energy_opt is None:
-            querry+=self.table_name
+            querry += self.table_name
         else:
-            querry+=" (SELECT * FROM "+self.table_name+"  ORDER BY TIMESTAMP DESC ) "
-        querry+= " " + condition
+            querry += " (SELECT * FROM " + self.table_name + "  ORDER BY TIMESTAMP DESC ) "
+        querry += " " + condition
         if energy_opt is not None:
             if energy_opt == "energyhour":
-                querry+=" Group by strftime('%Y-%m-%d %H',timestamp)"
+                querry += " Group by strftime('%Y-%m-%d %H',timestamp)"
             elif energy_opt == "energyday":
-                querry+=" Group by strftime('%Y-%m-%d',timestamp)"
+                querry += " Group by strftime('%Y-%m-%d',timestamp)"
             elif energy_opt == "energyweek":
-                querry+=" Group by strftime('%Y-%W',timestamp)"
+                querry += " Group by strftime('%Y-%W',timestamp)"
             elif energy_opt == "energymonth":
-                querry+=" Group by strftime('%Y-%m',timestamp)"
+                querry += " Group by strftime('%Y-%m',timestamp)"
             elif energy_opt == "energyyear":
-                querry+=" Group by strftime('%Y',timestamp)"
+                querry += " Group by strftime('%Y',timestamp)"
         logging.getLogger(self.logger_name).info(querry)
         mycursor.execute(querry)
         try:
@@ -380,7 +379,7 @@ class PowMr_Data(Table_Data):
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         if result is not None and len(result) > 0:
             data = self.dbResptoDict(result, self.getColumnNames())[0]
-            logging.getLogger(self.logger_name).info("PowMr_Data extract_last "+" result: "+json.dumps(data))
+            logging.getLogger(self.logger_name).info("PowMr_Data extract_last " + " result: " + json.dumps(data))
             return data
         return None
     
@@ -395,7 +394,7 @@ class PowMr_Data(Table_Data):
         sql += ") VALUES ("
         sql += ",".join(['?'] * len(values.keys()))
         sql += ")"
-        logging.getLogger(self.logger_name).info("PowMr_Data polled "+" result: "+str(sql) + " " + str(vals))
+        logging.getLogger(self.logger_name).info("PowMr_Data polled " + " result: " + str(sql) + " " + str(vals))
         print(sql + " " + str(vals))
         # print(vals)
         mycursor.executemany(sql, [tuple(vals)])
@@ -406,14 +405,14 @@ class PowMr_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
-    def poll_value(self, powmr_url,timeout= 10, mock=True):
+    def poll_value(self, powmr_url, timeout=10, mock=True):
         headers = {}
         if mock:
             powmr_data = mock_value
             powmr_data_energy = mock_energy_value
         else:
             try:
-                powmr_data = requests.get(powmr_url + "/powmr", headers=headers,timeout=timeout).json()
+                powmr_data = requests.get(powmr_url + "/powmr", headers=headers, timeout=timeout).json()
                 powmr_data_energy = requests.get(powmr_url + "/powmr_energy_clean", headers=headers).json()
             except Exception as e:
                 print(e)
@@ -447,7 +446,7 @@ class PowMr_Data(Table_Data):
             ins_data['load_energy_total'] = lastValue['load_energy_total'] + ins_data['load_energy']
             ins_data['pv_energy_total'] = lastValue['pv_energy_total'] + ins_data['pv_energy']
             ins_data['t0026_total_energy_total'] = lastValue['t0026_total_energy_total'] + ins_data['t0026_total_energy']
-        logging.getLogger(self.logger_name).info("PowMr_Data polled "+" result: "+json.dumps(ins_data))
+        logging.getLogger(self.logger_name).info("PowMr_Data polled " + " result: " + json.dumps(ins_data))
         ins_data = self.convertData(ins_data)
         print(ins_data)        
         
