@@ -420,15 +420,20 @@ class PowMr_Data(Table_Data):
             powmr_data_energy = mock_energy_value
         else:
             try:
+                logging.getLogger(self.logger_name).info("powmr sending requests")
                 powmr_data = requests.get(powmr_url + "/powmr", headers=headers, timeout=timeout).json()
-                powmr_data_energy = requests.get(powmr_url + "/powmr_energy_clean", headers=headers).json()
+                powmr_data_energy = requests.get(powmr_url + "/powmr_energy_clean", headers=headers, timeout=timeout).json()
+                logging.getLogger(self.logger_name).info("requests sent")
             except Exception as e:
                 print(e)
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return False
         ins_data = {}
+        logging.getLogger(self.logger_name).info("powmr_data")
         print("powmr_data")
+        logging.getLogger(self.logger_name).info(powmr_data)
         print(powmr_data)
+        logging.getLogger(self.logger_name).info(powmr_data_energy)
         print(powmr_data_energy)
         col_names = list(PowMr_Data.data_types.keys())
         if 'status' in powmr_data.keys() and powmr_data['status'] == 'disconnected':

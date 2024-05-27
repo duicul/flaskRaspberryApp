@@ -563,6 +563,35 @@ def home_station():
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         return render_template('login.html')
+
+@app.route('/home_station/error_flask')
+@login_required
+def home_station_powmr_flask_error():
+    try:
+        file=open("logs/error_flask.log","r")
+        Lines = file.readlines()
+        file_data = ""
+        for line in Lines:
+            file_data+=line+"<br/>"
+        file.close()
+        return file_data
+    except Exception as e:
+        return "error: "+str(e)
+    
+@app.route('/home_station/error_monitor')
+@login_required
+def home_station_powmr_monitor_error():
+    try:
+        file=open("logs/error_monitor.log","r")
+        Lines = file.readlines()
+        file_data = ""
+        for line in Lines:
+            file_data+=line+"<br/>"
+        file.close()
+        return file_data
+    except Exception as e:
+        return "error: "+str(e)
+    
     
 @app.route('/home_station_powmr')
 def home_station_powmr():    
