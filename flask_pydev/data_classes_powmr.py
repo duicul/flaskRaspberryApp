@@ -192,6 +192,7 @@ class PowMr_Data(Table_Data):
         conn = sqlite3.connect(self.database)
         cursor = conn.cursor()
         sql = "DROP TABLE IF EXISTS " + self.table_name
+        print(sql)
         try:
             cursor.execute(sql)
             logging.getLogger(self.logger_name).debug(self.table_name + " created ")
@@ -219,7 +220,7 @@ class PowMr_Data(Table_Data):
             if 'total' in cname:
                 sql += " DEFAULT 0" 
         sql += ");"
-        # print(sql)
+        print(sql)
         try:
             cursor.execute(sql)
             logging.getLogger(self.logger_name).debug(self.table_name + " created ")
@@ -502,21 +503,29 @@ class PowMr_Data(Table_Data):
 
       
 if __name__ == '__main__':
+    import logging.handlers
+    handler = logging.handlers.RotatingFileHandler(
+        'logs/error_monitor.log',
+        maxBytes=1024 * 1024)
+    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+    logger = logging.getLogger('monitor_logger')
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
     # ac=AC_Data("measure.db","random","random")
     # ac.insert(221,6.3,170,5478)
-    tsd = PowMr_Data("db/measure_powmr.db", "random")
-    #tsd.delete_table()
+    tsd = PowMr_Data("db/measure_powmr.db", 'monitor_logger')
+    tsd.delete_table()
     tsd.create_table()
     q = {}
     # for ent in col_names:
     #    if ent!='TIMESTAMP':
     #        q[ent]=0
     # tsd.insert(q)
-    tsd.poll_value('http://ipnfofuxpslepnbjo.go.ro:5000/home_station', mock=False)
+    #tsd.poll_value('http://ipnfofuxpslepnbjo.go.ro:5000/home_station', mock=False)
     # tsd.insert(1,42.3)
-    print(tsd.extract_all_interval(""))
-    print(tsd.getColumnNames())
-    print(json.dumps(tsd.dbResptoDict(tsd.extract_all_interval(""), tsd.getColumnNames())))
+    #print(tsd.extract_all_interval(""))
+    #print(tsd.getColumnNames())
+    #print(json.dumps(tsd.dbResptoDict(tsd.extract_all_interval(""), tsd.getColumnNames())))
     # tsd.convert_old()
     # td.insert(20,30)
     # print(ac.extract_last())
