@@ -128,7 +128,7 @@
     
     var ac_opt_powmr ={};
     var ac_skip = ['bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage', 'bms_08cell_voltage', 'bms_09cell_voltage', 'bms_10cell_voltage', 'bms_10cell_voltage', 'bms_11cell_voltage', 'bms_12cell_voltage', 'bms_13cell_voltage', 'bms_14cell_voltage', 'bms_15cell_voltage', 'bms_16cell_voltage'];
-    var energy_cols = ['load_energy_total','pv_energy_total','t0026_total_energy_total'];
+    var energy_cols = ['load_energy_total','pv_energy_total','t0026_total_energy_total','batt_energy'];
     function show_opt() {
         data = "";
         return;
@@ -518,6 +518,7 @@
                 div_html += "<canvas id=\"pv_power\"></canvas>";
                 div_html += "<canvas id=\"load_watt\"></canvas>";
                 div_html += "<canvas id=\"t0026\"></canvas>";
+                div_html += "<canvas id=\"battery_power\"></canvas>";
                 div_html += "<canvas id=\"battery_voltage\"></canvas>";
                 div_html += "<canvas id=\"batt_charge_current\"></canvas>";
                 div_html += "<canvas id=\"pv_current\"></canvas>";
@@ -528,7 +529,7 @@
                     width: 200,
                     height: 200,
                     units: 'W',
-                    title: "pv_power",
+                    title: "PV Power",
                     value: result["pv_power"],
                     minValue: 0,
                     maxValue: 6500,
@@ -571,7 +572,7 @@
                     width: 200,
                     height: 200,
                     units: 'W',
-                    title: "load_watt",
+                    title: "Load Watt",
                     value: result["load_watt"],
                     minValue: 0,
                     maxValue: 5000,
@@ -614,7 +615,7 @@
                     width: 200,
                     height: 200,
                     units: 'W',
-                    title: "TotalPower",
+                    title: "Total Power",
                     value: result["t0026"],
                     minValue: 0,
                     maxValue: 6500,
@@ -665,7 +666,7 @@
                     width: 200,
                     height: 200,
                     units: 'V',
-                    title: "battery_voltage",
+                    title: "Battery Voltage",
                     value: result["battery_voltage"],
                     minValue: 0,
                     maxValue: 40,
@@ -712,7 +713,7 @@
                     width: 200,
                     height: 200,
                     units: 'A',
-                    title: "batt_charge_current",
+                    title: "Battry charge current",
                     value: result["batt_charge_current"],
                     minValue: 0,
                     maxValue: 150,
@@ -759,7 +760,7 @@
                     width: 200,
                     height: 200,
                     units: 'A',
-                    title: "pv_current",
+                    title: "PV Current",
                     value: result["pv_current"],
                     minValue: 0,
                     maxValue: 40,
@@ -806,7 +807,7 @@
                     width: 200,
                     height: 200,
                     units: 'V',
-                    title: "pv_voltage",
+                    title: "PV Voltage",
                     value: result["pv_voltage"],
                     minValue: 0,
                     maxValue: 450,
@@ -847,7 +848,54 @@
                     animationDuration: 500
                 });
                 radial7.draw();
-
+                
+                
+                var radial8 = new RadialGauge({
+                    renderTo: 'battery_power',
+                    width: 200,
+                    height: 200,
+                    units: 'W',
+                    title: "Battery Power",
+                    value: result["batt_power"],
+                    minValue: 0,
+                    maxValue: 6500,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
+                    minorTicks: 10,
+                    strokeTicks: true,
+                    highlights: [{
+                        from: 0,
+                        to: 1000,
+                        color: 'rgba(0,0,155,.15)'
+                    }, {
+                        from: 1000,
+                        to: 2000,
+                        color: 'rgba(0,255,255,.15)'
+                    }, {
+                        from: 2000,
+                        to: 3000,
+                        color: 'rgba(0,155,0,.15)'
+                    }, {
+                        from: 3000,
+                        to: 4000,
+                        color: 'rgba(255,230,0,.25)'
+                    }, {
+                        from: 4000,
+                        to: 5000,
+                        color: 'rgba(255,100,0,.25)'
+                    }],
+                    colorPlate: '#222',
+                    colorMajorTicks: '#f5f5f5',
+                    colorMinorTicks: '#ddd',
+                    colorTitle: '#fff',
+                    colorUnits: '#ccc',
+                    colorNumbers: '#eee',
+                    colorNeedle: 'rgba(240, 128, 128, 1)',
+                    colorNeedleEnd: 'rgba(255, 160, 122, .9)',
+                    valueBox: true,
+                    animationRule: 'bounce',
+                    animationDuration: 500
+                });
+                radial8.draw();
             }
         });
     }
