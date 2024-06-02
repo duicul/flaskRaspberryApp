@@ -277,7 +277,7 @@ def powmr_energy_poll():
 @login_required
 def powmr_energy_clean_poll():
     try:
-        q = requests.get("http://192.168.0.11/powmrpowmr_energy_clean")
+        q = requests.get("http://192.168.0.11/powmr_energy_clean")
         return jsonify(q.json())      
     except Exception as e:
         return str(e)

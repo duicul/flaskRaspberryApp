@@ -31,6 +31,8 @@ class PowMr_Data(Table_Data):
                   'timestamp':str,
                   'batt_charge_current':float,
                   'battery_voltage':float,
+                  'batt_power':float,
+                  'batt_energy':float,
                   'bms_01cell_voltage':float,
                   'bms_02cell_voltage':float,
                   'bms_03cell_voltage':float,
@@ -135,7 +137,7 @@ class PowMr_Data(Table_Data):
                   'w6':int,
                   'inverter_status_on':bool}
     
-    cols = ['duration', 'timestamp', 'batt_charge_current', 'battery_voltage', 'bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage',
+    cols = ['duration', 'timestamp', 'batt_charge_current', 'battery_voltage', 'batt_power', 'batt_energy', 'bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage',
             'bms_08cell_voltage', 'bms_09cell_voltage', 'bms_10cell_voltage', 'bms_11cell_voltage', 'bms_12cell_voltage', 'bms_13cell_voltage', 'bms_14cell_voltage', 'bms_15cell_voltage', 'bms_16cell_voltage', 'bms_battery_current',
             'bms_battery_soc', 'bms_battery_voltage', 'bts_temperature', 'buck_topology', 'buck_topology_initial_finished', 'bus_n_grid_voltage_match', 'bus_ok', 'charge_finish', 'disable_utility', 'eq_charge_ready', 'eq_charge_start',
             'fan1_speed_percent', 'fan2_speed_percent', 'floating_charge', 'grid_current', 'grid_freq', 'grid_pll_ok', 'grid_voltage', 'hi0004', 'hi0004_', 'hi0013', 'inv_current', 'inv_freq', 'inv_va', 'inv_voltage', 'inverter_topology',
@@ -154,8 +156,8 @@ class PowMr_Data(Table_Data):
                    , {'name':'t0026_total_energy_total', 'type':'REAL'}]
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
     
-    average_columns = [{'name':'load_power_average', 'type':'REAL','average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL','average_col':'pv_energy'}
-                   , {'name':'t0026_total_power_average', 'type':'REAL','average_col':'t0026_total_energy'}]
+    average_columns = [{'name':'load_power_average', 'type':'REAL', 'average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL', 'average_col':'pv_energy'}
+                   , {'name':'t0026_total_power_average', 'type':'REAL', 'average_col':'t0026_total_energy'}, {'name':'batt_power_average', 'type':'REAL', 'average_col':'batt_energy'}]
     
     def __init__(self, database, logger_name):
         self.database = database
@@ -470,39 +472,40 @@ class PowMr_Data(Table_Data):
         requests.get(home_station_url + "/restart")
     
     def getColumnNames(self):
-        colnames =super().getColumnNames() #self.average_columns + 
-        #colnames.sort(key=lambda x:x.get("name",""))
+        colnames = super().getColumnNames()  # self.average_columns + 
+        # colnames.sort(key=lambda x:x.get("name",""))
         return colnames
     
-    def dbResptoDict(self,dbresp,colnames):
+    def dbResptoDict(self, dbresp, colnames):
         if dbresp is None:
             return []
         resp = []
-        colnameslist = list(map(lambda x:x["name"],colnames))
-        #print("colnames "+str(len(colnames)))
+        colnameslist = list(map(lambda x:x["name"], colnames))
+        # print("colnames "+str(len(colnames)))
         for dbrow in dbresp:
             dictResp = {}
             dbrow = list(dbrow)
-            #print("dbrow "+str(len(dbrow)))
+            # print("dbrow "+str(len(dbrow)))
             for i in range(len(colnameslist)):
                 cn = colnameslist[i]
                 if "type" in colnames[i].keys() and colnames[i]["type"] == "BOOLEAN" and not isinstance(dbrow[i], bool):
-                    cnval =( dbrow[i] == 1)
+                    cnval = (dbrow[i] == 1)
                 else:
                     cnval = dbrow[i]
-                #print(str(cn)+ " "+str(cnval))
-                dictResp[cn]=cnval
+                # print(str(cn)+ " "+str(cnval))
+                dictResp[cn] = cnval
             for average_col in self.average_columns:
-                if 'average_col' in average_col.keys() and  dictResp.get('duration',0) >0:
+                if 'average_col' in average_col.keys() and  dictResp.get('duration', 0) > 0:
                     dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
             resp.append(dictResp)
         return resp
+
       
 if __name__ == '__main__':
     # ac=AC_Data("measure.db","random","random")
     # ac.insert(221,6.3,170,5478)
     tsd = PowMr_Data("db/measure_powmr.db", "random")
-    # tsd.delete_table()
+    #tsd.delete_table()
     tsd.create_table()
     q = {}
     # for ent in col_names:
