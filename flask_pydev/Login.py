@@ -544,7 +544,7 @@ def home_station_powmr_data():
                             for oe_key in oe.keys():
                                 rec[oe_key]=oe[oe_key]
                             break
-                
+        #logging.getLogger('werkzeug').info(json.dumps(data))       
         return jsonify(data)
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))

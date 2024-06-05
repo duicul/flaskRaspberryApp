@@ -1323,7 +1323,7 @@
                         itemrow = Object.keys(item)[j];
                         var disp = false;
                         for(showKeys_energy_val of showKeys_energy){
-                            if (showKeys_energy != undefined && itemrow.includes(showKeys_energy)) {
+                            if (showKeys_energy != undefined && itemrow.includes(showKeys_energy_val)) {
                                 disp=true;
                                 break;
                             }
