@@ -33,6 +33,7 @@ class PowMr_Data(Table_Data):
                   'battery_voltage':float,
                   'batt_power':float,
                   'batt_energy':float,
+                  'batt_energy_total':float,
                   'bms_01cell_voltage':float,
                   'bms_02cell_voltage':float,
                   'bms_03cell_voltage':float,
@@ -153,7 +154,7 @@ class PowMr_Data(Table_Data):
     "SELECT *,LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_prev,pv_energy_total-LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_diff  FROM PowMr_Data Group by strftime('%Y-%m-%d %H',timestamp);"
     
     energy_cols = [{'name':'load_energy_total', 'type':'REAL'}, {'name':'pv_energy_total', 'type':'REAL'}
-                   , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy', 'type':'REAL'}]
+                   , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy_total', 'type':'REAL'}]
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
     
     average_columns = [{'name':'load_power_average', 'type':'REAL', 'average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL', 'average_col':'pv_energy'}
@@ -461,6 +462,7 @@ class PowMr_Data(Table_Data):
         if lastValue is not None:
             ins_data['load_energy_total'] = lastValue['load_energy_total'] + ins_data['load_energy']
             ins_data['pv_energy_total'] = lastValue['pv_energy_total'] + ins_data['pv_energy']
+            ins_data['batt_energy_total'] = lastValue['batt_energy_total'] + ins_data['batt_energy']
             ins_data['t0026_total_energy_total'] = lastValue['t0026_total_energy_total'] + ins_data['t0026_total_energy']
         logging.getLogger(self.logger_name).info("PowMr_Data polled " + " result: " + json.dumps(ins_data))
         ins_data = self.convertData(ins_data)
