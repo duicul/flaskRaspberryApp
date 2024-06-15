@@ -503,7 +503,20 @@ class PowMr_Data(Table_Data):
             resp.append(dictResp)
         return resp
 
-      
+    def extractAllValues(self):
+        conn = sqlite3.connect(self.database)
+        mycursor = conn.cursor()
+        querry = "SELECT * FROM " + self.table_name + "  ORDER BY TIMESTAMP DESC"
+        mycursor.execute(querry)
+        try:
+            result = mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        data = self.convertData(result)
+        return data
+
 if __name__ == '__main__':
     import logging.handlers
     handler = logging.handlers.RotatingFileHandler(
