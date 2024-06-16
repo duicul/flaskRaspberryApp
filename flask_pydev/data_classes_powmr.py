@@ -160,7 +160,7 @@ class PowMr_Data(Table_Data):
     "SELECT *,LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_prev,pv_energy_total-LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_diff  FROM PowMr_Data Group by strftime('%Y-%m-%d %H',timestamp);"
     
     energy_cols = [{'name':'load_energy_total', 'type':'REAL'}, {'name':'pv_energy_total', 'type':'REAL'}
-                   , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy_total', 'type':'REAL'}]
+                   , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy_total', 'type':'REAL'}, {'name':'batt_energy_charge_total', 'type':'REAL'}, {'name':'batt_energy_discharge_total', 'type':'REAL'}]
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
     
     average_columns = [{'name':'load_power_average', 'type':'REAL', 'average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL', 'average_col':'pv_energy'}
