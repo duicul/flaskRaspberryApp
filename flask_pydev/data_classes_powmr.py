@@ -32,8 +32,14 @@ class PowMr_Data(Table_Data):
                   'batt_charge_current':float,
                   'battery_voltage':float,
                   'batt_power':float,
+                  'batt_power_charge':float,
+                  'batt_power_discharge':float,
                   'batt_energy':float,
                   'batt_energy_total':float,
+                  'batt_energy_charge':float,
+                  'batt_energy_charge_total':float,
+                  'batt_energy_discharge':float,
+                  'batt_energy_discharge_total':float,
                   'bms_01cell_voltage':float,
                   'bms_02cell_voltage':float,
                   'bms_03cell_voltage':float,
@@ -138,14 +144,14 @@ class PowMr_Data(Table_Data):
                   'w6':int,
                   'inverter_status_on':bool}
     
-    cols = ['duration', 'timestamp', 'batt_charge_current', 'battery_voltage', 'batt_power', 'batt_energy', 'bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage',
+    """cols = ['duration', 'timestamp', 'batt_charge_current', 'battery_voltage', 'batt_power', 'batt_energy', 'bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage',
             'bms_08cell_voltage', 'bms_09cell_voltage', 'bms_10cell_voltage', 'bms_11cell_voltage', 'bms_12cell_voltage', 'bms_13cell_voltage', 'bms_14cell_voltage', 'bms_15cell_voltage', 'bms_16cell_voltage', 'bms_battery_current',
             'bms_battery_soc', 'bms_battery_voltage', 'bts_temperature', 'buck_topology', 'buck_topology_initial_finished', 'bus_n_grid_voltage_match', 'bus_ok', 'charge_finish', 'disable_utility', 'eq_charge_ready', 'eq_charge_start',
             'fan1_speed_percent', 'fan2_speed_percent', 'floating_charge', 'grid_current', 'grid_freq', 'grid_pll_ok', 'grid_voltage', 'hi0004', 'hi0004_', 'hi0013', 'inv_current', 'inv_freq', 'inv_va', 'inv_voltage', 'inverter_topology',
             'inverter_topology_initial_finished', 'inverter_va_percent', 'inverter_voltage_dc_component', 'inverter_watt_percent', 'llc_topology', 'llc_topology_initial_finished', 'lo0004', 'lo0013', 'lo0013_',
             'load_current', 'load_energy', 'load_energy_dur', 'load_va', 'load_watt', 'log_number', 'low_load_current', 'no_battery', 'ntc2_temperature', 'ntc3_temperature', 'ntc4_temperature',
             'parallel_current', 'parallel_frequency', 'parallel_lock_phase_ok', 'parallel_voltage', 'pv_current', 'pv_energy', 'pv_energy_dur', 'pv_excess', 'pv_input_ok', 'pv_power', 'pv_topology', 'pv_topology_initial_finished', 'pv_voltage',
-            'software_version', 'system_initial_finished', 'system_power', 't0010', 't0011', 't0002', 't0003', 't0005', 't0006', 't0007', 't0008', 't0009', 't0016', 't0017', 't0018', 't0019', 't0020', 't0026', 't0026_total_energy', 't0026_total_energy_dur', 't0032', 't0041', 't0042', 't0047', 't0048', 'w6']    
+            'software_version', 'system_initial_finished', 'system_power', 't0010', 't0011', 't0002', 't0003', 't0005', 't0006', 't0007', 't0008', 't0009', 't0016', 't0017', 't0018', 't0019', 't0020', 't0026', 't0026_total_energy', 't0026_total_energy_dur', 't0032', 't0041', 't0042', 't0047', 't0048', 'w6']"""
     
     convDataFactors = {"batt_charge_current":10, "battery_voltage":100, "bms_01cell_voltage":100, "bms_02cell_voltage":100, "bms_03cell_voltage":100, "bms_04cell_voltage":100,
                        "bms_05cell_voltage":100, "bms_06cell_voltage":100, "bms_07cell_voltage":100, "bms_08cell_voltage":100, "bms_09cell_voltage":100, "bms_10cell_voltage":100, "bms_11cell_voltage":100, "bms_12cell_voltage":100,
@@ -158,7 +164,8 @@ class PowMr_Data(Table_Data):
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
     
     average_columns = [{'name':'load_power_average', 'type':'REAL', 'average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL', 'average_col':'pv_energy'}
-                   , {'name':'t0026_total_power_average', 'type':'REAL', 'average_col':'t0026_total_energy'}, {'name':'batt_power_average', 'type':'REAL', 'average_col':'batt_energy'}]
+                   , {'name':'t0026_total_power_average', 'type':'REAL', 'average_col':'t0026_total_energy'}, {'name':'batt_power_average', 'type':'REAL', 'average_col':'batt_energy'},
+                   {'name':'batt_power_charge_average', 'type':'REAL', 'average_col':'batt_energy_charge'},{'name':'batt_power_discharge_average', 'type':'REAL', 'average_col':'batt_energy_discharge'}]
     
     def __init__(self, database, logger_name):
         self.database = database
@@ -463,6 +470,8 @@ class PowMr_Data(Table_Data):
             ins_data['load_energy_total'] = lastValue['load_energy_total'] + ins_data['load_energy']
             ins_data['pv_energy_total'] = lastValue['pv_energy_total'] + ins_data['pv_energy']
             ins_data['batt_energy_total'] = lastValue['batt_energy_total'] + ins_data['batt_energy']
+            ins_data['batt_energy_charge_total'] = lastValue['batt_energy_charge_total'] + ins_data['batt_energy_charge']
+            ins_data['batt_energy_discharge_total'] = lastValue['batt_energy_discharge_total'] + ins_data['batt_energy_discharge']
             ins_data['t0026_total_energy_total'] = lastValue['t0026_total_energy_total'] + ins_data['t0026_total_energy']
         logging.getLogger(self.logger_name).info("PowMr_Data polled " + " result: " + json.dumps(ins_data))
         ins_data = self.convertData(ins_data)
