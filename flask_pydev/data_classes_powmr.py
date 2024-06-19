@@ -218,14 +218,14 @@ class PowMr_Data(Table_Data):
         col_names = list(PowMr_Data.data_types.keys())
         
         sql += col_names[0] + " " + self.typeToSQL(PowMr_Data.data_types[col_names[0]])
-        if 'total' in col_names[0]:
+        if 'total' in col_names[0] or PowMr_Data.data_types[col_names[0]] in [int,float]:
             sql += " DEFAULT 0"
         
         for i in range(1, len(col_names)):
             cname = col_names[i]
             if not cname in ['timestamp', 'duration', 'id']:
                 sql += " , " + cname + " " + self.typeToSQL(PowMr_Data.data_types[cname])
-            if 'total' in cname:
+            if 'total' in cname or PowMr_Data.data_types[col_names[0]] in [int,float] :
                 sql += " DEFAULT 0" 
         sql += ");"
         print(sql)
@@ -488,7 +488,7 @@ class PowMr_Data(Table_Data):
         # colnames.sort(key=lambda x:x.get("name",""))
         return colnames
     
-    def dbResptoDict(self, dbresp, colnames):
+    def dbResptoDict(self, dbresp, colnames,addAverage=True):
         if dbresp is None:
             return []
         resp = []
@@ -506,9 +506,10 @@ class PowMr_Data(Table_Data):
                     cnval = dbrow[i]
                 # print(str(cn)+ " "+str(cnval))
                 dictResp[cn] = cnval
-            for average_col in self.average_columns:
-                if 'average_col' in average_col.keys() and  dictResp.get('duration', 0) > 0:
-                    dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
+            if addAverage:
+                for average_col in self.average_columns:
+                    if 'average_col' in average_col.keys() and average_col['average_col'] in dictResp.keys() and  dictResp.get('duration', 0) > 0:
+                        dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
             resp.append(dictResp)
         return resp
 
@@ -523,7 +524,7 @@ class PowMr_Data(Table_Data):
             conn.close()
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-        data = self.convertData(result)
+        data = self.dbResptoDict(result, self.getColumnNames(),addAverage=False)
         return data
 
 if __name__ == '__main__':
@@ -538,8 +539,11 @@ if __name__ == '__main__':
     # ac=AC_Data("measure.db","random","random")
     # ac.insert(221,6.3,170,5478)
     tsd = PowMr_Data("db/measure_powmr.db", 'monitor_logger')
+    tableData = tsd.extractAllValues()
     tsd.delete_table()
     tsd.create_table()
+    for entry in tableData:
+        tsd.insert(entry)
     q = {}
     # for ent in col_names:
     #    if ent!='TIMESTAMP':
