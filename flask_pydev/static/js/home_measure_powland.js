@@ -515,22 +515,24 @@
                 //console.log(result["date"]);
                 div_html = ""
                 div_html += new Date(result["TIMESTAMP"]).toString() + "</br>"
-                div_html += "<canvas id=\"pv_power\"></canvas>";
-                div_html += "<canvas id=\"load_watt\"></canvas>";
-                div_html += "<canvas id=\"t0026\"></canvas>";
-                div_html += "<canvas id=\"battery_power\"></canvas>";
-                div_html += "<canvas id=\"battery_voltage\"></canvas>";
-                div_html += "<canvas id=\"batt_charge_current\"></canvas>";
-                div_html += "<canvas id=\"pv_current\"></canvas>";
-                div_html += "<canvas id=\"pv_voltage\"></canvas>";
+                div_html += "<canvas id=\"AverageInverterPower\"></canvas>";
+                div_html += "<canvas id=\"AverageMainsPower\"></canvas>";
+                div_html += "<canvas id=\"BatteryAveragePower\"></canvas>";
+                div_html += "<canvas id=\"BatteryStateOfCharge\"></canvas>";
+                div_html += "<canvas id=\"InverterChargingPower\"></canvas>";
+                div_html += "<canvas id=\"InverterTemperature\"></canvas>";
+                div_html += "<canvas id=\"OutputActivePower\"></canvas>";
+                div_html += "<canvas id=\"OutputApparentPower\"></canvas>";
+                div_html += "<canvas id=\"PVAveragePower\"></canvas>";
+                div_html += "<canvas id=\"PVChargingAveragePower\"></canvas>";
                 $("#draw_gauge_ac").html(div_html);
                 var radial1 = new RadialGauge({
-                    renderTo: 'pv_power',
+                    renderTo: 'AverageInverterPower',
                     width: 200,
                     height: 200,
                     units: 'W',
-                    title: "PV Power",
-                    value: result["pv_power"],
+                    title: "AverageInverterPower",
+                    value: result["AverageInverterPower"],
                     minValue: 0,
                     maxValue: 6500,
                     majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6000'],
@@ -568,12 +570,12 @@
                 radial1.draw();
 
                 var radial2 = new RadialGauge({
-                    renderTo: 'load_watt',
+                    renderTo: 'AverageMainsPower',
                     width: 200,
                     height: 200,
                     units: 'W',
-                    title: "Load Watt",
-                    value: result["load_watt"],
+                    title: "AverageMainsPower",
+                    value: result["AverageMainsPower"],
                     minValue: 0,
                     maxValue: 5000,
                     majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
@@ -611,11 +613,11 @@
                 radial2.draw();
 
                 var radial3 = new RadialGauge({
-                    renderTo: 't0026',
+                    renderTo: 'BatteryAveragePower',
                     width: 200,
                     height: 200,
                     units: 'W',
-                    title: "Total Power",
+                    title: "BatteryAveragePower",
                     value: result["t0026"],
                     minValue: 0,
                     maxValue: 6500,
@@ -662,18 +664,18 @@
                 radial3.draw();
 
                 var radial4 = new RadialGauge({
-                    renderTo: 'battery_voltage',
+                    renderTo: 'BatteryStateOfCharge',
                     width: 200,
                     height: 200,
-                    units: 'V',
-                    title: "Battery Voltage",
-                    value: result["battery_voltage"],
+                    units: '%',
+                    title: "BatteryStateOfCharge",
+                    value: result["BatteryStateOfCharge"],
                     minValue: 0,
-                    maxValue: 40,
-                    majorTicks: [0, 5, 10, 15, 20, 25, 30, 35],
+                    maxValue: 100,
+                    majorTicks: [0, 10, 20, 30, 40, 50, 60, 70,80,90,100],
                     minorTicks: 5,
                     strokeTicks: true,
-                    highlights: [{
+                    /*highlights: [{
                         from: 0,
                         to: 7,
                         color: 'rgba(0,0,155,.15)'
@@ -693,7 +695,7 @@
                         from: 28,
                         to: 35,
                         color: 'rgba(255,30,0,.25)'
-                    }],
+                    }],*/
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -709,18 +711,18 @@
                 radial4.draw();
 
                 var radial5 = new RadialGauge({
-                    renderTo: 'batt_charge_current',
+                    renderTo: 'InverterChargingPower',
                     width: 200,
                     height: 200,
-                    units: 'A',
-                    title: "Battry charge current",
-                    value: result["batt_charge_current"],
+                    units: 'W',
+                    title: "InverterChargingPower",
+                    value: result["InverterChargingPower"],
                     minValue: 0,
                     maxValue: 150,
-                    majorTicks: [0, 25, 50, 75, 100, 125, 150],
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6000'],
                     minorTicks: 5,
                     strokeTicks: true,
-                    highlights: [{
+                    /*highlights: [{
                         from: 0,
                         to: 30,
                         color: 'rgba(0,0,155,.15)'
@@ -740,7 +742,7 @@
                         from: 120,
                         to: 150,
                         color: 'rgba(255,30,0,.25)'
-                    }],
+                    }],*/
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -756,18 +758,18 @@
                 radial5.draw();
 
                 var radial6 = new RadialGauge({
-                    renderTo: 'pv_current',
+                    renderTo: 'InverterTemperature',
                     width: 200,
                     height: 200,
-                    units: 'A',
-                    title: "PV Current",
-                    value: result["pv_current"],
+                    units: 'C',
+                    title: "InverterTemperature",
+                    value: result["InverterTemperature"],
                     minValue: 0,
-                    maxValue: 40,
-                    majorTicks: [0, 5, 10, 15, 20, 25, 30, 35],
+                    maxValue: 80,
+                    majorTicks: [0, 10, 20, 30, 40, 50, 60, 70],
                     minorTicks: 5,
                     strokeTicks: true,
-                    highlights: [{
+                    /*highlights: [{
                         from: 0,
                         to: 7,
                         color: 'rgba(0,0,155,.15)'
@@ -787,7 +789,7 @@
                         from: 28,
                         to: 35,
                         color: 'rgba(255,30,0,.25)'
-                    }],
+                    }],*/
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -803,18 +805,18 @@
                 radial6.draw();
 
                 var radial7 = new RadialGauge({
-                    renderTo: 'pv_voltage',
+                    renderTo: 'OutputActivePower',
                     width: 200,
                     height: 200,
-                    units: 'V',
-                    title: "PV Voltage",
-                    value: result["pv_voltage"],
+                    units: 'W',
+                    title: "OutputActivePower",
+                    value: result["OutputActivePower"],
                     minValue: 0,
                     maxValue: 450,
-                    majorTicks: [0, 50, 100, 150, 200, 250, 300, 350, 400, 450],
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6000'],
                     minorTicks: 10,
                     strokeTicks: true,
-                    highlights: [{
+                    /*highlights: [{
                         from: 0,
                         to: 90,
                         color: 'rgba(0,0,155,.15)'
@@ -834,7 +836,7 @@
                         from: 360,
                         to: 450,
                         color: 'rgba(255,30,0,.25)'
-                    }],
+                    }],*/
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -851,12 +853,12 @@
                 
                 
                 var radial8 = new RadialGauge({
-                    renderTo: 'battery_power',
+                    renderTo: 'OutputApparentPower',
                     width: 200,
                     height: 200,
                     units: 'W',
-                    title: "Battery Power",
-                    value: result["batt_power"],
+                    title: "OutputApparentPower",
+                    value: result["OutputApparentPower"],
                     minValue: 0,
                     maxValue: 6500,
                     majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
@@ -896,6 +898,100 @@
                     animationDuration: 500
                 });
                 radial8.draw();
+                
+            var radial9 = new RadialGauge({
+                    renderTo: 'PVAveragePower',
+                    width: 200,
+                    height: 200,
+                    units: 'W',
+                    title: "PVAveragePower",
+                    value: result["PVAveragePower"],
+                    minValue: 0,
+                    maxValue: 6500,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
+                    minorTicks: 10,
+                    strokeTicks: true,
+                    highlights: [{
+                        from: 0,
+                        to: 1000,
+                        color: 'rgba(0,0,155,.15)'
+                    }, {
+                        from: 1000,
+                        to: 2000,
+                        color: 'rgba(0,255,255,.15)'
+                    }, {
+                        from: 2000,
+                        to: 3000,
+                        color: 'rgba(0,155,0,.15)'
+                    }, {
+                        from: 3000,
+                        to: 4000,
+                        color: 'rgba(255,230,0,.25)'
+                    }, {
+                        from: 4000,
+                        to: 5000,
+                        color: 'rgba(255,100,0,.25)'
+                    }],
+                    colorPlate: '#222',
+                    colorMajorTicks: '#f5f5f5',
+                    colorMinorTicks: '#ddd',
+                    colorTitle: '#fff',
+                    colorUnits: '#ccc',
+                    colorNumbers: '#eee',
+                    colorNeedle: 'rgba(240, 128, 128, 1)',
+                    colorNeedleEnd: 'rgba(255, 160, 122, .9)',
+                    valueBox: true,
+                    animationRule: 'bounce',
+                    animationDuration: 500
+                });
+                radial9.draw();
+                
+            var radial10 = new RadialGauge({
+                    renderTo: 'PVChargingAveragePower',
+                    width: 200,
+                    height: 200,
+                    units: 'W',
+                    title: "PVChargingAveragePower",
+                    value: result["PVChargingAveragePower"],
+                    minValue: 0,
+                    maxValue: 6500,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
+                    minorTicks: 10,
+                    strokeTicks: true,
+                    highlights: [{
+                        from: 0,
+                        to: 1000,
+                        color: 'rgba(0,0,155,.15)'
+                    }, {
+                        from: 1000,
+                        to: 2000,
+                        color: 'rgba(0,255,255,.15)'
+                    }, {
+                        from: 2000,
+                        to: 3000,
+                        color: 'rgba(0,155,0,.15)'
+                    }, {
+                        from: 3000,
+                        to: 4000,
+                        color: 'rgba(255,230,0,.25)'
+                    }, {
+                        from: 4000,
+                        to: 5000,
+                        color: 'rgba(255,100,0,.25)'
+                    }],
+                    colorPlate: '#222',
+                    colorMajorTicks: '#f5f5f5',
+                    colorMinorTicks: '#ddd',
+                    colorTitle: '#fff',
+                    colorUnits: '#ccc',
+                    colorNumbers: '#eee',
+                    colorNeedle: 'rgba(240, 128, 128, 1)',
+                    colorNeedleEnd: 'rgba(255, 160, 122, .9)',
+                    valueBox: true,
+                    animationRule: 'bounce',
+                    animationDuration: 500
+                });
+                radial10.draw();
             }
         });
     }
