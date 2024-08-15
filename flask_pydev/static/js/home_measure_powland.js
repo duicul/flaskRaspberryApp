@@ -518,6 +518,7 @@
                 div_html += "<canvas id=\"AverageInverterPower\"></canvas>";
                 div_html += "<canvas id=\"AverageMainsPower\"></canvas>";
                 div_html += "<canvas id=\"BatteryAveragePower\"></canvas>";
+                div_html += "<canvas id=\"BatteryAverageVoltage\"></canvas>";
                 div_html += "<canvas id=\"BatteryStateOfCharge\"></canvas>";
                 div_html += "<canvas id=\"InverterChargingPower\"></canvas>";
                 div_html += "<canvas id=\"InverterTemperature\"></canvas>";
@@ -525,6 +526,7 @@
                 div_html += "<canvas id=\"OutputApparentPower\"></canvas>";
                 div_html += "<canvas id=\"PVAveragePower\"></canvas>";
                 div_html += "<canvas id=\"PVChargingAveragePower\"></canvas>";
+
                 $("#draw_gauge_ac").html(div_html);
                 var radial1 = new RadialGauge({
                     renderTo: 'AverageInverterPower',
@@ -992,6 +994,53 @@
                     animationDuration: 500
                 });
                 radial10.draw();
+                
+            var radial11 = new RadialGauge({
+                    renderTo: 'BatteryAverageVoltage',
+                    width: 200,
+                    height: 200,
+                    units: 'V',
+                    title: "BatteryAverageVoltage",
+                    value: result["BatteryAverageVoltage"],
+                    minValue: 0,
+                    maxValue: 45,
+                    majorTicks: ['0', '10', '20', '30', '40'],
+                    minorTicks: 10,
+                    strokeTicks: true,
+                    /*highlights: [{
+                        from: 0,
+                        to: 1000,
+                        color: 'rgba(0,0,155,.15)'
+                    }, {
+                        from: 1000,
+                        to: 2000,
+                        color: 'rgba(0,255,255,.15)'
+                    }, {
+                        from: 2000,
+                        to: 3000,
+                        color: 'rgba(0,155,0,.15)'
+                    }, {
+                        from: 3000,
+                        to: 4000,
+                        color: 'rgba(255,230,0,.25)'
+                    }, {
+                        from: 4000,
+                        to: 5000,
+                        color: 'rgba(255,100,0,.25)'
+                    }],*/
+                    colorPlate: '#222',
+                    colorMajorTicks: '#f5f5f5',
+                    colorMinorTicks: '#ddd',
+                    colorTitle: '#fff',
+                    colorUnits: '#ccc',
+                    colorNumbers: '#eee',
+                    colorNeedle: 'rgba(240, 128, 128, 1)',
+                    colorNeedleEnd: 'rgba(255, 160, 122, .9)',
+                    valueBox: true,
+                    animationRule: 'bounce',
+                    animationDuration: 500
+                });
+                radial11.draw();
             }
         });
     }
