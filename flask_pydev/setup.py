@@ -19,7 +19,8 @@ os.system(myCmd)
 myCmd = 'python3 -m venv '+BASE_DIR+'/../../flask_app_venv/venv'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'source '+BASE_DIR+'/../../flask_app_venv/venv/bin/activate'
+#source
+myCmd = ' . '+BASE_DIR+'/../../flask_app_venv/venv/bin/activate'
 print(myCmd)
 os.system(myCmd)
 myCmd = 'cd '+BASE_DIR
