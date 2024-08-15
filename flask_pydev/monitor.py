@@ -35,8 +35,20 @@ class Monitor():
             try:
                 logging.getLogger(self.logger_name).info("Polling homestation")
                 td.poll_value(self.url)
+            except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+            try:
+                logging.getLogger(self.logger_name).info("Polling homestation")
                 vd.poll_value(self.url)
+            except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+            try:
+                logging.getLogger(self.logger_name).info("Polling homestation")
                 acd.poll_value(self.url)
+            except:
+                logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+            try:
+                logging.getLogger(self.logger_name).info("Polling homestation")
                 od.poll_value()
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
