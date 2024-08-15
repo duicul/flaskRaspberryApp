@@ -13,6 +13,7 @@ import requests
 import traceback
 from data_classes import Outside_Data,Temperature_Split_Data,Voltage_Data,AC_Data
 from data_classes_powmr import PowMr_Data
+from data_classes_powland import PowLand_Data
 from authorization import Authorization
 from config_class import Config_Data,Config
 from user_class import UserAnonym,LoginAttempt_Data,LoginAttempt
@@ -50,6 +51,7 @@ acd=AC_Data("db/measure.db",'werkzeug')
 od=Outside_Data("db/measure.db",'werkzeug')
 
 powd = PowMr_Data("db/measure_powmr.db",'werkzeug')
+powld = PowLand_Data("db/measure_powmr.db",'werkzeug')
 
 aut=Authorization()
 cd=Config_Data("db/config.db",'werkzeug')
@@ -227,6 +229,7 @@ def force_poll():
         vd.poll_value(config.url)
         acd.poll_value(config.url)
         powd.poll_value(config.url)
+        powld.poll_value(config.url)
         od.poll_value()
     return ""
 
@@ -251,6 +254,14 @@ def temperature():
 @login_required
 def powmr():
     data=powd.extract_last()
+    if data==None:
+        return jsonify({})
+    return jsonify(data)
+
+@app.route('/powland')
+@login_required
+def powland():
+    data=powld.extract_last()
     if data==None:
         return jsonify({})
     return jsonify(data)
@@ -487,6 +498,13 @@ def home_station_powmr_cols():
     data.sort(key=lambda x:x.get("name",""))
     return jsonify(data)
 
+@app.route('/home_station/powland_cols')
+@login_required
+def home_station_powland_cols():
+    data = (powld.getColumnNames())#+powld.average_columns)
+    data.sort(key=lambda x:x.get("name",""))
+    return jsonify(data)
+
 @app.route('/home_station/powmr_data')
 @login_required
 def home_station_powmr_data():
@@ -568,6 +586,89 @@ def home_station_powmr_data():
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         return str(traceback.format_exc())
+    
+@app.route('/home_station/powland_data')
+@login_required
+def home_station_powland_data():
+    try:
+        data=[]
+        interval=False
+        compare=False
+        logging.getLogger('werkzeug').info(str(request.args))
+        energy_opt=[]
+        try:
+            energy_opt_str = request.args["energy_opt"]
+            logging.getLogger('werkzeug').info(str(energy_opt_str))
+            energy_opt = energy_opt_str.split(',')
+        except:
+            pass        
+        try:
+            interval=True if request.args["interval"] == "true" else False
+        except:
+            pass
+        try:
+            compare=True if request.args["compare"] == "true" else False
+        except:
+            pass
+        if(interval):
+            try:
+                data = powld.extract_all_between(request.args["fdate"], request.args["ldate"])
+            except:
+                logging.getLogger('werkzeug').error(str(traceback.format_exc())) 
+        elif(compare):
+            try:
+                data = powld.extractCompare(request.args["date1"], request.args["date2"])
+            except:
+                logging.getLogger('werkzeug').error(str(traceback.format_exc()))   
+        else:
+            try:
+                data = powld.extract_all_interval(request.args["items"])
+            except:
+                logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+                
+        logging.getLogger('werkzeug').info(str(energy_opt))
+        
+        data = powld.dbResptoDict(data, powld.getColumnNames())
+        
+        '''for opt in energy_opt:
+            if opt is not None and len(opt)>0 and opt in powld.energy_opt_vals:
+                data_opt = []
+                if(interval):
+                    try:
+                        data_opt = powld.extract_all_between(request.args["fdate"], request.args["ldate"],energy_opt=opt)
+                    except:
+                        logging.getLogger('werkzeug').error(str(traceback.format_exc())) 
+                elif(compare):
+                    try:
+                        data_opt = powld.extractCompare(request.args["date1"], request.args["date2"],energy_opt=opt)
+                    except:
+                        logging.getLogger('werkzeug').error(str(traceback.format_exc()))   
+                else:
+                    try:
+                        data_opt = powld.extract_all_interval(request.args["items"],energy_opt=opt)
+                    except:
+                        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+                
+                #data_opt = powld.extract_all_interval(request.args["items"],energy_opt=opt)
+                col_names = [{'name':'ID','type':'INTEGER'}]
+                for cn in powld.energy_cols:
+                    cn_energy = cn["name"]+"_"+opt
+                    col_names.append({'name':cn_energy,'type':'REAL'})
+                logging.getLogger('werkzeug').info("col_names_energy "+str(col_names))
+                data_opt = powld.dbResptoDict(data_opt, col_names)
+                
+                for oe in data_opt:
+                    for rec in data:
+                        if oe['ID'] == rec["ID"]:
+                            for oe_key in oe.keys():
+                                rec[oe_key]=oe[oe_key]
+                            break'''
+        #logging.getLogger('werkzeug').info(json.dumps(data))       
+        return jsonify(data)
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return str(traceback.format_exc())
+
 
 @app.route('/home_station')
 def home_station():    
@@ -622,6 +723,20 @@ def home_station_powmr():
             return render_template("login.html")
         else:
             return render_template('home_measure_powmr.html')
+    except:
+        logging.getLogger('werkzeug').error(str(traceback.format_exc()))
+        return render_template('login.html')
+
+@app.route('/home_station_powland')
+def home_station_powland():    
+    try:
+        epochtime=time.mktime((datetime.now()-attempt_period).timetuple())
+        logins=logins = len(list(filter(lambda logatt:not logatt.success,lad.getAllAttemptsIp(request.remote_addr, epochtime))))
+        current_user.attempts=logins
+        if(not current_user.is_authenticated):
+            return render_template("login.html")
+        else:
+            return render_template('home_measure_powland.html')
     except:
         logging.getLogger('werkzeug').error(str(traceback.format_exc()))
         return render_template('login.html')
