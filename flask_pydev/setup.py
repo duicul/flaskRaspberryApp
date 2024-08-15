@@ -15,7 +15,14 @@ os.system(myCmd)
 
 #myCmd = 'cd '+BASE_DIR+'/../../flask_app_venv'
 #print(myCmd)
+myCmd = 'mkdir ~/.config/pip'
 os.system(myCmd)
+
+configPip = "[global] \n break-system-packages = true \n"
+f = open("~/.config/pip", "w")
+f.write(configPip)
+f.close()
+
 myCmd = 'python3 -m venv '+BASE_DIR+'/../../flask_app_venv/venv'
 print(myCmd)
 os.system(myCmd)
