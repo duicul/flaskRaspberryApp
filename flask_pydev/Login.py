@@ -255,6 +255,16 @@ def powmr():
         return jsonify({})
     return jsonify(data)
 
+@app.route('/home_station/powland')
+@login_required
+def powland_poll():
+    try:
+        q = requests.get("http://192.168.0.11/modbus")
+        return jsonify(q.json())      
+    except Exception as e:
+        return str(e)
+
+'''
 @app.route('/home_station/powmr')
 @login_required
 def powmr_poll():
@@ -281,7 +291,7 @@ def powmr_energy_clean_poll():
         return jsonify(q.json())      
     except Exception as e:
         return str(e)
-    
+'''
 @app.route('/voltage')
 @login_required
 def voltage():
