@@ -10,14 +10,20 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 myCmd = 'mkdir '+BASE_DIR+'/logs;chmod a+w '+BASE_DIR+'/logs;'
 os.system(myCmd)
 myCmd = 'mkdir '+BASE_DIR+'/../../flask_app_venv'
+print(myCmd)
 os.system(myCmd)
+
 myCmd = 'cd '+BASE_DIR+'/../../flask_app_venv'
+print(myCmd)
 os.system(myCmd)
 myCmd = 'python3 -m venv venv'
+print(myCmd)
 os.system(myCmd)
 myCmd = 'source venv/bin/activate'
+print(myCmd)
 os.system(myCmd)
 myCmd = 'cd '+BASE_DIR
+print(myCmd)
 os.system(myCmd)
 
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
@@ -36,7 +42,9 @@ myCmd = 'chmod a+w ..'
 os.system(myCmd)
 myCmd = 'chmod a+w logs'
 os.system(myCmd)
+print("Createuwsgiconfig: ")
 import Createuwsgiconfig
+print("Createnginxconfig: ")
 import Createnginxconfig
 myCmd = 'chmod a+w ./*'
 os.system(myCmd)
