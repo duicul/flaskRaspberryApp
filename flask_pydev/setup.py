@@ -13,13 +13,13 @@ myCmd = 'mkdir '+BASE_DIR+'/../../flask_app_venv'
 print(myCmd)
 os.system(myCmd)
 
-myCmd = 'cd '+BASE_DIR+'/../../flask_app_venv'
+#myCmd = 'cd '+BASE_DIR+'/../../flask_app_venv'
+#print(myCmd)
+os.system(myCmd)
+myCmd = 'python3 -m venv '+BASE_DIR+'/../../flask_app_venv/venv'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'python3 -m venv venv'
-print(myCmd)
-os.system(myCmd)
-myCmd = 'source venv/bin/activate'
+myCmd = 'source '+BASE_DIR+'/../../flask_app_venv/venv/bin/activate'
 print(myCmd)
 os.system(myCmd)
 myCmd = 'cd '+BASE_DIR
@@ -27,15 +27,21 @@ print(myCmd)
 os.system(myCmd)
 
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
+print(myCmd)
 os.system(myCmd)
 myCmd = 'sudo pip3 install pysha3'
+print(myCmd)
 os.system(myCmd)
 myCmd = 'sudo pip3 install flask-login'
+print(myCmd)
 os.system(myCmd)
 myCmd = 'sudo pip3 install Flask-JSON'
+print(myCmd)
 os.system(myCmd)
 myCmd = 'sudo pip3 install speedtest-cli'
+print(myCmd)
 os.system(myCmd)
+
 myCmd = 'chmod a+w .'
 os.system(myCmd)
 myCmd = 'chmod a+w ..'
