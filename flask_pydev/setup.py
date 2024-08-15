@@ -9,6 +9,15 @@ import restartServices
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 myCmd = 'mkdir '+BASE_DIR+'/logs;chmod a+w '+BASE_DIR+'/logs;'
 os.system(myCmd)
+myCmd = 'mkdir '+BASE_DIR+'/../../flask_app_venv && cd '+BASE_DIR+'/../../flask_app_venv'
+os.system(myCmd)
+myCmd = 'python3 -m venv venv'
+os.system(myCmd)
+myCmd = 'source venv/bin/activate'
+os.system(myCmd)
+myCmd = 'cd '+BASE_DIR
+os.system(myCmd)
+
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
 os.system(myCmd)
 myCmd = 'sudo pip3 install pysha3'
