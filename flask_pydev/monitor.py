@@ -5,7 +5,7 @@ from  threading import Thread
 import logging
 from data_classes import Temperature_Data,Voltage_Data,AC_Data,\
     Temperature_Split_Data,Outside_Data
-from data_classes_powmr import PowMr_Data
+from data_classes_powland import PowLand_Data
 from config_class import Config_Data
 
 from config_class import Config_Handler
@@ -30,7 +30,7 @@ class Monitor():
         vd=Voltage_Data("db/measure.db",self.logger_name)
         acd=AC_Data("db/measure.db",self.logger_name)
         od=Outside_Data("db/measure.db",self.logger_name)
-        pmd=PowMr_Data("db/measure_powmr.db",self.logger_name)
+        pmd=PowLand_Data("db/measure_powmr.db",self.logger_name)
         while True:                
             try:
                 logging.getLogger(self.logger_name).info("Polling homestation")
