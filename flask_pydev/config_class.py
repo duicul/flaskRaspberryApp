@@ -74,6 +74,7 @@ class Config_Data:
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
         for rec in result:
+            print(result)
             configs.append(Config(rec[1], rec[2], rec[3], rec[4], rec[5]))
         return configs
     
