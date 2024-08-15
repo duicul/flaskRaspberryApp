@@ -30,16 +30,16 @@ os.system(myCmd)
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo pip3 install pysha3'
+myCmd = 'sudo apt install python3-pysha3'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo pip3 install flask-login'
+myCmd = 'sudo apt install python3-flask-login'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo pip3 install Flask-JSON'
+myCmd = 'sudo apt install python3-Flask-JSON'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo pip3 install speedtest-cli'
+myCmd = 'sudo apt install python3-speedtest-cli'
 print(myCmd)
 os.system(myCmd)
 
