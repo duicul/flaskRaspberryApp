@@ -37,7 +37,7 @@ os.system(myCmd)'''
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'pip install --break-system-packages pysha3'
+myCmd = 'pip install --break-system-packages safe-pysha3'
 print(myCmd)
 os.system(myCmd)
 myCmd = 'pip install --break-system-packages flask-login'
