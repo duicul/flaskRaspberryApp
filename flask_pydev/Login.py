@@ -228,8 +228,8 @@ def force_poll():
         tsd.poll_value(config.url)
         vd.poll_value(config.url)
         acd.poll_value(config.url)
-        powd.poll_value(config.url)
-        powld.poll_value(config.url)
+        powd.poll_value(config.url_powmr)
+        powld.poll_value(config.url_powmr)
         od.poll_value()
     return ""
 
@@ -270,7 +270,26 @@ def powland():
 @login_required
 def powland_poll():
     try:
-        q = requests.get("http://192.168.0.11/modbus")
+        user = current_user.user_name
+        url = "http://192.168.0.11"
+        if(user!=None):
+            config=cd.getConfig(user)
+            url = config.url_powmr
+        q = requests.get(str(url)+"/modbus")
+        return jsonify(q.json())      
+    except Exception as e:
+        return str(e)
+
+@app.route('/home_station/powland_energy')
+@login_required
+def powland_poll_energy():
+    try:
+        user = current_user.user_name
+        url = "http://192.168.0.11"
+        if(user!=None):
+            config=cd.getConfig(user)
+            url = config.url_powmr
+        q = requests.get(str(url)+"/modbus_energy")
         return jsonify(q.json())      
     except Exception as e:
         return str(e)
@@ -279,7 +298,12 @@ def powland_poll():
 @login_required
 def powland_settings_poll():
     try:
-        q = requests.get("http://192.168.0.11/modbussettings")
+        user = current_user.user_name
+        url = "http://192.168.0.11"
+        if(user!=None):
+            config=cd.getConfig(user)
+            url = config.url_powmr
+        q = requests.get(str(url)+"/modbussettings")
         return jsonify(q.json())      
     except Exception as e:
         return str(e)
@@ -501,7 +525,7 @@ def home_station_powmr_cols():
 @app.route('/home_station/powland_cols')
 @login_required
 def home_station_powland_cols():
-    data = (powld.getColumnNames())#+powld.average_columns)
+    data = (powld.getColumnNames()+powld.average_columns)
     data.sort(key=lambda x:x.get("name",""))
     return jsonify(data)
 
@@ -630,7 +654,7 @@ def home_station_powland_data():
         
         data = powld.dbResptoDict(data, powld.getColumnNames())
         
-        '''for opt in energy_opt:
+        for opt in energy_opt:
             if opt is not None and len(opt)>0 and opt in powld.energy_opt_vals:
                 data_opt = []
                 if(interval):
@@ -662,7 +686,7 @@ def home_station_powland_data():
                         if oe['ID'] == rec["ID"]:
                             for oe_key in oe.keys():
                                 rec[oe_key]=oe[oe_key]
-                            break'''
+                            break
         #logging.getLogger('werkzeug').info(json.dumps(data))       
         return jsonify(data)
     except:

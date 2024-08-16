@@ -49,6 +49,10 @@ os.system(myCmd)
 myCmd = 'spip install --break-system-packages speedtest-cli'
 print(myCmd)
 os.system(myCmd)
+myCmd = 'spip install --break-system-packages speedtest'
+print(myCmd)
+os.system(myCmd)
+
 
 myCmd = 'chmod a+w .'
 os.system(myCmd)

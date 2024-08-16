@@ -48,7 +48,9 @@ class PowLand_Data(Table_Data):
             "PVChargingAverageCurrent": 0
         }
     
-    data_types={"OperationMode": int,
+    data_types={'duration':int,
+                'timestamp':str,
+                "OperationMode": int,
                 "EffectiveMainsVoltage": float,
                 "MainsFrequency": float,
                 "AverageMainsPower": float,
@@ -75,7 +77,23 @@ class PowLand_Data(Table_Data):
                 "BatteryStateOfCharge": float,
                 "BatteryAverageCurrentFlow": float,
                 "InverterChargingAverageCurrent": float,
-                "PVChargingAverageCurrent": float
+                "PVChargingAverageCurrent": float,
+                "AverageInverterEnergy": float,
+                "AverageMainsEnergy": float,
+                "BatteryAverageEnergy": float,
+                "InverterChargingEnergy": float,
+                "OutputActiveEnergy": float,
+                "OutputApparentEnergy": float,
+                "PVAverageEnergy": float,
+                "PVChargingAverageEnergy": float,
+                "AverageInverterEnergyTotal": float,
+                "AverageMainsEnergyTotal": float,
+                "BatteryAverageEnergyTotal": float,
+                "InverterChargingEnergyTotal": float,
+                "OutputActiveEnergyTotal": float,
+                "OutputApparentEnergyTotal": float,
+                "PVAverageEnergyTotal": float,
+                "PVChargingAverageEnergyTotal": float               
             }
     
     """cols = ['duration', 'timestamp', 'batt_charge_current', 'battery_voltage', 'batt_power', 'batt_energy', 'bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage',
@@ -92,12 +110,31 @@ class PowLand_Data(Table_Data):
     #                   "bms_13cell_voltage":100, "bms_14cell_voltage":100, "bms_15cell_voltage":100, "bms_16cell_voltage":100, "bms_battery_current":100, "bms_battery_soc":100, "bms_battery_voltage":100, "bus_voltage":10,
     #                   "grid_current":100, "grid_freq":100, "grid_voltage":10, "inv_current":100, "inv_freq":100, "inv_voltage":10, "load_current":100, "pv_current":100, "pv_voltage":10}
     #"SELECT *,LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_prev,pv_energy_total-LAG(pv_energy_total,1) OVER (ORDER BY TIMESTAMP) as pv_energy_total_diff  FROM PowMr_Data Group by strftime('%Y-%m-%d %H',timestamp);"
-    '''
-    energy_cols = [{'name':'load_energy_total', 'type':'REAL'}, {'name':'pv_energy_total', 'type':'REAL'}
-                   , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy_total', 'type':'REAL'}, {'name':'batt_energy_charge_total', 'type':'REAL'}, {'name':'batt_energy_discharge_total', 'type':'REAL'}]
+    
+    energy_cols = [{'name':"AverageInverterEnergyTotal", 'type':'REAL'},
+                   {'name':"AverageMainsEnergyTotal", 'type':'REAL'},
+                   {'name':"BatteryAverageEnergyTotal", 'type':'REAL'},
+                   {'name':"InverterChargingEnergyTotal", 'type':'REAL'},
+                   {'name':"OutputActiveEnergyTotal", 'type':'REAL'},
+                   {'name':"OutputApparentEnergyTotal", 'type':'REAL'},
+                   {'name':"PVAverageEnergyTotal", 'type':'REAL'},
+                   {'name':"PVChargingAverageEnergyTotal", 'type':'REAL'}]
+        
+    average_columns = [{'name':"AverageInverterEnergyTotal_Average", 'type':'REAL','average_col':"AverageInverterEnergyTotal"},
+                   {'name':"AverageMainsEnergyTotal_Average", 'type':'REAL','average_col':"AverageMainsEnergyTotal"},
+                   {'name':"BatteryAverageEnergyTotal_Average", 'type':'REAL','average_col':"BatteryAverageEnergyTotal"},
+                   {'name':"InverterChargingEnergyTotal_Average", 'type':'REAL','average_col':"InverterChargingEnergyTotal"},
+                   {'name':"OutputActiveEnergyTotal_Average", 'type':'REAL','average_col':"OutputActiveEnergyTotal"},
+                   {'name':"OutputApparentEnergyTotal_Average", 'type':'REAL','average_col':"OutputApparentEnergyTotal"},
+                   {'name':"PVAverageEnergyTotal_Average", 'type':'REAL','average_col':"PVAverageEnergyTotal"},
+                   {'name':"PVChargingAverageEnergyTotal_Average", 'type':'REAL','average_col':"PVChargingAverageEnergyTotal"}]    
+        #{'name':'load_energy_total', 'type':'REAL'}, {'name':'pv_energy_total', 'type':'REAL'}
+        #           , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy_total', 'type':'REAL'}, {'name':'batt_energy_charge_total', 'type':'REAL'}, {'name':'batt_energy_discharge_total', 'type':'REAL'}]
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
     
-    average_columns = [{'name':'load_power_average', 'type':'REAL', 'average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL', 'average_col':'pv_energy'}
+    #average_columns =[]
+    
+    '''average_columns = [{'name':'load_power_average', 'type':'REAL', 'average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL', 'average_col':'pv_energy'}
                    , {'name':'t0026_total_power_average', 'type':'REAL', 'average_col':'t0026_total_energy'}, {'name':'batt_power_average', 'type':'REAL', 'average_col':'batt_energy'},
                    {'name':'batt_power_charge_average', 'type':'REAL', 'average_col':'batt_energy_charge'},{'name':'batt_power_discharge_average', 'type':'REAL', 'average_col':'batt_energy_discharge'}]
     '''
@@ -150,16 +187,16 @@ class PowLand_Data(Table_Data):
         sql += "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
         sql += "TIMESTAMP timestamp with time zone NOT NULL DEFAULT (datetime('now','localtime')),"
         col_names = list(PowLand_Data.data_types.keys())
-        
+        print(col_names)
         sql += col_names[0] + " " + self.typeToSQL(PowLand_Data.data_types[col_names[0]])
-        if 'total' in col_names[0] or PowLand_Data.data_types[col_names[0]] in [int,float]:
-            sql += " DEFAULT 0"
+        #if 'Total' in col_names[0] or PowLand_Data.data_types[col_names[0]] in [int,float]:
+        #    sql += " DEFAULT 0"
         
         for i in range(1, len(col_names)):
             cname = col_names[i]
             if not cname in ['timestamp', 'duration', 'id']:
                 sql += " , " + cname + " " + self.typeToSQL(PowLand_Data.data_types[cname])
-            if 'total' in cname or PowLand_Data.data_types[col_names[0]] in [int,float] :
+            if 'Total' in cname or PowLand_Data.data_types[col_names[0]] in [int,float] :
                 sql += " DEFAULT 0" 
         sql += ");"
         print(sql)
@@ -362,14 +399,16 @@ class PowLand_Data(Table_Data):
         headers = {}
         if mock:
             powmr_data = mock_value
-            #powmr_data_energy = mock_energy_value
+            powmr_data_energy = mock_energy_value
         else:
             try:
                 logging.getLogger(self.logger_name).info("powmr sending requests")
                 print(powmr_url + "/modbus")
                 powmr_data = requests.get(powmr_url + "/modbus", headers=headers, timeout=timeout).json()
                 print(str(powmr_data))
-                #powmr_data_energy = requests.get(powmr_url + "/powmr_energy_clean", headers=headers, timeout=timeout).json()
+                print(str(powmr_data)+ "/modbus_energy_clean")
+                powmr_data_energy = requests.get(powmr_url + "/modbus_energy_clean", headers=headers, timeout=timeout).json()
+                print(str(powmr_data))
                 logging.getLogger(self.logger_name).info("requests sent")
             except Exception as e:
                 print(e)
@@ -380,8 +419,8 @@ class PowLand_Data(Table_Data):
         print("powmr_data")
         logging.getLogger(self.logger_name).info(powmr_data)
         print(powmr_data)
-        #logging.getLogger(self.logger_name).info(powmr_data_energy)
-        #print(powmr_data_energy)
+        logging.getLogger(self.logger_name).info(powmr_data_energy)
+        print(powmr_data_energy)
         col_names = list(map(lambda x:x.lower(),PowLand_Data.data_types.keys()))
         '''if 'resp' in powmr_data.keys() and powmr_data['resp'] != 1:
             #ins_data['inverter_status_on'] = False
@@ -394,25 +433,30 @@ class PowLand_Data(Table_Data):
             print(ent)
             if ent.lower() in col_names:
                 print(ent)
-                ins_data[ent.lower()] = powmr_data[ent]
+                ins_data[ent] = powmr_data[ent]
         print()
         #ins_data['inverter_status_on'] = True
-        '''for ent in powmr_data_energy.keys():
+        for ent in powmr_data_energy.keys():
             # print(ent)
             if ent.lower() in col_names:
                 # print(ent)
-                ins_data[ent.lower()] = powmr_data_energy[ent.lower()]'''
+                ins_data[ent] = powmr_data_energy[ent]
         lastValue = self.extract_last()
         # print("lastValue")
         # print(lastValue)
         # lastValue = self.dbResptoDict(lastValue, self.getColumnNames())
-        '''if lastValue is not None:
-            ins_data['load_energy_total'] = lastValue['load_energy_total'] + ins_data['load_energy']
-            ins_data['pv_energy_total'] = lastValue['pv_energy_total'] + ins_data['pv_energy']
-            ins_data['batt_energy_total'] = lastValue['batt_energy_total'] + ins_data['batt_energy']
-            ins_data['batt_energy_charge_total'] = lastValue['batt_energy_charge_total'] + ins_data['batt_energy_charge']
-            ins_data['batt_energy_discharge_total'] = lastValue['batt_energy_discharge_total'] + ins_data['batt_energy_discharge']
-            ins_data['t0026_total_energy_total'] = lastValue['t0026_total_energy_total'] + ins_data['t0026_total_energy']'''
+        print("energy total "+json.dumps(ins_data))
+        if lastValue is not None:
+            ins_data['AverageInverterEnergyTotal'] = lastValue['AverageInverterEnergyTotal'] + ins_data['AverageInverterEnergy']
+            ins_data['AverageMainsEnergyTotal'] = lastValue['AverageMainsEnergyTotal'] + ins_data['AverageMainsEnergy']
+            ins_data['BatteryAverageEnergyTotal'] = lastValue['BatteryAverageEnergyTotal'] + ins_data['BatteryAverageEnergy']
+            ins_data['InverterChargingEnergyTotal'] = lastValue['InverterChargingEnergyTotal'] + ins_data['InverterChargingEnergy']
+            
+            ins_data['OutputActiveEnergyTotal'] = lastValue['OutputActiveEnergyTotal'] + ins_data['OutputActiveEnergy']
+            ins_data['OutputApparentEnergyTotal'] = lastValue['OutputApparentEnergyTotal'] + ins_data['OutputApparentEnergy']
+            ins_data['PVAverageEnergyTotal'] = lastValue['PVAverageEnergyTotal'] + ins_data['PVAverageEnergy']
+            ins_data['PVChargingAverageEnergyTotal'] = lastValue['PVChargingAverageEnergyTotal'] + ins_data['PVChargingAverageEnergy']
+            
         logging.getLogger(self.logger_name).info("PowMr_Data polled " + " result: " + json.dumps(ins_data))
         #ins_data = self.convertData(ins_data)
         print(ins_data)        
@@ -446,10 +490,10 @@ class PowLand_Data(Table_Data):
                     cnval = dbrow[i]
                 # print(str(cn)+ " "+str(cnval))
                 dictResp[cn] = cnval
-            '''if addAverage:
+            if addAverage:
                 for average_col in self.average_columns:
                     if 'average_col' in average_col.keys() and average_col['average_col'] in dictResp.keys() and  dictResp.get('duration', 0) > 0:
-                        dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)'''
+                        dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
             resp.append(dictResp)
         return resp
 
@@ -484,8 +528,8 @@ if __name__ == '__main__':
     print(json.dumps(tableData))
     tsd.delete_table()
     tsd.create_table()
-    #for entry in tableData:
-    #    tsd.insert(entry)
+    for entry in tableData:
+        tsd.insert(entry)
     #q = {}
     # for ent in col_names:
     #    if ent!='TIMESTAMP':
@@ -495,7 +539,7 @@ if __name__ == '__main__':
     # tsd.insert(1,42.3)
     #print(tsd.extract_all_interval(""))
     #print(tsd.getColumnNames())
-    #print(json.dumps(tsd.dbResptoDict(tsd.extract_all_interval(""), tsd.getColumnNames())))
+    print(json.dumps(tsd.dbResptoDict(tsd.extract_all_interval(""), tsd.getColumnNames())))
     # tsd.convert_old()
     # td.insert(20,30)
     # print(ac.extract_last())
