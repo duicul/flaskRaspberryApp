@@ -131,7 +131,7 @@ class PowLand_Data(Table_Data):
         #{'name':'load_energy_total', 'type':'REAL'}, {'name':'pv_energy_total', 'type':'REAL'}
         #           , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy_total', 'type':'REAL'}, {'name':'batt_energy_charge_total', 'type':'REAL'}, {'name':'batt_energy_discharge_total', 'type':'REAL'}]
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
-    
+    BatteryStateOfChargeReal = [{'name':'BatteryStateOfChargeReal', 'type':'REAL'}]
     #average_columns =[]
     
     '''average_columns = [{'name':'load_power_average', 'type':'REAL', 'average_col':'load_energy'}, {'name':'pv_power_average', 'type':'REAL', 'average_col':'pv_energy'}
@@ -187,7 +187,7 @@ class PowLand_Data(Table_Data):
         sql += "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"
         sql += "TIMESTAMP timestamp with time zone NOT NULL DEFAULT (datetime('now','localtime')),"
         col_names = list(PowLand_Data.data_types.keys())
-        print(col_names)
+        #print(col_names)
         sql += col_names[0] + " " + self.typeToSQL(PowLand_Data.data_types[col_names[0]])
         #if 'Total' in col_names[0] or PowLand_Data.data_types[col_names[0]] in [int,float]:
         #    sql += " DEFAULT 0"
@@ -405,10 +405,10 @@ class PowLand_Data(Table_Data):
                 logging.getLogger(self.logger_name).info("powmr sending requests")
                 print(powmr_url + "/modbus")
                 powmr_data = requests.get(powmr_url + "/modbus", headers=headers, timeout=timeout).json()
-                print(str(powmr_data))
+                #print(str(powmr_data))
                 print(str(powmr_data)+ "/modbus_energy_clean")
                 powmr_data_energy = requests.get(powmr_url + "/modbus_energy_clean", headers=headers, timeout=timeout).json()
-                print(str(powmr_data))
+                #print(str(powmr_data))
                 logging.getLogger(self.logger_name).info("requests sent")
             except Exception as e:
                 print(e)
@@ -416,25 +416,25 @@ class PowLand_Data(Table_Data):
                 return False
         ins_data = {}
         logging.getLogger(self.logger_name).info("powmr_data")
-        print("powmr_data")
+        #print("powmr_data")
         logging.getLogger(self.logger_name).info(powmr_data)
-        print(powmr_data)
+        #print(powmr_data)
         logging.getLogger(self.logger_name).info(powmr_data_energy)
-        print(powmr_data_energy)
+        #print(powmr_data_energy)
         col_names = list(map(lambda x:x.lower(),PowLand_Data.data_types.keys()))
         '''if 'resp' in powmr_data.keys() and powmr_data['resp'] != 1:
             #ins_data['inverter_status_on'] = False
         else:'''
         if 'values' in powmr_data.keys():
             powmr_data = powmr_data['values']
-            print("values")
-            print(powmr_data)
+            #print("values")
+            #print(powmr_data)
         for ent in powmr_data.keys():
-            print(ent)
+            #print(ent)
             if ent.lower() in col_names:
-                print(ent)
+                #print(ent)
                 ins_data[ent] = powmr_data[ent]
-        print()
+        #print()
         #ins_data['inverter_status_on'] = True
         for ent in powmr_data_energy.keys():
             # print(ent)
@@ -445,7 +445,7 @@ class PowLand_Data(Table_Data):
         # print("lastValue")
         # print(lastValue)
         # lastValue = self.dbResptoDict(lastValue, self.getColumnNames())
-        print("energy total "+json.dumps(ins_data))
+        #print("energy total "+json.dumps(ins_data))
         if lastValue is not None:
             ins_data['AverageInverterEnergyTotal'] = lastValue['AverageInverterEnergyTotal'] + ins_data['AverageInverterEnergy']
             ins_data['AverageMainsEnergyTotal'] = lastValue['AverageMainsEnergyTotal'] + ins_data['AverageMainsEnergy']
@@ -459,7 +459,7 @@ class PowLand_Data(Table_Data):
             
         logging.getLogger(self.logger_name).info("PowMr_Data polled " + " result: " + json.dumps(ins_data))
         #ins_data = self.convertData(ins_data)
-        print(ins_data)        
+        #print(ins_data)        
         
         return self.insert(ins_data)
     
@@ -471,6 +471,24 @@ class PowLand_Data(Table_Data):
         colnames = super().getColumnNames()  # self.average_columns + 
         # colnames.sort(key=lambda x:x.get("name",""))
         return colnames
+    
+    def calculate_capacity_lifepo4(self,bat_volt):
+        volt_val=[20,24,25,25.6,25.8,26,26.2,26.4,26.6,26.8,27.2]
+        bat_cap=[0,9,14,17,20,30,40,70,90,99,100]
+        if bat_volt >= volt_val[len(volt_val)-1]:
+            return 100
+        if bat_volt <= volt_val[0]:
+            return 0
+        for i in range(len(volt_val)):
+            if volt_val[i]>bat_volt:
+                break
+        #print("upper "+str(volt_val[i]))
+        #print("upper "+str(bat_cap[i]))
+        percent_interval_voltage = (bat_volt-volt_val[i-1])/(volt_val[i]-volt_val[i-1])
+        #print(percent_interval_voltage)
+        #print(bat_cap[i]-bat_cap[i-1])
+        bat_cap = (percent_interval_voltage * (bat_cap[i]-bat_cap[i-1]))+bat_cap[i-1]
+        return int(bat_cap)
     
     def dbResptoDict(self, dbresp, colnames,addAverage=True):
         if dbresp is None:
@@ -494,6 +512,7 @@ class PowLand_Data(Table_Data):
                 for average_col in self.average_columns:
                     if 'average_col' in average_col.keys() and average_col['average_col'] in dictResp.keys() and  dictResp.get('duration', 0) > 0:
                         dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
+            dictResp["BatteryStateOfChargeReal"] = self.calculate_capacity_lifepo4(dictResp["BatteryAverageVoltage"])
             resp.append(dictResp)
         return resp
 

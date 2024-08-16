@@ -523,7 +523,7 @@
                 div_html += "<canvas id=\"AverageMainsPower\"></canvas>";
                 div_html += "<canvas id=\"BatteryAveragePower\"></canvas>";
                 div_html += "<canvas id=\"BatteryAverageVoltage\"></canvas>";
-                div_html += "<canvas id=\"BatteryStateOfCharge\"></canvas>";
+                div_html += "<canvas id=\"BatteryStateOfChargeReal\"></canvas>";
                 div_html += "<canvas id=\"InverterChargingPower\"></canvas>";
                 div_html += "<canvas id=\"InverterTemperature\"></canvas>";
                 div_html += "<canvas id=\"OutputActivePower\"></canvas>";
@@ -625,12 +625,36 @@
                     units: 'W',
                     title: "BatteryAveragePower",
                     value: result["t0026"],
-                    minValue: 0,
+                    minValue: -6500,
                     maxValue: 6500,
-                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6000'],
+                    majorTicks: ['-6500', '-5000', '-4000', '-3000', '-2000', '-1000','0', '1000', '2000', '3000', '4000', '5000', '6500'],
                     minorTicks: 10,
                     strokeTicks: true,
                     highlights: [{
+                        from: -6500,
+                        to: -5000,
+                        color: 'rgba(255,30,0,.25)'
+                    }, {
+                        from: -5000,
+                        to: -4000,
+                        color: 'rgba(255,100,0,.25)'
+                    }, {
+                        from: -4000,
+                        to: -3000,
+                        color: 'rgba(255,230,0,.25)'
+                    }, {
+                        from: -3000,
+                        to: -2000,
+                        color: 'rgba(0,155,0,.15)'
+                    }, {
+                        from: -2000,
+                        to: -1000,
+                        color: 'rgba(0,255,255,.15)'
+                    },{
+                        from: -1000,
+                        to: 0,
+                        color: 'rgba(0,0,155,.15)'
+                    },{
                         from: 0,
                         to: 1000,
                         color: 'rgba(0,0,155,.15)'
@@ -652,7 +676,7 @@
                         color: 'rgba(255,100,0,.25)'
                     }, {
                         from: 5000,
-                        to: 6000,
+                        to: 6500,
                         color: 'rgba(255,30,0,.25)'
                     }],
                     colorPlate: '#222',
@@ -670,38 +694,30 @@
                 radial3.draw();
 
                 var radial4 = new RadialGauge({
-                    renderTo: 'BatteryStateOfCharge',
+                    renderTo: 'BatteryStateOfChargeReal',
                     width: 200,
                     height: 200,
                     units: '%',
-                    title: "BatteryStateOfCharge",
-                    value: result["BatteryStateOfCharge"],
+                    title: "BatteryStateOfChargeReal",
+                    value: result["BatteryStateOfChargeReal"],
                     minValue: 0,
                     maxValue: 100,
                     majorTicks: [0, 10, 20, 30, 40, 50, 60, 70,80,90,100],
                     minorTicks: 5,
                     strokeTicks: true,
-                    /*highlights: [{
+                    highlights: [{
                         from: 0,
-                        to: 7,
-                        color: 'rgba(0,0,155,.15)'
+                        to: 33,
+                        color: 'rgba(255,0,0,.15)'
                     }, {
-                        from: 7,
-                        to: 14,
-                        color: 'rgba(0,255,255,.15)'
-                    }, {
-                        from: 14,
-                        to: 21,
-                        color: 'rgba(0,155,0,.15)'
-                    }, {
-                        from: 21,
-                        to: 28,
+                        from: 34,
+                        to: 67,
                         color: 'rgba(255,230,0,.25)'
                     }, {
-                        from: 28,
-                        to: 35,
-                        color: 'rgba(255,30,0,.25)'
-                    }],*/
+                        from: 68,
+                        to: 100,
+                        color: 'rgba(0,255,0,.15)'
+                    }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -724,31 +740,35 @@
                     title: "InverterChargingPower",
                     value: result["InverterChargingPower"],
                     minValue: 0,
-                    maxValue: 150,
-                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6000'],
+                    maxValue: 6500,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6500'],
                     minorTicks: 5,
                     strokeTicks: true,
-                    /*highlights: [{
+                   highlights: [{
                         from: 0,
-                        to: 30,
+                        to: 1000,
                         color: 'rgba(0,0,155,.15)'
                     }, {
-                        from: 30,
-                        to: 60,
+                        from: 1000,
+                        to: 2000,
                         color: 'rgba(0,255,255,.15)'
                     }, {
-                        from: 60,
-                        to: 90,
+                        from: 2000,
+                        to: 3000,
                         color: 'rgba(0,155,0,.15)'
                     }, {
-                        from: 90,
-                        to: 120,
+                        from: 3000,
+                        to: 4000,
                         color: 'rgba(255,230,0,.25)'
                     }, {
-                        from: 120,
-                        to: 150,
+                        from: 4000,
+                        to: 5000,
+                        color: 'rgba(255,100,0,.25)'
+                    }, {
+                        from: 5000,
+                        to: 6500,
                         color: 'rgba(255,30,0,.25)'
-                    }],*/
+                    }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -772,30 +792,22 @@
                     value: result["InverterTemperature"],
                     minValue: 0,
                     maxValue: 80,
-                    majorTicks: [0, 10, 20, 30, 40, 50, 60, 70],
+                    majorTicks: [0, 10, 20, 30, 40, 50, 60, 80],
                     minorTicks: 5,
                     strokeTicks: true,
-                    /*highlights: [{
+                    highlights: [{
                         from: 0,
-                        to: 7,
-                        color: 'rgba(0,0,155,.15)'
+                        to: 33,
+                        color: 'rgba(0,255,0,.15)'
                     }, {
-                        from: 7,
-                        to: 14,
-                        color: 'rgba(0,255,255,.15)'
-                    }, {
-                        from: 14,
-                        to: 21,
-                        color: 'rgba(0,155,0,.15)'
-                    }, {
-                        from: 21,
-                        to: 28,
+                        from: 34,
+                        to: 67,
                         color: 'rgba(255,230,0,.25)'
                     }, {
-                        from: 28,
-                        to: 35,
-                        color: 'rgba(255,30,0,.25)'
-                    }],*/
+                        from: 68,
+                        to: 80,
+                        color: 'rgba(255,0,0,.15)'
+                    }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -818,31 +830,35 @@
                     title: "OutputActivePower",
                     value: result["OutputActivePower"],
                     minValue: 0,
-                    maxValue: 450,
-                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6000'],
-                    minorTicks: 10,
+                    maxValue: 6500,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6500'],
+                    minorTicks: 5,
                     strokeTicks: true,
-                    /*highlights: [{
+                   highlights: [{
                         from: 0,
-                        to: 90,
+                        to: 1000,
                         color: 'rgba(0,0,155,.15)'
                     }, {
-                        from: 90,
-                        to: 180,
+                        from: 1000,
+                        to: 2000,
                         color: 'rgba(0,255,255,.15)'
                     }, {
-                        from: 180,
-                        to: 270,
+                        from: 2000,
+                        to: 3000,
                         color: 'rgba(0,155,0,.15)'
                     }, {
-                        from: 270,
-                        to: 360,
+                        from: 3000,
+                        to: 4000,
                         color: 'rgba(255,230,0,.25)'
                     }, {
-                        from: 360,
-                        to: 450,
+                        from: 4000,
+                        to: 5000,
+                        color: 'rgba(255,100,0,.25)'
+                    }, {
+                        from: 5000,
+                        to: 6500,
                         color: 'rgba(255,30,0,.25)'
-                    }],*/
+                    }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
@@ -867,10 +883,10 @@
                     value: result["OutputApparentPower"],
                     minValue: 0,
                     maxValue: 6500,
-                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
-                    minorTicks: 10,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6500'],
+                    minorTicks: 5,
                     strokeTicks: true,
-                    highlights: [{
+                   highlights: [{
                         from: 0,
                         to: 1000,
                         color: 'rgba(0,0,155,.15)'
@@ -890,6 +906,10 @@
                         from: 4000,
                         to: 5000,
                         color: 'rgba(255,100,0,.25)'
+                    }, {
+                        from: 5000,
+                        to: 6500,
+                        color: 'rgba(255,30,0,.25)'
                     }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
@@ -914,10 +934,10 @@
                     value: result["PVAveragePower"],
                     minValue: 0,
                     maxValue: 6500,
-                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
-                    minorTicks: 10,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6500'],
+                    minorTicks: 5,
                     strokeTicks: true,
-                    highlights: [{
+                   highlights: [{
                         from: 0,
                         to: 1000,
                         color: 'rgba(0,0,155,.15)'
@@ -937,6 +957,10 @@
                         from: 4000,
                         to: 5000,
                         color: 'rgba(255,100,0,.25)'
+                    }, {
+                        from: 5000,
+                        to: 6500,
+                        color: 'rgba(255,30,0,.25)'
                     }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
@@ -961,10 +985,10 @@
                     value: result["PVChargingAveragePower"],
                     minValue: 0,
                     maxValue: 6500,
-                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000'],
-                    minorTicks: 10,
+                    majorTicks: ['0', '1000', '2000', '3000', '4000', '5000', '6500'],
+                    minorTicks: 5,
                     strokeTicks: true,
-                    highlights: [{
+                   highlights: [{
                         from: 0,
                         to: 1000,
                         color: 'rgba(0,0,155,.15)'
@@ -984,6 +1008,10 @@
                         from: 4000,
                         to: 5000,
                         color: 'rgba(255,100,0,.25)'
+                    }, {
+                        from: 5000,
+                        to: 6500,
+                        color: 'rgba(255,30,0,.25)'
                     }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
@@ -1008,30 +1036,22 @@
                     value: result["BatteryAverageVoltage"],
                     minValue: 0,
                     maxValue: 45,
-                    majorTicks: ['0', '10', '20', '30', '40'],
-                    minorTicks: 10,
+                    majorTicks: ['0', '10', '20', '30', '45'],
+                    minorTicks: 5,
                     strokeTicks: true,
-                    /*highlights: [{
+                    highlights: [{
                         from: 0,
-                        to: 1000,
-                        color: 'rgba(0,0,155,.15)'
+                        to: 22,
+                        color: 'rgba(255,0,0,.15)'
                     }, {
-                        from: 1000,
-                        to: 2000,
-                        color: 'rgba(0,255,255,.15)'
-                    }, {
-                        from: 2000,
-                        to: 3000,
-                        color: 'rgba(0,155,0,.15)'
-                    }, {
-                        from: 3000,
-                        to: 4000,
+                        from: 22,
+                        to: 26,
                         color: 'rgba(255,230,0,.25)'
                     }, {
-                        from: 4000,
-                        to: 5000,
-                        color: 'rgba(255,100,0,.25)'
-                    }],*/
+                        from: 27,
+                        to: 45,
+                        color: 'rgba(0,255,0,.15)'
+                    }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',

@@ -525,7 +525,7 @@ def home_station_powmr_cols():
 @app.route('/home_station/powland_cols')
 @login_required
 def home_station_powland_cols():
-    data = (powld.getColumnNames()+powld.average_columns)
+    data = (powld.getColumnNames()+powld.average_columns+powld.BatteryStateOfChargeReal)
     data.sort(key=lambda x:x.get("name",""))
     return jsonify(data)
 
