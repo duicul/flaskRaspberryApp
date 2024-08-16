@@ -512,7 +512,7 @@ class PowLand_Data(Table_Data):
                 for average_col in self.average_columns:
                     if 'average_col' in average_col.keys() and average_col['average_col'] in dictResp.keys() and  dictResp.get('duration', 0) > 0:
                         dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
-            if addBattertyReal:
+            if addBattertyReal and "BatteryAverageVoltage" in dictResp.keys():
                 dictResp["BatteryStateOfChargeReal"] = self.calculate_capacity_lifepo4(dictResp["BatteryAverageVoltage"])
             resp.append(dictResp)
         return resp
