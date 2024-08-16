@@ -624,7 +624,7 @@
                     height: 200,
                     units: 'W',
                     title: "BatteryAveragePower",
-                    value: result["t0026"],
+                    value: result["BatteryAveragePower"],
                     minValue: -6500,
                     maxValue: 6500,
                     majorTicks: ['-6500', '-5000', '-4000', '-3000', '-2000', '-1000','0', '1000', '2000', '3000', '4000', '5000', '6500'],
