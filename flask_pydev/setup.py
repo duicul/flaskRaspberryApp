@@ -37,16 +37,16 @@ os.system(myCmd)'''
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'pip install --break-system-packages python3-pysha3'
+myCmd = 'pip install --break-system-packages pysha3'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'pip install --break-system-packages python3-flask-login'
+myCmd = 'pip install --break-system-packages flask-login'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'pip install --break-system-packages python3-Flask-JSON'
+myCmd = 'pip install --break-system-packages Flask-JSON'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'spip install --break-system-packages python3-speedtest-cli'
+myCmd = 'spip install --break-system-packages speedtest-cli'
 print(myCmd)
 os.system(myCmd)
 
