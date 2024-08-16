@@ -490,7 +490,7 @@ class PowLand_Data(Table_Data):
         bat_cap = (percent_interval_voltage * (bat_cap[i]-bat_cap[i-1]))+bat_cap[i-1]
         return int(bat_cap)
     
-    def dbResptoDict(self, dbresp, colnames,addAverage=True):
+    def dbResptoDict(self, dbresp, colnames,addAverage=True,addBattertyReal=True):
         if dbresp is None:
             return []
         resp = []
@@ -512,7 +512,8 @@ class PowLand_Data(Table_Data):
                 for average_col in self.average_columns:
                     if 'average_col' in average_col.keys() and average_col['average_col'] in dictResp.keys() and  dictResp.get('duration', 0) > 0:
                         dictResp[average_col['name']] = dictResp[average_col['average_col']] / (dictResp['duration'] / 3600)
-            dictResp["BatteryStateOfChargeReal"] = self.calculate_capacity_lifepo4(dictResp["BatteryAverageVoltage"])
+            if addBattertyReal:
+                dictResp["BatteryStateOfChargeReal"] = self.calculate_capacity_lifepo4(dictResp["BatteryAverageVoltage"])
             resp.append(dictResp)
         return resp
 
@@ -527,7 +528,7 @@ class PowLand_Data(Table_Data):
             conn.close()
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
-        data = self.dbResptoDict(result, self.getColumnNames(),addAverage=False)
+        data = self.dbResptoDict(result, self.getColumnNames(),addAverage=False,addBattertyReal=False)
         return data
 
 if __name__ == '__main__':
