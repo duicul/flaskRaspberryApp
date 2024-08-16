@@ -22,7 +22,7 @@ configPip = "[global] \n break-system-packages = true \n"
 f = open("~/.config/pip", "w")
 f.write(configPip)
 f.close()
-
+'''
 myCmd = 'python3 -m venv '+BASE_DIR+'/../../flask_app_venv/venv'
 print(myCmd)
 os.system(myCmd)
@@ -32,21 +32,21 @@ print(myCmd)
 os.system(myCmd)
 myCmd = 'cd '+BASE_DIR
 print(myCmd)
-os.system(myCmd)
+os.system(myCmd)'''
 
 myCmd = 'sudo apt install nginx uwsgi uwsgi-plugin-python3'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo apt install python3-pysha3'
+myCmd = 'pip install --break-system-packages python3-pysha3'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo apt install python3-flask-login'
+myCmd = 'pip install --break-system-packages python3-flask-login'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo apt install python3-Flask-JSON'
+myCmd = 'pip install --break-system-packages python3-Flask-JSON'
 print(myCmd)
 os.system(myCmd)
-myCmd = 'sudo apt install python3-speedtest-cli'
+myCmd = 'spip install --break-system-packages python3-speedtest-cli'
 print(myCmd)
 os.system(myCmd)
 
