@@ -520,16 +520,19 @@
                 div_html = ""
                 div_html += new Date(result["TIMESTAMP"]).toString() + "</br>"
                 div_html += "<canvas id=\"AverageInverterPower\"></canvas>";
-                div_html += "<canvas id=\"AverageMainsPower\"></canvas>";
-                div_html += "<canvas id=\"BatteryAveragePower\"></canvas>";
-                div_html += "<canvas id=\"BatteryAverageVoltage\"></canvas>";
-                div_html += "<canvas id=\"BatteryStateOfChargeReal\"></canvas>";
                 div_html += "<canvas id=\"InverterChargingPower\"></canvas>";
-                div_html += "<canvas id=\"InverterTemperature\"></canvas>";
+                div_html += "<canvas id=\"AverageMainsPower\"></canvas>";
                 div_html += "<canvas id=\"OutputActivePower\"></canvas>";
                 div_html += "<canvas id=\"OutputApparentPower\"></canvas>";
+                
+                div_html += "<canvas id=\"BatteryAveragePower\"></canvas>";               
+                div_html += "<canvas id=\"BatteryAverageVoltage\"></canvas>";
+                div_html += "<canvas id=\"BatteryStateOfCharge\"></canvas>";
+                div_html += "<canvas id=\"BatteryStateOfChargeReal\"></canvas>";
+                div_html += "<canvas id=\"InverterTemperature\"></canvas>";
+                
                 div_html += "<canvas id=\"PVAveragePower\"></canvas>";
-                div_html += "<canvas id=\"PVChargingAveragePower\"></canvas>";
+                div_html += "<canvas id=\"PVChargingAveragePower\"></canvas>";               
 
                 $("#draw_gauge_ac").html(div_html);
                 var radial1 = new RadialGauge({
@@ -1065,6 +1068,44 @@
                     animationDuration: 500
                 });
                 radial11.draw();
+            var radial12 = new RadialGauge({
+                    renderTo: 'BatteryStateOfCharge',
+                    width: 200,
+                    height: 200,
+                    units: '%',
+                    title: "BatteryStateOfCharge",
+                    value: result["BatteryStateOfCharge"],
+                    minValue: 0,
+                    maxValue: 100,
+                    majorTicks: [0, 10, 20, 30, 40, 50, 60, 70,80,90,100],
+                    minorTicks: 5,
+                    strokeTicks: true,
+                    highlights: [{
+                        from: 0,
+                        to: 33,
+                        color: 'rgba(255,0,0,.15)'
+                    }, {
+                        from: 34,
+                        to: 67,
+                        color: 'rgba(255,230,0,.25)'
+                    }, {
+                        from: 68,
+                        to: 100,
+                        color: 'rgba(0,255,0,.15)'
+                    }],
+                    colorPlate: '#222',
+                    colorMajorTicks: '#f5f5f5',
+                    colorMinorTicks: '#ddd',
+                    colorTitle: '#fff',
+                    colorUnits: '#ccc',
+                    colorNumbers: '#eee',
+                    colorNeedle: 'rgba(240, 128, 128, 1)',
+                    colorNeedleEnd: 'rgba(255, 160, 122, .9)',
+                    valueBox: true,
+                    animationRule: 'bounce',
+                    animationDuration: 500
+                });
+                radial12.draw();
             }
         });
     }
