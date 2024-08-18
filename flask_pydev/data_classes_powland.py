@@ -120,14 +120,14 @@ class PowLand_Data(Table_Data):
                    {'name':"PVAverageEnergyTotal", 'type':'REAL'},
                    {'name':"PVChargingAverageEnergyTotal", 'type':'REAL'}]
         
-    average_columns = [{'name':"AverageInverterEnergyTotal_Average", 'type':'REAL','average_col':"AverageInverterEnergyTotal"},
-                   {'name':"AverageMainsEnergyTotal_Average", 'type':'REAL','average_col':"AverageMainsEnergyTotal"},
-                   {'name':"BatteryAverageEnergyTotal_Average", 'type':'REAL','average_col':"BatteryAverageEnergyTotal"},
-                   {'name':"InverterChargingEnergyTotal_Average", 'type':'REAL','average_col':"InverterChargingEnergyTotal"},
-                   {'name':"OutputActiveEnergyTotal_Average", 'type':'REAL','average_col':"OutputActiveEnergyTotal"},
-                   {'name':"OutputApparentEnergyTotal_Average", 'type':'REAL','average_col':"OutputApparentEnergyTotal"},
-                   {'name':"PVAverageEnergyTotal_Average", 'type':'REAL','average_col':"PVAverageEnergyTotal"},
-                   {'name':"PVChargingAverageEnergyTotal_Average", 'type':'REAL','average_col':"PVChargingAverageEnergyTotal"}]    
+    average_columns = [{'name':"AverageInverterEnergyTotal_Average", 'type':'REAL','average_col':"AverageInverterEnergy"},
+                   {'name':"AverageMainsEnergyTotal_Average", 'type':'REAL','average_col':"AverageMainsEnergy"},
+                   {'name':"BatteryAverageEnergyTotal_Average", 'type':'REAL','average_col':"BatteryAverageEnergy"},
+                   {'name':"InverterChargingEnergyTotal_Average", 'type':'REAL','average_col':"InverterChargingEnergy"},
+                   {'name':"OutputActiveEnergyTotal_Average", 'type':'REAL','average_col':"OutputActiveEnergy"},
+                   {'name':"OutputApparentEnergyTotal_Average", 'type':'REAL','average_col':"OutputApparentEnergy"},
+                   {'name':"PVAverageEnergyTotal_Average", 'type':'REAL','average_col':"PVAverageEnergy"},
+                   {'name':"PVChargingAverageEnergyTotal_Average", 'type':'REAL','average_col':"PVChargingAverageEnergy"}]    
         #{'name':'load_energy_total', 'type':'REAL'}, {'name':'pv_energy_total', 'type':'REAL'}
         #           , {'name':'t0026_total_energy_total', 'type':'REAL'}, {'name':'batt_energy_total', 'type':'REAL'}, {'name':'batt_energy_charge_total', 'type':'REAL'}, {'name':'batt_energy_discharge_total', 'type':'REAL'}]
     energy_opt_vals = ["energyhour", "energyday", "energyweek", "energymonth", "energyyear"]
