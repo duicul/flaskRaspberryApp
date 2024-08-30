@@ -93,7 +93,8 @@ class PowLand_Data(Table_Data):
                 "OutputActiveEnergyTotal": float,
                 "OutputApparentEnergyTotal": float,
                 "PVAverageEnergyTotal": float,
-                "PVChargingAverageEnergyTotal": float               
+                "PVChargingAverageEnergyTotal": float,
+                "EnergyFromFullCharge":float               
             }
     
     """cols = ['duration', 'timestamp', 'batt_charge_current', 'battery_voltage', 'batt_power', 'batt_energy', 'bms_01cell_voltage', 'bms_02cell_voltage', 'bms_03cell_voltage', 'bms_04cell_voltage', 'bms_05cell_voltage', 'bms_06cell_voltage', 'bms_07cell_voltage',
@@ -143,6 +144,8 @@ class PowLand_Data(Table_Data):
         self.logger_name = logger_name
         self.table_name = "PowLand_Data"
         self.create_table()
+        self.alter_table()
+        self.add_table_views()
         ch = Config_Handler("json/monitor_config.json", 'monitor_logger')
         self.config = ch.loadUsingFile()
     
@@ -207,7 +210,45 @@ class PowLand_Data(Table_Data):
             conn.close()
         except:
             logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
+    
+    def alter_table(self):
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+        sql = "ALTER TABLE Powland_Data ADD COLUMN EnergyFromFullCharge REAL DEFAULT 0;"
+        print(sql)
+        try:
+            cursor.execute(sql)
+            logging.getLogger(self.logger_name).debug(self.table_name + " created ")
+            cursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
         
+        '''conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+        sql = "UPDATE Powland_Data SET EnergyFromFullCharge = (BatteryAverageEnergyTotal - (SELECT pdOld.BatteryAverageEnergyTotal from Powland_Data pdOld where pdOld.TIMESTAMP = (select MAX(TIMESTAMP) from powland_data ) and  pdOld.BatteryStateOfCharge ) ); "
+        print(sql)
+        try:
+            cursor.execute(sql)
+            logging.getLogger(self.logger_name).debug(self.table_name + " created ")
+            cursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))'''
+    
+    def add_table_views(self):
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+        sql = "CREATE VIEW MAXCHARGE AS SELECT * FROM powland_data where BatteryStateOfCharge>=99;"
+        print(sql)
+        try:
+            cursor.execute(sql)
+            logging.getLogger(self.logger_name).debug(self.table_name + " created ")
+            cursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).warning(str(traceback.format_exc()))
+    
     def remove_wrong_value(self):
         ''' Remove incorrect values from the database '''
         pass
@@ -395,6 +436,22 @@ class PowLand_Data(Table_Data):
         except:
             logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
     
+    def getBatteryTotalEnergyFullCharge(self):
+        conn = sqlite3.connect(self.database)
+        mycursor = conn.cursor()
+        querry = "SELECT BatteryAverageEnergyTotal FROM  MAXCHARGE WHERE TIMESTAMP = (SELECT MAX(TIMESTAMP) FROM MAXCHARGE);"
+        print(querry)
+        mycursor.execute(querry)
+        try:
+            result = mycursor.fetchall()
+            mycursor.close()
+            conn.close()
+        except:
+            logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
+        if result is not None and len(result) > 0:
+            return result[0][0]
+        return None
+    
     def poll_value(self, powmr_url, timeout=10, mock=True):
         headers = {}
         if mock:
@@ -456,7 +513,10 @@ class PowLand_Data(Table_Data):
             ins_data['OutputApparentEnergyTotal'] = lastValue['OutputApparentEnergyTotal'] + ins_data['OutputApparentEnergy']
             ins_data['PVAverageEnergyTotal'] = lastValue['PVAverageEnergyTotal'] + ins_data['PVAverageEnergy']
             ins_data['PVChargingAverageEnergyTotal'] = lastValue['PVChargingAverageEnergyTotal'] + ins_data['PVChargingAverageEnergy']
-            
+        
+        energyFullCharge = self.getBatteryTotalEnergyFullCharge()
+        if energyFullCharge is not None:
+            ins_data['EnergyFromFullCharge'] = ins_data['BatteryAverageEnergyTotal'] - energyFullCharge
         logging.getLogger(self.logger_name).info("PowMr_Data polled " + " result: " + json.dumps(ins_data))
         #ins_data = self.convertData(ins_data)
         #print(ins_data)        
@@ -544,12 +604,12 @@ if __name__ == '__main__':
     # ac.insert(221,6.3,170,5478)
     tsd = PowLand_Data("db/measure_powmr.db", 'monitor_logger')
     tsd.create_table()
-    tableData = tsd.extractAllValues()
-    print(json.dumps(tableData))
-    tsd.delete_table()
-    tsd.create_table()
-    for entry in tableData:
-        tsd.insert(entry)
+    #tableData = tsd.extractAllValues()
+    #print(json.dumps(tableData))
+    #tsd.delete_table()
+    #tsd.create_table()
+    #for entry in tableData:
+    #    tsd.insert(entry)
     #q = {}
     # for ent in col_names:
     #    if ent!='TIMESTAMP':
