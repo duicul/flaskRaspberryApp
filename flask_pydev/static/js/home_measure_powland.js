@@ -529,8 +529,9 @@
                 div_html += "<canvas id=\"BatteryAverageVoltage\"></canvas>";
                 div_html += "<canvas id=\"BatteryStateOfCharge\"></canvas>";
                 div_html += "<canvas id=\"BatteryStateOfChargeReal\"></canvas>";
-                div_html += "<canvas id=\"InverterTemperature\"></canvas>";
+                div_html += "<canvas id=\"EnergyFromFullCharge\"></canvas>";
                 
+                div_html += "<canvas id=\"InverterTemperature\"></canvas>";
                 div_html += "<canvas id=\"PVAveragePower\"></canvas>";
                 div_html += "<canvas id=\"PVChargingAveragePower\"></canvas>";               
 
@@ -1106,6 +1107,48 @@
                     animationDuration: 500
                 });
                 radial12.draw();
+            var radial13 = new RadialGauge({
+                    renderTo: 'EnergyFromFullCharge',
+                    width: 200,
+                    height: 200,
+                    units: 'W',
+                    title: "EnergyFromFullCharge",
+                    value: result["EnergyFromFullCharge"],
+                    minValue: 0,
+                    maxValue: 100,
+                    majorTicks: [-20000,-15000,-10000,-5000,5000],
+                    minorTicks: 5,
+                    strokeTicks: true,
+                    highlights: [{
+                        from: -20000,
+                        to: -15000,
+                        color: 'rgba(255,0,0,.15)'
+                    }, {
+                        from: -15000,
+                        to: -10000,
+                        color: 'rgba(255,230,0,.25)'
+                    }, {
+                        from: -10000,
+                        to: -5000,
+                        color: 'rgba(100,255,0,.15)'
+                    }, {
+                        from: -5000,
+                        to: 5000,
+                        color: 'rgba(0,255,0,.15)'
+                    }],
+                    colorPlate: '#222',
+                    colorMajorTicks: '#f5f5f5',
+                    colorMinorTicks: '#ddd',
+                    colorTitle: '#fff',
+                    colorUnits: '#ccc',
+                    colorNumbers: '#eee',
+                    colorNeedle: 'rgba(240, 128, 128, 1)',
+                    colorNeedleEnd: 'rgba(255, 160, 122, .9)',
+                    valueBox: true,
+                    animationRule: 'bounce',
+                    animationDuration: 500
+                });
+                radial13.draw();
             }
         });
     }
