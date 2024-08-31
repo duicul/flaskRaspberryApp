@@ -1111,7 +1111,7 @@
                     renderTo: 'EnergyFromFullCharge',
                     width: 200,
                     height: 200,
-                    units: 'W',
+                    units: 'Wh',
                     title: "EnergyFromFullCharge",
                     value: result["EnergyFromFullCharge"],
                     minValue: -20000,
