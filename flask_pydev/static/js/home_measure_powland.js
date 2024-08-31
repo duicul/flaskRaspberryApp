@@ -1116,7 +1116,7 @@
                     value: result["EnergyFromFullCharge"],
                     minValue: -20000,
                     maxValue: 5000,
-                    majorTicks: [-20000,-15000,-10000,-5000,5000],
+                    majorTicks: [-20000,-15000,-10000,-5000,0,5000],
                     minorTicks: 5,
                     strokeTicks: true,
                     highlights: [{
@@ -1126,16 +1126,20 @@
                     }, {
                         from: -15000,
                         to: -10000,
-                        color: 'rgba(255,230,0,.25)'
+                        color: 'rgba(200,200,0,.25)'
                     }, {
                         from: -10000,
                         to: -5000,
                         color: 'rgba(100,255,0,.15)'
                     }, {
                         from: -5000,
-                        to: 5000,
+                        to: 0,
                         color: 'rgba(0,255,0,.15)'
-                    }],
+                    }, {
+                        from: 0,
+                        to: 5000,
+                        color: 'rgba(0,100,100,.15)'
+                    },
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
