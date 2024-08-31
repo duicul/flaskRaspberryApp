@@ -1139,7 +1139,7 @@
                         from: 0,
                         to: 5000,
                         color: 'rgba(0,100,100,.15)'
-                    },
+                    }],
                     colorPlate: '#222',
                     colorMajorTicks: '#f5f5f5',
                     colorMinorTicks: '#ddd',
