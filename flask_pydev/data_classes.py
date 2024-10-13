@@ -481,15 +481,17 @@ class Temperature_Split_Data(Table_Data):
         temp1=-127
         temp2=-127
         self.remove_wrong_value()
-        while (temp1==-127 or temp2==-127) and i<30:
+        while (temp1==-127 or temp2==-127 or temp1 == temp2) and i<30:
             i=i+1
             try:
                 temp = requests.get(home_station_url+"/temperature",timeout=timeout).json()
             except:
                 logging.getLogger(self.logger_name).error(str(traceback.format_exc()))
                 return 
-            temp1=float(temp["temp1"]) if float(temp["temp1"])!=-127 else temp1
-            temp2=float(temp["temp2"]) if float(temp["temp2"])!=-127 else temp2
+            if temp1 == -127 or temp1 == temp2:
+                temp1=float(temp["temp1"]) if (float(temp["temp1"])!=-127 and ("temp1_addr" in temp.keys()) and temp["temp1_addr"]) else temp1
+            if temp2 == -127 or temp1 == temp2:
+                temp2=float(temp["temp2"]) if (float(temp["temp2"])!=-127 and ("temp2_addr" in temp.keys()) and temp["temp2_addr"]) else temp2
             
         logging.getLogger(self.logger_name).info("Temperature_Split_Data polled temperature"+str(home_station_url)+" result: "+str(temp1)+" "+str(temp2)+" "+str(i)+"tries")
         try:
