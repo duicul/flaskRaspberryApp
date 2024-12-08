@@ -37,6 +37,7 @@ Attempts: {{current_user.attempts}}
 {% if current_user.countReached() %}
 <div style="color:red"> Maximum attempt number reached</div>
 {%endif%}
+<p>{{ form.errors }}</p>
 <script src="/static/js/hello.js?v=1.14"></script>
 </body>
 </html>
