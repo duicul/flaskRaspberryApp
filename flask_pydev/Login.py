@@ -20,7 +20,9 @@ from user_class import UserAnonym,LoginAttempt_Data,LoginAttempt
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user,login_url
 import html
 login_manager = LoginManager()
-
+login_manager.session_protection = "strong"
+login_manager.login_view = "login"
+login_manager.login_message_category = "info"
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
