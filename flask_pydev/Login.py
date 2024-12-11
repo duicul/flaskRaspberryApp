@@ -26,7 +26,7 @@ login_manager.login_message_category = "info"
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.permanent_session_lifetime = timedelta(hours=1)
+app.permanent_session_lifetime = timedelta(hours=12)
 FlaskJSON(app)
 
 home_station_url="http://192.168.1.6"
