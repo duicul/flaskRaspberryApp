@@ -1,4 +1,0 @@
-commit_dialog_history_messages=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<messages>\r\n<message>Fix setup text</message>\r\n<message>Add config data input to setup</message>\r\n<message>Session expiration</message>\r\n<message>Fix attempts epoch time</message>\r\n<message>Add compare 2 dates</message>\r\n<message>Reverse logins list</message>\r\n<message>Add max attempts by ip</message>\r\n<message>Record unsuccessfull logins</message>\r\n<message>Use flask-login and store login attemps in db</message>\r\n<message>Try creating table</message>\r\n</messages>
-eclipse.preferences.version=1
-resourcehistory_graph_split=500,500
-resourcehistory_rev_split=700,300
