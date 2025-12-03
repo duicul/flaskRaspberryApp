@@ -185,7 +185,7 @@ def memory_usage():
 @app.route('/disk_usage')
 @login_required
 def disk_usage():
-    memory = os.popen('df -H').read().replace("\n","<br>").replace(" ","&nbsp;&nbsp;")
+    memory = os.popen('echo $USER;pwd;df -THP --sync').read().replace("\n","<br>").replace(" ","&nbsp;&nbsp;")
     return memory
 
 @app.route('/data_retr')
