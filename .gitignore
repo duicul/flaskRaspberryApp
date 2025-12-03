@@ -8,3 +8,5 @@ flask_logs
 json
 logs
 nginx_logs
+.metadata/
+.metadata/.plugins
